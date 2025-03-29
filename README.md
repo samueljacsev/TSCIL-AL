@@ -13,7 +13,7 @@
 ## Class-incremental Learning for Time Series with Active Learning: Benchmark and Evaluation
 
 
-This project is a fork of the TSCIL repository: a unified experimental framework for Time Series Class-Incremental Learning (TSCIL) based on Pytorch now extended with Active Learning capabilities. The [paper](https://arxiv.org/abs/2402.12035) has been accepted by SIGKDD 2024. Our CIL benchmarks are established with open-sourced real-world time series datasets. Based on these, our toolkit provides a simple way to customize the continual learning settings. Hyperparameter selection is based on [Ray Tune](https://docs.ray.io/en/latest/tune/index.html). 
+This project is a fork of the [TSCIL](https://github.com/zqiao11/TSCIL) repository: a unified experimental framework for Time Series Class-Incremental Learning (TSCIL) based on Pytorch now extended with Active Learning capabilities. The [paper](https://arxiv.org/abs/2402.12035) has been accepted by SIGKDD 2024. Our CIL benchmarks are established with open-sourced real-world time series datasets. Based on these, our toolkit provides a simple way to customize the continual learning settings. Hyperparameter selection is based on [Ray Tune](https://docs.ray.io/en/latest/tune/index.html). 
 The addition of Active Learning enables the framework to intelligently select the most informative samples for labeling, improving efficiency and performance in class-incremental learning scenarios. This extension is designed to support various active learning strategies and seamlessly integrate them into the existing TSCIL pipeline.
 
 ## Requirements
@@ -166,12 +166,6 @@ Our implementation uses the source code from the following repositories:
 
 <!-- CONTACT -->
 ## Contact
-For any issues/questions regarding the repo, please contact the following.
-
-Zhongzheng Qiao - qiao0020@e.ntu.edu.sg
-
-School of Electrical and Electronic Engineering (EEE),
-Nanyang Technological University (NTU), Singapore.
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
