@@ -10,18 +10,11 @@
 
 
 <!-- ABOUT THE PROJECT -->
-## Class-incremental Learning for Time Series: Benchmark and Evaluation
-
-A unified experimental framework for Time Series Class-Incremental Learning (TSCIL) based on Pytorch. The [paper](https://arxiv.org/abs/2402.12035) has been accepted by SIGKDD 2024. Our CIL benchmarks are established with open-sourced real-world time series datasets. Based on these, our toolkit provides a simple way to customize the continual learning settings. Hyperparameter selection is based on [Ray Tune](https://docs.ray.io/en/latest/tune/index.html). 
-
-## What's new
-* Jun 2024: Include FastICARL into our toolkit.
+## Class-incremental Learning for Time Series with Active Learning: Benchmark and Evaluation
 
 
-* May 2024: Our TSCIL paper has been accepted by SIGKDD 2024 (ADS track).
-
-
-* Feb 2024: Release of TSCIL toolkit.
+This project is a fork of the TSCIL repository: a unified experimental framework for Time Series Class-Incremental Learning (TSCIL) based on Pytorch now extended with Active Learning capabilities. The [paper](https://arxiv.org/abs/2402.12035) has been accepted by SIGKDD 2024. Our CIL benchmarks are established with open-sourced real-world time series datasets. Based on these, our toolkit provides a simple way to customize the continual learning settings. Hyperparameter selection is based on [Ray Tune](https://docs.ray.io/en/latest/tune/index.html). 
+The addition of Active Learning enables the framework to intelligently select the most informative samples for labeling, improving efficiency and performance in class-incremental learning scenarios. This extension is designed to support various active learning strategies and seamlessly integrate them into the existing TSCIL pipeline.
 
 ## Requirements
 ![](https://img.shields.io/badge/python-3.10-green.svg)
