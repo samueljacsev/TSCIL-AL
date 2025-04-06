@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 import numpy as np
-from utils.data import extract_samples_according_to_labels, extract_samples_according_to_labels_with_sub
+from utils.data import extract_samples_according_to_labels, extract_samples_according_to_labels_with_sub, extract_n_samples_randomly
 from utils.utils import load_pickle
 from utils.setup_elements import n_classes, n_tasks, data_path, preset_orders, n_tasks_val, n_classes_per_task, input_size_match
 import torch

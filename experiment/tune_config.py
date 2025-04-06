@@ -7,7 +7,7 @@ from agents.utils.name_match import agents_replay
 
 content_root = os.path.abspath('.')
 config_default = {'scenario': 'class',
-                  'runs': 5,
+                  'runs': 1,
                   'runs_val': 2,  # To increase the confidence of best_config
                   'seed': 1234,
                   'verbose': False,
@@ -30,7 +30,9 @@ config_default = {'scenario': 'class',
                   'head': 'Linear',  # Linear (Default),  SplitCosineLinear
                   'criterion': 'CE',  # Default: CE (Default),  BCE
                   'ncm_classifier': False,  # Default: False
-                  'er_sub_type': 'balanced'    # 'part' / 'balanced'
+                  'er_sub_type': 'balanced',    # 'part' / 'balanced'
+                  'al_total': 20,  # Total number of active learning steps
+                  'al_budget': 2,  # Number of active learning steps to be executed
                   }
                   # 1. Linear, BCE, False; 2. Linear, CE, True; 3. SplitCosineLinear, CE, False
 
@@ -81,7 +83,7 @@ config_cl = {'LwF': {'lambda_kd_lwf': tune.grid_search([1, 1e1, 1e2, 1e3, 1e4]),
 
              'ASER': {'aser_k': tune.grid_search([3]),
                       'aser_type': 'asvm',
-                      'aser_n_smp_cls': tune.grid_search([2, 4])
+                      'aser_n_smp_cls': tune.grid_search([2, 4]),
                       },
 
              'GR': {'lr_g': tune.grid_search([1e-3, 1e-4]),
@@ -137,7 +139,7 @@ def modify_config_accordingly(args, config_generic, config_model, config_cl):
 
     if args.agent in agents_replay or args.agent == 'Offline':  # Set a larger patience for methods using replay
         args.patience = 20
-
+    
     # Set dropout based on the dataset
     config_model[args.encoder]['dropout'] = set_dropout(args.data)
 

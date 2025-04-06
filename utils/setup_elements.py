@@ -126,4 +126,3 @@ def get_buffer_size(args):
         mem_size = n_exemplar_per_task * n_tasks_exp[args.data]
 
     return mem_size
-

@@ -11,7 +11,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Train the continual learning agent on task sequence')
 
     # #################### Main setting for the experiment ####################
-    parser.add_argument('--agent', dest='agent', default='ER', type=str,
+    parser.add_argument('--agent', dest='agent', default='ASER', type=str,
                         choices=['SFT', 'Offline',
                                  'LwF', 'EWC', 'SI', 'MAS', 'DT2W',
                                  'ER', 'ASER', 'DER', 'Herding', 'CLOPS', 'ER_Sub'  # ER_Sub is only applicable to DSA
@@ -157,6 +157,16 @@ if __name__ == "__main__":
     parser.add_argument('--feat_scale', type=float, default=1)  # No loss_feat if == 0
     parser.add_argument('--k_freq', type=int, default=-1)  # All freq if == -1, no loss_freq if == 0
     parser.add_argument('--regularize_freq_on_feat', default=False, type=boolean_string)
+
+    # Active Learning
+    parser.add_argument('--sampler', dest='sampler', default='random_iter', type=str,
+                        choices=['full', 'random', 'random_iter', 'uncertainty', 'entropy'],
+                        help='Active learning samplers')
+    parser.add_argument('--al_total', dest='al_total', default=20, type=int,
+                        help='Total number of active learning cycles')
+    parser.add_argument('--al_budget', dest='al_budget', default=2, type=float,
+                        help='Number of active learning steps to be executed')
+
 
     args = parser.parse_args()
     args.device = 'cuda' if torch.cuda.is_available() else 'cpu'

@@ -15,9 +15,12 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from utils.optimizer import set_optimizer, adjust_learning_rate
 from utils.utils import EarlyStopping, BinaryCrossEntropy
+from utils.buffer.buffer import Buffer
 from torch.optim import lr_scheduler
 import copy
 from agents.utils.functions import compute_cls_feature_mean_buffer
+
+# from selectors.base import BaseSelector
 
 
 class BaseLearner(nn.Module, metaclass=abc.ABCMeta):
@@ -43,7 +46,7 @@ class BaseLearner(nn.Module, metaclass=abc.ABCMeta):
         self.teacher = None
         self.use_kd = False
         self.ncm_classifier = False  # Only applicable for replay-based methods
-
+        
         if not self.args.tune:
             self.ckpt_path = args.exp_path + '/ckpt_r{}.pt'.format(self.run_id)
         else:
@@ -96,15 +99,23 @@ class BaseLearner(nn.Module, metaclass=abc.ABCMeta):
 
         if self.verbose:
             print('\n--> Task {}: {} classes in total'.format(self.task_now, len(self.learned_classes + self.classes_in_task)))
+        
 
-    def learn_task(self, task):
+    def learn_task(self, task, idxs: list, new_task:bool, args):
         """
         Basic workflow for learning a task. For particular methods, this function will be overwritten.
         """
 
         (x_train, y_train), (x_val, y_val), _ = task
+        x_train = x_train[idxs]
+        y_train = y_train[idxs]
+        
+        # TODO validation set?
 
-        self.before_task(y_train)
+        
+        if new_task:
+            print('Learning a new task')
+            self.before_task(y_train)
         train_dataloader = Dataloader_from_numpy(x_train, y_train, self.batch_size, shuffle=True)
         val_dataloader = Dataloader_from_numpy(x_val, y_val, self.batch_size, shuffle=False)
         early_stopping = EarlyStopping(path=self.ckpt_path, patience=self.args.patience, mode='min', verbose=False)
@@ -112,6 +123,7 @@ class BaseLearner(nn.Module, metaclass=abc.ABCMeta):
                                                  steps_per_epoch=len(train_dataloader),
                                                  epochs=self.epochs,
                                                  max_lr=self.args.lr)
+        
 
         for epoch in range(self.epochs):
             # Train for one epoch
@@ -131,8 +143,9 @@ class BaseLearner(nn.Module, metaclass=abc.ABCMeta):
                 if self.verbose:
                     print("Early stopping")
                 break
-
-        self.after_task(x_train, y_train)
+        
+        if new_task:
+            self.after_task(x_train, y_train)
 
     @abstractmethod
     def train_epoch(self, dataloader, epoch):
@@ -162,6 +175,16 @@ class BaseLearner(nn.Module, metaclass=abc.ABCMeta):
             self.teacher = copy.deepcopy(self.model)  # eval()
             if not self.args.teacher_eval:
                 self.teacher.train()
+      
+                
+    @torch.no_grad()
+    def evaluate_on_dataloader(self, eval_dataloader_i: Dataloader_from_numpy, i, mode='test'):
+        
+        eval_loss_i, eval_acc_i = self.cross_entropy_epoch_run(eval_dataloader_i, mode='test')
+
+        print('#################### Task {}: Accuracy == {}, Test CE Loss == {} ;'.format(i, eval_acc_i, eval_loss_i))
+            
+                
 
 
     @torch.no_grad()

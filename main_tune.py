@@ -15,6 +15,7 @@ if __name__ == "__main__":
     parser.add_argument('--encoder', dest='encoder', default='CNN', type=str)
     parser.add_argument('--agent', dest='agent', default='DT2W', type=str)
     parser.add_argument('--norm', dest='norm', default='BN', type=str)
+    parser.add_argument('--sampler', dest='sampler', default='random_iter', type=str)
     args = parser.parse_args()
 
     # Include unchanged general params
@@ -31,4 +32,6 @@ if __name__ == "__main__":
     log_path = args.exp_path + '/log.txt'
     sys.stdout = Logger('{}'.format(log_path))
 
+    from utils.setup_elements import n_tasks_exp
+    print(n_tasks_exp['uwave'])
     tune_and_experiment_multiple_runs(args)
