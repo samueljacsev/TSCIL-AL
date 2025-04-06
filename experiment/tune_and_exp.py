@@ -2,6 +2,7 @@ import numpy as np
 from types import SimpleNamespace
 from models.base import setup_model
 from agents.utils.name_match import agents, agents_replay
+from samplers.utils.name_match import samplers
 from experiment.exp import offline_train_eval
 from utils.stream import IncrementalTaskStream, get_cls_order
 from utils.utils import seed_fixer, check_ram_usage, save_pickle
@@ -99,9 +100,17 @@ def tune_offline_on_val_tasks(config, args, cls_order):
     return {'offline_acc': test_offline_acc[0]}
 
 
-def tune_hyperparams_on_val_tasks(args, cls_order, config_generic={}, config_model={}, config_cl={}):
+def tune_hyperparams_on_val_tasks(args, cls_order, config_generic={}, config_model={}, config_cl={}):   
     # Modify the config according to dataset and agent
     args, config_generic, config_model, config_cl = modify_config_accordingly(args, config_generic, config_model, config_cl)
+    
+    # TEST SETUP
+    if args.data == 'uwave' and args.encoder == 'CNN' and args.agent == 'ASER' and args.norm == 'BN':
+        best_params = {'generic': {'lr': 0.001, 'lradj': 'step10', 'batch_size': 32, 'weight_decay': 0}, 
+                       'model': {'feature_dim': 128, 'n_layers': 4, 'dropout': 0}, 
+                       'agent': {'aser_k': 3, 'aser_type': 'asvm', 'aser_n_smp_cls': 4}
+                       }
+        return dict(best_params['model'], **best_params['agent'], **best_params['generic'])
 
     if args.ablation:
         adjust_config_for_ablation(args, config_cl[args.agent])
@@ -153,6 +162,52 @@ def tune_hyperparams_on_val_tasks(args, cls_order, config_generic={}, config_mod
     best_params = best_trial.config
     best_params = dict(best_params['model'], **best_params['agent'], **best_params['generic'])
     return best_params
+
+def val_mean_anc_cil_over_runs(args, Acc_multiple_run_valid):
+    # ################## Val: mean and CI over runs ##################
+    print('Valid Set:')
+    Acc_multiple_run_valid = np.array(Acc_multiple_run_valid)
+    if args.agent == 'Offline':
+        acc = compute_performance_offline(Acc_multiple_run_valid)
+        print('---- Offline Accuracy with 95% CI is {} ----'.format(np.around(acc, decimals=2)))
+    else:
+        avg_end_acc, avg_end_fgt, avg_cur_acc, avg_acc, avg_bwtp = compute_performance(Acc_multiple_run_valid)
+        print(' Avg_End_Acc {} Avg_End_Fgt {} Avg_Cur_Acc {} Avg_Acc {} Avg_Bwtp {} \n'
+              .format(np.around(avg_end_acc, decimals=2), np.around(avg_end_fgt, decimals=2),
+                      np.around(avg_cur_acc, decimals=2), np.around(avg_acc, decimals=2),
+                      np.around(avg_bwtp, decimals=2)))
+        
+    return Acc_multiple_run_valid
+        
+        
+
+def test_mean_anc_cil_over_runs(args, Acc_multiple_run_test):
+    # ################## Test: mean and CI over runs ##################
+    print('Test Set:')
+    Acc_multiple_run_test = np.array(Acc_multiple_run_test)
+
+    if args.agent == 'Offline':
+        acc = compute_performance_offline(Acc_multiple_run_test)
+        print('---- Offline Accuracy with 95% CI is {} ----'.format(np.around(acc, decimals=2)))
+    else:
+        avg_end_acc, avg_end_fgt, avg_cur_acc, avg_acc, avg_bwtp = compute_performance(Acc_multiple_run_test)
+        print('Avg_End_Acc {} Avg_End_Fgt {} Avg_Cur_Acc {} Avg_Acc {} Avg_Bwtp {}'
+              .format(np.around(avg_end_acc, decimals=2), np.around(avg_end_fgt, decimals=2),
+                      np.around(avg_cur_acc, decimals=2), np.around(avg_acc, decimals=2),
+                      np.around(avg_bwtp, decimals=2)))
+    
+    return Acc_multiple_run_test
+
+
+def save_results(args, Acc_multiple_run_valid, Acc_multiple_run_test, Best_params, start, end):
+    result = {}
+    result['time'] = end - start
+    result['acc_array_val'] = Acc_multiple_run_valid
+    result['acc_array_test'] = Acc_multiple_run_test
+    result['ram'] = check_ram_usage()
+    result['best_params'] = Best_params
+    save_path = args.exp_path + '/result.pkl'
+    save_pickle(result, save_path)
 
 
 def tune_and_experiment_multiple_runs(args):
@@ -208,11 +263,23 @@ def tune_and_experiment_multiple_runs(args):
             task_stream.setup(load_subject=load_subject)
             model = setup_model(exp_args)
             agent = agents[args.agent](model=model, args=exp_args)
-            # Task Loop: Train & evaluate for each task.
+            
+
+            sampler = samplers[args.sampler](
+                agent=agent, 
+                exp_args=exp_args, 
+                args=exp_args) # create the sampler, by passing the agent
+
             for i in range(n_tasks_exp):
-                task = task_stream.tasks[i]
-                agent.learn_task(task)
-                agent.evaluate(task_stream, path=tsne_path)  # TSNE path
+
+                ## with AL
+                sampler.active_learn_task(task_stream, i) 
+                ## without AL. Same as using --sampler full
+                #task = task_stream.tasks[i]
+                #range(task[0][0].shape[0])
+                #agent.learn_task(task, idxs, True, args)
+                               
+                agent.evaluate(task_stream, path=tsne_path)  # TSNE path                
 
                 # Plot CF matrix after finishing the final task.
                 if i+1 == n_tasks_exp and args.cf_matrix:
@@ -234,39 +301,9 @@ def tune_and_experiment_multiple_runs(args):
     print('\n All runs finish. Total running time: {} sec'.format(end - start))
 
     # ################## Val: mean and CI over runs ##################
-    print('Valid Set:')
-    Acc_multiple_run_valid = np.array(Acc_multiple_run_valid)
-    if args.agent == 'Offline':
-        acc = compute_performance_offline(Acc_multiple_run_valid)
-        print('---- Offline Accuracy with 95% CI is {} ----'.format(np.around(acc, decimals=2)))
-    else:
-        avg_end_acc, avg_end_fgt, avg_cur_acc, avg_acc, avg_bwtp = compute_performance(Acc_multiple_run_valid)
-        print(' Avg_End_Acc {} Avg_End_Fgt {} Avg_Cur_Acc {} Avg_Acc {} Avg_Bwtp {} \n'
-              .format(np.around(avg_end_acc, decimals=2), np.around(avg_end_fgt, decimals=2),
-                      np.around(avg_cur_acc, decimals=2), np.around(avg_acc, decimals=2),
-                      np.around(avg_bwtp, decimals=2)))
-
+    Acc_multiple_run_valid = val_mean_anc_cil_over_runs(args, Acc_multiple_run_valid)
     # ################## Test: mean and CI over runs ##################
-    print('Test Set:')
-    Acc_multiple_run_test = np.array(Acc_multiple_run_test)
-
-    if args.agent == 'Offline':
-        acc = compute_performance_offline(Acc_multiple_run_test)
-        print('---- Offline Accuracy with 95% CI is {} ----'.format(np.around(acc, decimals=2)))
-    else:
-        avg_end_acc, avg_end_fgt, avg_cur_acc, avg_acc, avg_bwtp = compute_performance(Acc_multiple_run_test)
-        print('Avg_End_Acc {} Avg_End_Fgt {} Avg_Cur_Acc {} Avg_Acc {} Avg_Bwtp {}'
-              .format(np.around(avg_end_acc, decimals=2), np.around(avg_end_fgt, decimals=2),
-                      np.around(avg_cur_acc, decimals=2), np.around(avg_acc, decimals=2),
-                      np.around(avg_bwtp, decimals=2)))
-
+    Acc_multiple_run_test = test_mean_anc_cil_over_runs(args, Acc_multiple_run_test)  
     # Save the results
-    result = {}
-    result['time'] = end - start
-    result['acc_array_val'] = Acc_multiple_run_valid
-    result['acc_array_test'] = Acc_multiple_run_test
-    result['ram'] = check_ram_usage()
-    result['best_params'] = Best_params
-    save_path = args.exp_path + '/result.pkl'
-    save_pickle(result, save_path)
+    save_results(args, Acc_multiple_run_valid, Acc_multiple_run_test, Best_params, start, end)
 
