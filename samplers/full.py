@@ -22,7 +22,7 @@ class FullSampler(BaseSampler):
         """
 
         task = task_stream.tasks[i]
-        labelled_idxs = np.arange(task[0][0].shape[0])
-        
-        print('Labelled set size:', len(labelled_idxs))
-        self.agent.learn_task(task=task, idxs=labelled_idxs, new_task=True, args=self.args)
+
+        self.agent.learn_task(task=task, 
+                              labelled_idxs=np.arange(task[0][0].shape[0]), 
+                              new_task=True, args=self.args)

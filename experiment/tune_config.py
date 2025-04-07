@@ -7,7 +7,7 @@ from agents.utils.name_match import agents_replay
 
 content_root = os.path.abspath('.')
 config_default = {'scenario': 'class',
-                  'runs': 3,
+                  'runs': 1,
                   'runs_val': 2,  # To increase the confidence of best_config
                   'seed': 1234,
                   'verbose': False,

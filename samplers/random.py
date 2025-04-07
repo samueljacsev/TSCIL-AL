@@ -35,7 +35,7 @@ class RandomSampler(BaseSampler):
         # update the unlabelled data
         idx_unlabelled = idx_unlabelled[n_select:]
 
-        print('Labelled set size:', len(labelled_idxs))
+            
         self.agent.learn_task(task, labelled_idxs, new_task=True, args=self.args)
 
                     
