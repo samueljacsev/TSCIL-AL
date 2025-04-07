@@ -107,13 +107,12 @@ class BaseLearner(nn.Module, metaclass=abc.ABCMeta):
         (x_train, y_train), (x_val, y_val), _ = task
         x_train = x_train[idxs]
         y_train = y_train[idxs]
-        
-        # TODO validation set?
-
+        # validation set?
         
         if new_task:
             print('Learning a new task')
             self.before_task(y_train)
+            
         train_dataloader = Dataloader_from_numpy(x_train, y_train, self.batch_size, shuffle=True)
         val_dataloader = Dataloader_from_numpy(x_val, y_val, self.batch_size, shuffle=False)
         early_stopping = EarlyStopping(path=self.ckpt_path, patience=self.args.patience, mode='min', verbose=False)
@@ -122,7 +121,6 @@ class BaseLearner(nn.Module, metaclass=abc.ABCMeta):
                                                  epochs=self.epochs,
                                                  max_lr=self.args.lr)
         
-
         for epoch in range(self.epochs):
             # Train for one epoch
             epoch_loss_train, epoch_acc_train = self.train_epoch(train_dataloader, epoch=epoch)
@@ -174,15 +172,6 @@ class BaseLearner(nn.Module, metaclass=abc.ABCMeta):
             if not self.args.teacher_eval:
                 self.teacher.train()
       
-                
-    @torch.no_grad()
-    def evaluate_on_dataloader(self, eval_dataloader_i: Dataloader_from_numpy, i, mode='test'):
-        
-        eval_loss_i, eval_acc_i = self.cross_entropy_epoch_run(eval_dataloader_i, mode='test')
-
-        print('#################### Task {}: Accuracy == {}, Test CE Loss == {} ;'.format(i, eval_acc_i, eval_loss_i))
-            
-                
 
 
     @torch.no_grad()
@@ -421,7 +410,7 @@ class SequentialFineTune(BaseLearner):
         super(SequentialFineTune, self).__init__(model, args)
 
     def train_epoch(self, dataloader, epoch):
-        epoch_acc_train, epoch_loss_train, = self.cross_entropy_epoch_run(dataloader=dataloader,
+        epoch_acc_train, epoch_loss_train = self.cross_entropy_epoch_run(dataloader=dataloader,
                                                                           epoch=epoch,
                                                                           mode='train')
         return epoch_loss_train, epoch_acc_train
