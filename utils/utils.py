@@ -173,9 +173,6 @@ class BinaryCrossEntropywithLogits():
         return loss
 
 
-
-
-
 def list_subtraction(l1, l2):
     """
     return l1-l2
