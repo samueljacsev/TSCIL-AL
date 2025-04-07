@@ -162,3 +162,5 @@ data/raw_datasets
 data/saved
 debug.py
 
+# Result files
+result/tune_and_exp/
