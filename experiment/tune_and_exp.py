@@ -106,7 +106,7 @@ def tune_hyperparams_on_val_tasks(args, cls_order, config_generic={}, config_mod
     
     # TEST SETUP
     if args.data == 'uwave' and args.encoder == 'CNN' and args.agent == 'ASER' and args.norm == 'BN':
-        best_params = {'generic': {'lr': 0.001, 'lradj': 'step10', 'batch_size': 32, 'weight_decay': 0}, 
+        best_params = {'generic': {'lr': 0.001, 'lradj': 'step10', 'batch_size': 40, 'weight_decay': 0}, 
                        'model': {'feature_dim': 128, 'n_layers': 4, 'dropout': 0}, 
                        'agent': {'aser_k': 3, 'aser_type': 'asvm', 'aser_n_smp_cls': 4}
                        }
@@ -163,7 +163,7 @@ def tune_hyperparams_on_val_tasks(args, cls_order, config_generic={}, config_mod
     best_params = dict(best_params['model'], **best_params['agent'], **best_params['generic'])
     return best_params
 
-def val_mean_anc_cil_over_runs(args, Acc_multiple_run_valid):
+def val_mean_and_cil_over_runs(args, Acc_multiple_run_valid):
     # ################## Val: mean and CI over runs ##################
     print('Valid Set:')
     Acc_multiple_run_valid = np.array(Acc_multiple_run_valid)
@@ -181,7 +181,7 @@ def val_mean_anc_cil_over_runs(args, Acc_multiple_run_valid):
         
         
 
-def test_mean_anc_cil_over_runs(args, Acc_multiple_run_test):
+def test_mean_and_cil_over_runs(args, Acc_multiple_run_test):
     # ################## Test: mean and CI over runs ##################
     print('Test Set:')
     Acc_multiple_run_test = np.array(Acc_multiple_run_test)
@@ -247,7 +247,6 @@ def tune_and_experiment_multiple_runs(args):
         exp_args.tune = False
         exp_args.verbose = True  # Print the loss during training
         exp_args.stream_split = 'exp'
-        print(exp_args)
 
         task_stream = IncrementalTaskStream(data=args.data, scenario=args.scenario, cls_order=cls_order, split='exp')
 
@@ -264,7 +263,6 @@ def tune_and_experiment_multiple_runs(args):
             model = setup_model(exp_args)
             agent = agents[args.agent](model=model, args=exp_args)
             
-
             sampler = samplers[args.sampler](
                 agent=agent, 
                 exp_args=exp_args, 
@@ -272,13 +270,8 @@ def tune_and_experiment_multiple_runs(args):
 
             for i in range(n_tasks_exp):
 
-                ## with AL
-                sampler.active_learn_task(task_stream, i) 
-                ## without AL. Same as using --sampler full
-                #task = task_stream.tasks[i]
-                #range(task[0][0].shape[0])
-                #agent.learn_task(task, idxs, True, args)
-                               
+                # Active Learning
+                sampler.active_learn_task(task_stream, i)             
                 agent.evaluate(task_stream, path=tsne_path)  # TSNE path                
 
                 # Plot CF matrix after finishing the final task.
@@ -289,6 +282,7 @@ def tune_and_experiment_multiple_runs(args):
             # Save Acc of this run
             Acc_multiple_run_valid.append(agent.Acc_tasks['valid'])
             Acc_multiple_run_test.append(agent.Acc_tasks['test'])
+            print('Len of Acc_multiple_run_test:', len(Acc_multiple_run_test))
 
         run_over = time.time()
         print('\n Finish Run {}: total {} sec'.format(run, run_over - run_start))
@@ -301,9 +295,9 @@ def tune_and_experiment_multiple_runs(args):
     print('\n All runs finish. Total running time: {} sec'.format(end - start))
 
     # ################## Val: mean and CI over runs ##################
-    Acc_multiple_run_valid = val_mean_anc_cil_over_runs(args, Acc_multiple_run_valid)
+    Acc_multiple_run_valid = val_mean_and_cil_over_runs(args, Acc_multiple_run_valid)
     # ################## Test: mean and CI over runs ##################
-    Acc_multiple_run_test = test_mean_anc_cil_over_runs(args, Acc_multiple_run_test)  
+    Acc_multiple_run_test = test_mean_and_cil_over_runs(args, Acc_multiple_run_test)  
     # Save the results
     save_results(args, Acc_multiple_run_valid, Acc_multiple_run_test, Best_params, start, end)
 

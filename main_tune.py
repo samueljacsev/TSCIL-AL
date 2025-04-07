@@ -32,6 +32,5 @@ if __name__ == "__main__":
     log_path = args.exp_path + '/log.txt'
     sys.stdout = Logger('{}'.format(log_path))
 
-    from utils.setup_elements import n_tasks_exp
-    print(n_tasks_exp['uwave'])
+
     tune_and_experiment_multiple_runs(args)
