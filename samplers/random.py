@@ -10,7 +10,10 @@ class RandomSampler(BaseSampler):
     RandomIterSampler: A sampler that randomly selects samples from the unlabelled pool.
     """
 
-    def __init__(self, agent: BaseLearner, exp_args: SimpleNamespace, args: SimpleNamespace, ):
+    def __init__(self, 
+                 agent: BaseLearner,
+                 exp_args: SimpleNamespace,
+                 args: SimpleNamespace ):
         super().__init__(agent, exp_args, args, name='Random')
 
 

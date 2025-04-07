@@ -3,16 +3,21 @@ from types import SimpleNamespace
 from agents.base import BaseLearner
 from samplers.base import BaseSampler
 from utils.data import Dataloader_from_numpy
-import torch
 import numpy as np
+import torch
+
 
 class UncertaintySampler(BaseSampler):
     """
     UncertaintySampler: A sampler with uncertainty sampling strategy.
     """
 
-    def __init__(self, agent: BaseLearner, exp_args: SimpleNamespace, args: SimpleNamespace):
+    def __init__(self, 
+                 agent: BaseLearner, 
+                 exp_args: SimpleNamespace, 
+                 args: SimpleNamespace):
         super().__init__(agent, exp_args, args, name='Uncertainty')
+
 
     def compute_uncertainty(self, outputs, metric='least_confidence'):
         """
@@ -42,6 +47,7 @@ class UncertaintySampler(BaseSampler):
 
         return uncertainties
 
+    
     def active_learn_task(self, task_stream, i, metric='least_confidence'):
         """
         Selects the next few samples to be labelled based on uncertainty sampling.
