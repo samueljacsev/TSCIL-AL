@@ -11,7 +11,10 @@ class FullSampler(BaseSampler):
     This is a simple sampler that does not perform any active learning.
     """
 
-    def __init__(self, agent: BaseLearner, exp_args: SimpleNamespace, args: SimpleNamespace, ):
+    def __init__(self, 
+                 agent: BaseLearner, 
+                 exp_args: SimpleNamespace, 
+                 args: SimpleNamespace ):
         super().__init__(agent, exp_args, args, name='Full')
 
 

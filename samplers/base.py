@@ -1,17 +1,10 @@
 # -*- coding: UTF-8 -*-
-import argparse
-import numpy as np
 import torch.nn as nn
-import torch.nn.functional as F
 import abc
-import os
 from abc import abstractmethod
 from types import SimpleNamespace
 from agents.base import BaseLearner
 from utils.setup_elements import get_buffer_size, n_smp_per_cls, n_classes, n_tasks
-
-
-
 
 
 class BaseSampler(nn.Module, metaclass=abc.ABCMeta):
@@ -26,7 +19,6 @@ class BaseSampler(nn.Module, metaclass=abc.ABCMeta):
                  name: str='base'):
         super(BaseSampler, self).__init__()
         self.name = name
-        self.exp_args = exp_args
         self.args = args
         self.agent = agent
         self.batch_size = agent.batch_size
