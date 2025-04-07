@@ -17,7 +17,8 @@ class BaseSampler(nn.Module, metaclass=abc.ABCMeta):
                  exp_args:SimpleNamespace, 
                  args:SimpleNamespace, 
                  name: str='base'):
-        super(BaseSampler, self).__init__()
+        super().__init__()
+        
         self.name = name
         self.args = args
         self.agent = agent

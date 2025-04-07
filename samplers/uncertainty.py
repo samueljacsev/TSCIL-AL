@@ -38,7 +38,7 @@ class UncertaintySampler(BaseSampler):
         elif metric == 'margin':
             # Compute margin (difference between top-2 probabilities)
             sorted_probs = -np.sort(-probabilities, axis=1)  # Sort in descending order
-            uncertainties = sorted_probs[:, 0] - sorted_probs[:, 1]
+            uncertainties = 1 - (sorted_probs[:, 0] - sorted_probs[:, 1])
         elif metric == 'least_confidence':
             # Compute least confidence (1 - max probability)
             uncertainties = 1 - np.max(probabilities, axis=1)
@@ -48,7 +48,7 @@ class UncertaintySampler(BaseSampler):
         return uncertainties
 
     
-    def active_learn_task(self, task_stream, i, metric='least_confidence'):
+    def active_learn_task(self, task_stream, i, metric='margin'):
         """
         Selects the next few samples to be labelled based on uncertainty sampling.
 
