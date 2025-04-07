@@ -17,7 +17,6 @@ class RandomIterSampler(BaseSampler):
         super().__init__(agent, exp_args, args, name='RandomIter')
 
 
-        
     def active_learn_task(self, task_stream, i):
         """
         active_learn_task: Selects the next few samples to be labelled randomly in multiple iter.
@@ -40,9 +39,5 @@ class RandomIterSampler(BaseSampler):
             # update the unlabelled data
             idx_unlabelled = idx_unlabelled[n_samples_per_al_cycle:]
 
-            if alc == 0:
-                new_task = True
-            else:
-                new_task = False
-                
+            new_task = (alc == 0)
             self.agent.learn_task(task, labelled_idxs, new_task, self.args)

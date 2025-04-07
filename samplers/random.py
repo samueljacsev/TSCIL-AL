@@ -26,20 +26,17 @@ class RandomSampler(BaseSampler):
         n_samples_per_al_cycle = int(n_train_samples_per_task / self.al_total)
         
         task = task_stream.tasks[i]
-        (x_train, y_train), (x_val, y_val), (x_test, y_test) = task
+        x_train = task[0][0]
+        
         idx_unlabelled = np.arange(x_train.shape[0])
-                  
         np.random.shuffle(idx_unlabelled)
         
         n_select = self.al_budget * n_samples_per_al_cycle
-        
-        # label data by random sampling n_select number of samples
-        labelled_idxs = idx_unlabelled[:n_select]
-        # update the unlabelled data
-        idx_unlabelled = idx_unlabelled[n_select:]
 
-            
-        self.agent.learn_task(task, labelled_idxs, new_task=True, args=self.args)
+        self.agent.learn_task(
+            task,
+            idx_unlabelled[:n_select],
+            new_task=True,
+            args=self.args)
 
-                    
                     
