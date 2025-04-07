@@ -106,7 +106,7 @@ def tune_hyperparams_on_val_tasks(args, cls_order, config_generic={}, config_mod
     
     # TEST SETUP
     if args.data == 'uwave' and args.encoder == 'CNN' and args.agent == 'ASER' and args.norm == 'BN':
-        best_params = {'generic': {'lr': 0.001, 'lradj': 'step10', 'batch_size': 40, 'weight_decay': 0}, 
+        best_params = {'generic': {'lr': 0.001, 'lradj': 'step10', 'batch_size': 32, 'weight_decay': 0}, 
                        'model': {'feature_dim': 128, 'n_layers': 4, 'dropout': 0}, 
                        'agent': {'aser_k': 3, 'aser_type': 'asvm', 'aser_n_smp_cls': 4}
                        }
