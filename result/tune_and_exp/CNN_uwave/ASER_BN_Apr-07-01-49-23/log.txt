@@ -1,0 +1,2184 @@
+
+ ######## Run 0, cls_order :[2, 1, 6, 0, 4, 5, 3, 7] ########
+Create exp stream : 4 tasks,  classes order [2, 1, 6, 0, 4, 5, 3, 7] 
+Input shape (L, D): (315, 3)
+Training set size: 722; Val set size: 84; Test set size: 3582
+buffer has 40 slots
+ER mode: task, NCM classifier: False
+AL strategy: Uncertainty
+AL cycle: 1 / 2
+Labelled set size: 8
+Learning a new task
+
+--> Task 0: 2 classes in total
+Epoch 1/100: Accuracy = 25.0, Loss = 0.8521825671195984
+Epoch 2/100: Accuracy = 62.5, Loss = 0.5987964272499084
+Epoch 3/100: Accuracy = 100.0, Loss = 0.021038547158241272
+Epoch 4/100: Accuracy = 100.0, Loss = 0.003198683727532625
+Epoch 5/100: Accuracy = 100.0, Loss = 0.0017068912275135517
+Epoch 6/100: Accuracy = 100.0, Loss = 0.0013955594040453434
+Epoch 7/100: Accuracy = 100.0, Loss = 0.0012430513743311167
+Epoch 8/100: Accuracy = 100.0, Loss = 0.0009624594822525978
+Epoch 9/100: Accuracy = 100.0, Loss = 0.0006949820090085268
+Epoch 10/100: Accuracy = 100.0, Loss = 0.0005076394299976528
+Epoch 11/100: Accuracy = 100.0, Loss = 0.00039170164382085204
+Epoch 12/100: Accuracy = 100.0, Loss = 0.00038282692548818886
+Epoch 13/100: Accuracy = 100.0, Loss = 0.00037404129398055375
+Epoch 14/100: Accuracy = 100.0, Loss = 0.0003652703599072993
+Epoch 15/100: Accuracy = 100.0, Loss = 0.00035664811730384827
+Epoch 16/100: Accuracy = 100.0, Loss = 0.00034815972321666777
+Epoch 17/100: Accuracy = 100.0, Loss = 0.0003397605032660067
+Epoch 18/100: Accuracy = 100.0, Loss = 0.00033153980621136725
+Epoch 19/100: Accuracy = 100.0, Loss = 0.0003234828182030469
+Epoch 20/100: Accuracy = 100.0, Loss = 0.0003156192833557725
+Epoch 21/100: Accuracy = 100.0, Loss = 0.00030796416103839874
+Epoch 22/100: Accuracy = 100.0, Loss = 0.00030050252098590136
+Epoch 23/100: Accuracy = 100.0, Loss = 0.00029323436319828033
+Early stopping
+AL cycle: 2 / 2
+Shape of unlabelled data: (164, 315, 3)
+Labelled set size: 8
+Epoch 1/100: Accuracy = 87.5, Loss = 0.36492812633514404
+Epoch 2/100: Accuracy = 87.5, Loss = 0.3257300555706024
+Epoch 3/100: Accuracy = 100.0, Loss = 0.007198127917945385
+Epoch 4/100: Accuracy = 100.0, Loss = 0.0012330770259723067
+Epoch 5/100: Accuracy = 100.0, Loss = 0.0005976964021101594
+Epoch 6/100: Accuracy = 100.0, Loss = 0.00042792741442099214
+Epoch 7/100: Accuracy = 100.0, Loss = 0.00036030009505338967
+Epoch 8/100: Accuracy = 100.0, Loss = 0.0003285139100626111
+Epoch 9/100: Accuracy = 100.0, Loss = 0.0003180162748321891
+Epoch 10/100: Accuracy = 100.0, Loss = 0.0003145280061289668
+Epoch 11/100: Accuracy = 100.0, Loss = 0.00031254327041096985
+Epoch 12/100: Accuracy = 100.0, Loss = 0.00031191905145533383
+Epoch 13/100: Accuracy = 100.0, Loss = 0.0003108036471530795
+Epoch 14/100: Accuracy = 100.0, Loss = 0.0003092268598265946
+Epoch 15/100: Accuracy = 100.0, Loss = 0.00030729270656593144
+Epoch 16/100: Accuracy = 100.0, Loss = 0.00030500133289024234
+Epoch 17/100: Accuracy = 100.0, Loss = 0.0003022334713023156
+Epoch 18/100: Accuracy = 100.0, Loss = 0.0002991976507473737
+Epoch 19/100: Accuracy = 100.0, Loss = 0.0002958044642582536
+Epoch 20/100: Accuracy = 100.0, Loss = 0.0002921878476627171
+Epoch 21/100: Accuracy = 100.0, Loss = 0.00028828828362748027
+Early stopping
+
+ ======== Evaluate on valid set ========
+Task 0: Accuracy == 50.0, Test CE Loss == 0.6650357842445374 ;
+
+ ======== Evaluate on test set ========
+Task 0: Accuracy == 50.11037527593819, Test CE Loss == 0.6741562485694885 ;
+AL cycle: 1 / 2
+Labelled set size: 8
+Learning a new task
+
+--> Task 1: 4 classes in total
+Epoch 1/100: Accuracy = 50.0, Loss = 1.1689292192459106
+Epoch 2/100: Accuracy = 50.0, Loss = 1.0427513122558594
+Epoch 3/100: Accuracy = 100.0, Loss = 0.1300264298915863
+Epoch 4/100: Accuracy = 100.0, Loss = 0.058465395122766495
+Epoch 5/100: Accuracy = 100.0, Loss = 0.017496487125754356
+Epoch 6/100: Accuracy = 100.0, Loss = 0.010676060803234577
+Epoch 7/100: Accuracy = 100.0, Loss = 0.007775330916047096
+Epoch 8/100: Accuracy = 100.0, Loss = 0.005421523470431566
+Epoch 9/100: Accuracy = 100.0, Loss = 0.003912576008588076
+Epoch 10/100: Accuracy = 100.0, Loss = 0.0030766604468226433
+Epoch 11/100: Accuracy = 100.0, Loss = 0.002563021145761013
+Epoch 12/100: Accuracy = 100.0, Loss = 0.0025170715525746346
+Epoch 13/100: Accuracy = 100.0, Loss = 0.002461994532495737
+Epoch 14/100: Accuracy = 100.0, Loss = 0.0023994978982955217
+Epoch 15/100: Accuracy = 100.0, Loss = 0.0023312964476644993
+Epoch 16/100: Accuracy = 100.0, Loss = 0.002258964581415057
+Epoch 17/100: Accuracy = 100.0, Loss = 0.0021836753003299236
+Epoch 18/100: Accuracy = 100.0, Loss = 0.0021067510824650526
+Epoch 19/100: Accuracy = 100.0, Loss = 0.0020293439738452435
+Epoch 20/100: Accuracy = 100.0, Loss = 0.001952144899405539
+Epoch 21/100: Accuracy = 100.0, Loss = 0.0018763362895697355
+Epoch 22/100: Accuracy = 100.0, Loss = 0.0018023347947746515
+Epoch 23/100: Accuracy = 100.0, Loss = 0.001730297808535397
+Epoch 24/100: Accuracy = 100.0, Loss = 0.001660455483943224
+Epoch 25/100: Accuracy = 100.0, Loss = 0.0015931588131934404
+Epoch 26/100: Accuracy = 100.0, Loss = 0.0015287654241546988
+Epoch 27/100: Accuracy = 100.0, Loss = 0.0014672980178147554
+Epoch 28/100: Accuracy = 100.0, Loss = 0.001408846816048026
+Epoch 29/100: Accuracy = 100.0, Loss = 0.0013530998257920146
+Epoch 30/100: Accuracy = 100.0, Loss = 0.0013000726466998458
+Epoch 31/100: Accuracy = 100.0, Loss = 0.0012498850701376796
+Epoch 32/100: Accuracy = 100.0, Loss = 0.0012020979775115848
+Epoch 33/100: Accuracy = 100.0, Loss = 0.0011568610789254308
+Epoch 34/100: Accuracy = 100.0, Loss = 0.0011140852002426982
+Epoch 35/100: Accuracy = 100.0, Loss = 0.001073651947081089
+Epoch 36/100: Accuracy = 100.0, Loss = 0.0010354198748245835
+Epoch 37/100: Accuracy = 100.0, Loss = 0.0009992331033572555
+Epoch 38/100: Accuracy = 100.0, Loss = 0.0009650547872297466
+Epoch 39/100: Accuracy = 100.0, Loss = 0.0009326914441771805
+Epoch 40/100: Accuracy = 100.0, Loss = 0.0009020240977406502
+Epoch 41/100: Accuracy = 100.0, Loss = 0.0008730680565349758
+Epoch 42/100: Accuracy = 100.0, Loss = 0.0008456743671558797
+Epoch 43/100: Accuracy = 100.0, Loss = 0.0008198060095310211
+Epoch 44/100: Accuracy = 100.0, Loss = 0.0007952323649078608
+Epoch 45/100: Accuracy = 100.0, Loss = 0.0007719533168710768
+Epoch 46/100: Accuracy = 100.0, Loss = 0.0007499245111830533
+Epoch 47/100: Accuracy = 100.0, Loss = 0.0007290791254490614
+Epoch 48/100: Accuracy = 100.0, Loss = 0.0007092233281582594
+Epoch 49/100: Accuracy = 100.0, Loss = 0.0006903200992383063
+Epoch 50/100: Accuracy = 100.0, Loss = 0.0006723545957356691
+Epoch 51/100: Accuracy = 100.0, Loss = 0.0006552897393703461
+Epoch 52/100: Accuracy = 100.0, Loss = 0.0006389691261574626
+Epoch 53/100: Accuracy = 100.0, Loss = 0.0006234300090000033
+Epoch 54/100: Accuracy = 100.0, Loss = 0.0006085608620196581
+Early stopping
+AL cycle: 2 / 2
+Shape of unlabelled data: (179, 315, 3)
+Labelled set size: 8
+Epoch 1/100: Accuracy = 66.66666666666666, Loss = 0.554762065410614
+Epoch 2/100: Accuracy = 66.66666666666666, Loss = 0.5262497067451477
+Epoch 3/100: Accuracy = 95.83333333333334, Loss = 0.07861360162496567
+Epoch 4/100: Accuracy = 95.83333333333334, Loss = 0.056917447596788406
+Epoch 5/100: Accuracy = 100.0, Loss = 0.03134436532855034
+Epoch 6/100: Accuracy = 100.0, Loss = 0.017276505008339882
+Epoch 7/100: Accuracy = 100.0, Loss = 0.015932222828269005
+Epoch 8/100: Accuracy = 100.0, Loss = 0.014143447391688824
+Epoch 9/100: Accuracy = 100.0, Loss = 0.01126297190785408
+Epoch 10/100: Accuracy = 100.0, Loss = 0.009274103678762913
+Epoch 11/100: Accuracy = 100.0, Loss = 0.008391761220991611
+Epoch 12/100: Accuracy = 100.0, Loss = 0.008256754837930202
+Epoch 13/100: Accuracy = 100.0, Loss = 0.008005027659237385
+Epoch 14/100: Accuracy = 100.0, Loss = 0.0076599400490522385
+Epoch 15/100: Accuracy = 100.0, Loss = 0.0072485399432480335
+Epoch 16/100: Accuracy = 100.0, Loss = 0.006797286216169596
+Epoch 17/100: Accuracy = 100.0, Loss = 0.0063325148075819016
+Epoch 18/100: Accuracy = 100.0, Loss = 0.005874373018741608
+Epoch 19/100: Accuracy = 100.0, Loss = 0.005435755010694265
+Epoch 20/100: Accuracy = 100.0, Loss = 0.005025858525186777
+Epoch 21/100: Accuracy = 100.0, Loss = 0.004649084061384201
+Epoch 22/100: Accuracy = 100.0, Loss = 0.004307196009904146
+Early stopping
+
+ ======== Evaluate on valid set ========
+Task 0: Accuracy == 55.00000000000001, Test CE Loss == 2.347179889678955 ;
+Task 1: Accuracy == 95.45454545454545, Test CE Loss == 0.13948501646518707 ;
+
+ ======== Evaluate on test set ========
+Task 0: Accuracy == 47.24061810154526, Test CE Loss == 2.527461290359497 ;
+Task 1: Accuracy == 96.71945701357465, Test CE Loss == 0.12089981883764267 ;
+AL cycle: 1 / 2
+Labelled set size: 8
+Learning a new task
+
+--> Task 2: 6 classes in total
+Epoch 1/100: Accuracy = 66.66666666666666, Loss = 0.9980202317237854
+Epoch 2/100: Accuracy = 66.66666666666666, Loss = 0.911461591720581
+Epoch 3/100: Accuracy = 95.83333333333334, Loss = 0.2980973422527313
+Epoch 4/100: Accuracy = 95.83333333333334, Loss = 0.15232108533382416
+Epoch 5/100: Accuracy = 100.0, Loss = 0.06832832843065262
+Epoch 6/100: Accuracy = 100.0, Loss = 0.039698533713817596
+Epoch 7/100: Accuracy = 100.0, Loss = 0.027565576136112213
+Epoch 8/100: Accuracy = 100.0, Loss = 0.020869115367531776
+Epoch 9/100: Accuracy = 100.0, Loss = 0.016306588426232338
+Epoch 10/100: Accuracy = 100.0, Loss = 0.013154998421669006
+Epoch 11/100: Accuracy = 100.0, Loss = 0.010854360647499561
+Epoch 12/100: Accuracy = 100.0, Loss = 0.010620092041790485
+Epoch 13/100: Accuracy = 100.0, Loss = 0.01032379362732172
+Epoch 14/100: Accuracy = 100.0, Loss = 0.0099801542237401
+Epoch 15/100: Accuracy = 100.0, Loss = 0.009604018181562424
+Epoch 16/100: Accuracy = 100.0, Loss = 0.009207620285451412
+Epoch 17/100: Accuracy = 100.0, Loss = 0.008803696371614933
+Epoch 18/100: Accuracy = 100.0, Loss = 0.00840116385370493
+Epoch 19/100: Accuracy = 100.0, Loss = 0.008007328025996685
+Epoch 20/100: Accuracy = 100.0, Loss = 0.007626799400895834
+Epoch 21/100: Accuracy = 100.0, Loss = 0.007263147737830877
+Epoch 22/100: Accuracy = 100.0, Loss = 0.006917838007211685
+Epoch 23/100: Accuracy = 100.0, Loss = 0.0065928176045417786
+Epoch 24/100: Accuracy = 100.0, Loss = 0.0062864962965250015
+Epoch 25/100: Accuracy = 100.0, Loss = 0.005999254062771797
+Epoch 26/100: Accuracy = 100.0, Loss = 0.005730985198169947
+Epoch 27/100: Accuracy = 100.0, Loss = 0.005481336265802383
+Epoch 28/100: Accuracy = 100.0, Loss = 0.0052485535852611065
+Epoch 29/100: Accuracy = 100.0, Loss = 0.005032188259065151
+Epoch 30/100: Accuracy = 100.0, Loss = 0.004830606747418642
+Epoch 31/100: Accuracy = 100.0, Loss = 0.004642100539058447
+Epoch 32/100: Accuracy = 100.0, Loss = 0.00446525402367115
+Epoch 33/100: Accuracy = 100.0, Loss = 0.004299290012568235
+Epoch 34/100: Accuracy = 100.0, Loss = 0.004142906982451677
+Epoch 35/100: Accuracy = 100.0, Loss = 0.003995292354375124
+Epoch 36/100: Accuracy = 100.0, Loss = 0.0038560403045266867
+Epoch 37/100: Accuracy = 100.0, Loss = 0.003724185051396489
+Epoch 38/100: Accuracy = 100.0, Loss = 0.003599611110985279
+Epoch 39/100: Accuracy = 100.0, Loss = 0.0034819997381418943
+Epoch 40/100: Accuracy = 100.0, Loss = 0.0033704880625009537
+Epoch 41/100: Accuracy = 100.0, Loss = 0.0032642765436321497
+Epoch 42/100: Accuracy = 100.0, Loss = 0.0031629400327801704
+Epoch 43/100: Accuracy = 100.0, Loss = 0.003066119970753789
+Epoch 44/100: Accuracy = 100.0, Loss = 0.0029736680444329977
+Epoch 45/100: Accuracy = 100.0, Loss = 0.0028855365235358477
+Epoch 46/100: Accuracy = 100.0, Loss = 0.0028015580028295517
+Epoch 47/100: Accuracy = 100.0, Loss = 0.002721605123952031
+Epoch 48/100: Accuracy = 100.0, Loss = 0.0026451051235198975
+Epoch 49/100: Accuracy = 100.0, Loss = 0.0025718053802847862
+Epoch 50/100: Accuracy = 100.0, Loss = 0.0025016225408762693
+Epoch 51/100: Accuracy = 100.0, Loss = 0.002434295602142811
+Epoch 52/100: Accuracy = 100.0, Loss = 0.0023700129240751266
+Epoch 53/100: Accuracy = 100.0, Loss = 0.0023087996523827314
+Epoch 54/100: Accuracy = 100.0, Loss = 0.0022501221392303705
+Epoch 55/100: Accuracy = 100.0, Loss = 0.0021941594313830137
+Epoch 56/100: Accuracy = 100.0, Loss = 0.0021407781168818474
+Epoch 57/100: Accuracy = 100.0, Loss = 0.002089884364977479
+Early stopping
+AL cycle: 2 / 2
+Shape of unlabelled data: (183, 315, 3)
+Labelled set size: 8
+Epoch 1/100: Accuracy = 81.25, Loss = 0.4579801559448242
+Epoch 2/100: Accuracy = 81.25, Loss = 0.4487389326095581
+Epoch 3/100: Accuracy = 93.75, Loss = 0.2014855444431305
+Epoch 4/100: Accuracy = 96.875, Loss = 0.08927538990974426
+Epoch 5/100: Accuracy = 100.0, Loss = 0.041223764419555664
+Epoch 6/100: Accuracy = 100.0, Loss = 0.02543330006301403
+Epoch 7/100: Accuracy = 100.0, Loss = 0.02173103392124176
+Epoch 8/100: Accuracy = 100.0, Loss = 0.02342471107840538
+Epoch 9/100: Accuracy = 100.0, Loss = 0.025865908712148666
+Epoch 10/100: Accuracy = 100.0, Loss = 0.02407778799533844
+Epoch 11/100: Accuracy = 100.0, Loss = 0.020229380577802658
+Epoch 12/100: Accuracy = 100.0, Loss = 0.019703272730112076
+Epoch 13/100: Accuracy = 100.0, Loss = 0.018944397568702698
+Epoch 14/100: Accuracy = 100.0, Loss = 0.018011461943387985
+Epoch 15/100: Accuracy = 100.0, Loss = 0.016961943358182907
+Epoch 16/100: Accuracy = 100.0, Loss = 0.01585443876683712
+Epoch 17/100: Accuracy = 100.0, Loss = 0.014738384634256363
+Epoch 18/100: Accuracy = 100.0, Loss = 0.013648392632603645
+Epoch 19/100: Accuracy = 100.0, Loss = 0.012608115561306477
+Epoch 20/100: Accuracy = 100.0, Loss = 0.011634418740868568
+Epoch 21/100: Accuracy = 100.0, Loss = 0.010736635886132717
+Epoch 22/100: Accuracy = 100.0, Loss = 0.00991990976035595
+Epoch 23/100: Accuracy = 100.0, Loss = 0.009184892289340496
+Epoch 24/100: Accuracy = 100.0, Loss = 0.008524177595973015
+Epoch 25/100: Accuracy = 100.0, Loss = 0.00793356355279684
+Epoch 26/100: Accuracy = 100.0, Loss = 0.007405701093375683
+Epoch 27/100: Accuracy = 100.0, Loss = 0.006933387368917465
+Epoch 28/100: Accuracy = 100.0, Loss = 0.00650874013081193
+Epoch 29/100: Accuracy = 100.0, Loss = 0.006125899963080883
+Epoch 30/100: Accuracy = 100.0, Loss = 0.0057809134013950825
+Epoch 31/100: Accuracy = 100.0, Loss = 0.005469274241477251
+Epoch 32/100: Accuracy = 100.0, Loss = 0.00518539734184742
+Epoch 33/100: Accuracy = 100.0, Loss = 0.004925820976495743
+Epoch 34/100: Accuracy = 100.0, Loss = 0.004688269924372435
+Epoch 35/100: Accuracy = 100.0, Loss = 0.00447075255215168
+Epoch 36/100: Accuracy = 100.0, Loss = 0.004270661156624556
+Epoch 37/100: Accuracy = 100.0, Loss = 0.004085245542228222
+Epoch 38/100: Accuracy = 100.0, Loss = 0.003913768567144871
+Epoch 39/100: Accuracy = 100.0, Loss = 0.0037537994794547558
+Epoch 40/100: Accuracy = 100.0, Loss = 0.0036056574899703264
+Epoch 41/100: Accuracy = 100.0, Loss = 0.0034671106841415167
+Epoch 42/100: Accuracy = 100.0, Loss = 0.003337802132591605
+Epoch 43/100: Accuracy = 100.0, Loss = 0.00321706454269588
+Epoch 44/100: Accuracy = 100.0, Loss = 0.003104406176134944
+Epoch 45/100: Accuracy = 100.0, Loss = 0.002999081276357174
+Epoch 46/100: Accuracy = 100.0, Loss = 0.0029007333796471357
+Epoch 47/100: Accuracy = 100.0, Loss = 0.0028087494429200888
+Epoch 48/100: Accuracy = 100.0, Loss = 0.0027221734635531902
+Epoch 49/100: Accuracy = 100.0, Loss = 0.0026410301215946674
+Epoch 50/100: Accuracy = 100.0, Loss = 0.002564727794378996
+Epoch 51/100: Accuracy = 100.0, Loss = 0.0024928266648203135
+Epoch 52/100: Accuracy = 100.0, Loss = 0.002424993785098195
+Epoch 53/100: Accuracy = 100.0, Loss = 0.0023609339259564877
+Epoch 54/100: Accuracy = 100.0, Loss = 0.0023003953974694014
+Epoch 55/100: Accuracy = 100.0, Loss = 0.0022429735399782658
+Epoch 56/100: Accuracy = 100.0, Loss = 0.002188544487580657
+Epoch 57/100: Accuracy = 100.0, Loss = 0.002136732917279005
+Epoch 58/100: Accuracy = 100.0, Loss = 0.0020874689798802137
+Epoch 59/100: Accuracy = 100.0, Loss = 0.002040586434304714
+Epoch 60/100: Accuracy = 100.0, Loss = 0.0019960415083914995
+Epoch 61/100: Accuracy = 100.0, Loss = 0.0019534847233444452
+Epoch 62/100: Accuracy = 100.0, Loss = 0.0019128243438899517
+Epoch 63/100: Accuracy = 100.0, Loss = 0.0018739599036052823
+Epoch 64/100: Accuracy = 100.0, Loss = 0.0018366914009675384
+Epoch 65/100: Accuracy = 100.0, Loss = 0.0018008218612521887
+Epoch 66/100: Accuracy = 100.0, Loss = 0.001766255241818726
+Early stopping
+
+ ======== Evaluate on valid set ========
+Task 0: Accuracy == 55.00000000000001, Test CE Loss == 1.652875542640686 ;
+Task 1: Accuracy == 77.27272727272727, Test CE Loss == 0.7891168594360352 ;
+Task 2: Accuracy == 77.27272727272727, Test CE Loss == 0.7796897292137146 ;
+
+ ======== Evaluate on test set ========
+Task 0: Accuracy == 50.11037527593819, Test CE Loss == 1.875175952911377 ;
+Task 1: Accuracy == 82.6923076923077, Test CE Loss == 0.5305176377296448 ;
+Task 2: Accuracy == 71.99546485260771, Test CE Loss == 1.0160664319992065 ;
+AL cycle: 1 / 2
+Labelled set size: 8
+Learning a new task
+
+--> Task 3: 8 classes in total
+Epoch 1/100: Accuracy = 75.0, Loss = 0.7775974869728088
+Epoch 2/100: Accuracy = 75.0, Loss = 0.7302644848823547
+Epoch 3/100: Accuracy = 90.625, Loss = 0.3299722969532013
+Epoch 4/100: Accuracy = 100.0, Loss = 0.18999320268630981
+Epoch 5/100: Accuracy = 100.0, Loss = 0.09902878105640411
+Epoch 6/100: Accuracy = 100.0, Loss = 0.056067027151584625
+Epoch 7/100: Accuracy = 100.0, Loss = 0.04013742133975029
+Epoch 8/100: Accuracy = 100.0, Loss = 0.032016828656196594
+Epoch 9/100: Accuracy = 100.0, Loss = 0.02651979587972164
+Epoch 10/100: Accuracy = 100.0, Loss = 0.02207062393426895
+Epoch 11/100: Accuracy = 100.0, Loss = 0.018380029127001762
+Epoch 12/100: Accuracy = 100.0, Loss = 0.01796746999025345
+Epoch 13/100: Accuracy = 100.0, Loss = 0.017413156107068062
+Epoch 14/100: Accuracy = 100.0, Loss = 0.016754737123847008
+Epoch 15/100: Accuracy = 100.0, Loss = 0.016021206974983215
+Epoch 16/100: Accuracy = 100.0, Loss = 0.015245567075908184
+Epoch 17/100: Accuracy = 100.0, Loss = 0.014457855373620987
+Epoch 18/100: Accuracy = 100.0, Loss = 0.013677209615707397
+Epoch 19/100: Accuracy = 100.0, Loss = 0.012914641760289669
+Epoch 20/100: Accuracy = 100.0, Loss = 0.012184560298919678
+Epoch 21/100: Accuracy = 100.0, Loss = 0.011494915932416916
+Epoch 22/100: Accuracy = 100.0, Loss = 0.010848221369087696
+Epoch 23/100: Accuracy = 100.0, Loss = 0.010245234705507755
+Epoch 24/100: Accuracy = 100.0, Loss = 0.009688266552984715
+Epoch 25/100: Accuracy = 100.0, Loss = 0.009175128303468227
+Epoch 26/100: Accuracy = 100.0, Loss = 0.008704221807420254
+Epoch 27/100: Accuracy = 100.0, Loss = 0.00827222689986229
+Epoch 28/100: Accuracy = 100.0, Loss = 0.007875272072851658
+Epoch 29/100: Accuracy = 100.0, Loss = 0.007510952651500702
+Epoch 30/100: Accuracy = 100.0, Loss = 0.007176932878792286
+Epoch 31/100: Accuracy = 100.0, Loss = 0.006870726123452187
+Epoch 32/100: Accuracy = 100.0, Loss = 0.006588296499103308
+Epoch 33/100: Accuracy = 100.0, Loss = 0.006328415125608444
+Epoch 34/100: Accuracy = 100.0, Loss = 0.006088238209486008
+Epoch 35/100: Accuracy = 100.0, Loss = 0.005866453517228365
+Epoch 36/100: Accuracy = 100.0, Loss = 0.005660633556544781
+Epoch 37/100: Accuracy = 100.0, Loss = 0.005469044204801321
+Epoch 38/100: Accuracy = 100.0, Loss = 0.005289653781801462
+Epoch 39/100: Accuracy = 100.0, Loss = 0.005121920723468065
+Epoch 40/100: Accuracy = 100.0, Loss = 0.004964723251760006
+Epoch 41/100: Accuracy = 100.0, Loss = 0.004817457403987646
+Epoch 42/100: Accuracy = 100.0, Loss = 0.004678391385823488
+Epoch 43/100: Accuracy = 100.0, Loss = 0.004546578042209148
+Epoch 44/100: Accuracy = 100.0, Loss = 0.004421602003276348
+Epoch 45/100: Accuracy = 100.0, Loss = 0.004302536603063345
+Epoch 46/100: Accuracy = 100.0, Loss = 0.004189252853393555
+Early stopping
+AL cycle: 2 / 2
+Shape of unlabelled data: (164, 315, 3)
+Labelled set size: 8
+Epoch 1/100: Accuracy = 85.0, Loss = 0.35158097743988037
+Epoch 2/100: Accuracy = 85.0, Loss = 0.34443408250808716
+Epoch 3/100: Accuracy = 97.5, Loss = 0.1392405927181244
+Epoch 4/100: Accuracy = 100.0, Loss = 0.05792183429002762
+Epoch 5/100: Accuracy = 100.0, Loss = 0.040641456842422485
+Epoch 6/100: Accuracy = 100.0, Loss = 0.042095158249139786
+Epoch 7/100: Accuracy = 100.0, Loss = 0.042246438562870026
+Epoch 8/100: Accuracy = 100.0, Loss = 0.03762944042682648
+Epoch 9/100: Accuracy = 100.0, Loss = 0.03076687827706337
+Epoch 10/100: Accuracy = 100.0, Loss = 0.025076279416680336
+Epoch 11/100: Accuracy = 100.0, Loss = 0.020771898329257965
+Epoch 12/100: Accuracy = 100.0, Loss = 0.020310476422309875
+Epoch 13/100: Accuracy = 100.0, Loss = 0.0196722112596035
+Epoch 14/100: Accuracy = 100.0, Loss = 0.0188946183770895
+Epoch 15/100: Accuracy = 100.0, Loss = 0.01801827736198902
+Epoch 16/100: Accuracy = 100.0, Loss = 0.017080139368772507
+Epoch 17/100: Accuracy = 100.0, Loss = 0.016116702929139137
+Epoch 18/100: Accuracy = 100.0, Loss = 0.015159942209720612
+Epoch 19/100: Accuracy = 100.0, Loss = 0.014231542125344276
+Epoch 20/100: Accuracy = 100.0, Loss = 0.013347657397389412
+Epoch 21/100: Accuracy = 100.0, Loss = 0.012517963536083698
+Epoch 22/100: Accuracy = 100.0, Loss = 0.011744707822799683
+Epoch 23/100: Accuracy = 100.0, Loss = 0.011031688190996647
+Epoch 24/100: Accuracy = 100.0, Loss = 0.010381915606558323
+Epoch 25/100: Accuracy = 100.0, Loss = 0.009792101569473743
+Epoch 26/100: Accuracy = 100.0, Loss = 0.0092580895870924
+Epoch 27/100: Accuracy = 100.0, Loss = 0.00877609197050333
+Epoch 28/100: Accuracy = 100.0, Loss = 0.008343943394720554
+Epoch 29/100: Accuracy = 100.0, Loss = 0.007955343462526798
+Epoch 30/100: Accuracy = 100.0, Loss = 0.007603881414979696
+Epoch 31/100: Accuracy = 100.0, Loss = 0.007285709492862225
+Epoch 32/100: Accuracy = 100.0, Loss = 0.00699531938880682
+Epoch 33/100: Accuracy = 100.0, Loss = 0.00672901188954711
+Epoch 34/100: Accuracy = 100.0, Loss = 0.006484716199338436
+Epoch 35/100: Accuracy = 100.0, Loss = 0.0062592290341854095
+Epoch 36/100: Accuracy = 100.0, Loss = 0.006049689836800098
+Epoch 37/100: Accuracy = 100.0, Loss = 0.005853862036019564
+Epoch 38/100: Accuracy = 100.0, Loss = 0.0056702555157244205
+Epoch 39/100: Accuracy = 100.0, Loss = 0.0054969945922493935
+Epoch 40/100: Accuracy = 100.0, Loss = 0.005333050154149532
+Epoch 41/100: Accuracy = 100.0, Loss = 0.0051777963526546955
+Epoch 42/100: Accuracy = 100.0, Loss = 0.005029651336371899
+Epoch 43/100: Accuracy = 100.0, Loss = 0.004888677038252354
+Epoch 44/100: Accuracy = 100.0, Loss = 0.004753931425511837
+Epoch 45/100: Accuracy = 100.0, Loss = 0.004625161178410053
+Epoch 46/100: Accuracy = 100.0, Loss = 0.004501992836594582
+Epoch 47/100: Accuracy = 100.0, Loss = 0.004383839201182127
+Epoch 48/100: Accuracy = 100.0, Loss = 0.00427053589373827
+Epoch 49/100: Accuracy = 100.0, Loss = 0.004161832854151726
+Epoch 50/100: Accuracy = 100.0, Loss = 0.004057846497744322
+Epoch 51/100: Accuracy = 100.0, Loss = 0.0039580753073096275
+Early stopping
+
+ ======== Evaluate on valid set ========
+Task 0: Accuracy == 55.00000000000001, Test CE Loss == 2.134169578552246 ;
+Task 1: Accuracy == 68.18181818181817, Test CE Loss == 0.963165283203125 ;
+Task 2: Accuracy == 68.18181818181817, Test CE Loss == 0.9102639555931091 ;
+Task 3: Accuracy == 95.0, Test CE Loss == 0.22367314994335175 ;
+Accuracy matrix of all tasks:
+[[50.    0.    0.    0.  ]
+ [55.   95.45  0.    0.  ]
+ [55.   77.27 77.27  0.  ]
+ [55.   68.18 68.18 95.  ]]
+
+ ======== Evaluate on test set ========
+Task 0: Accuracy == 49.88962472406181, Test CE Loss == 2.3413541316986084 ;
+Task 1: Accuracy == 72.62443438914026, Test CE Loss == 0.8013966679573059 ;
+Task 2: Accuracy == 66.09977324263039, Test CE Loss == 1.030875325202942 ;
+Task 3: Accuracy == 87.25274725274726, Test CE Loss == 0.4250747859477997 ;
+Accuracy matrix of all tasks:
+[[50.11  0.    0.    0.  ]
+ [47.24 96.72  0.    0.  ]
+ [50.11 82.69 72.    0.  ]
+ [49.89 72.62 66.1  87.25]]
+Len of Acc_multiple_run_test: 1
+
+ Finish Run 0: total 31.58981204032898 sec
+
+ ######## Run 1, cls_order :[0, 1, 5, 4, 7, 6, 2, 3] ########
+Create exp stream : 4 tasks,  classes order [0, 1, 5, 4, 7, 6, 2, 3] 
+Input shape (L, D): (315, 3)
+Training set size: 722; Val set size: 84; Test set size: 3582
+buffer has 40 slots
+ER mode: task, NCM classifier: False
+AL strategy: Uncertainty
+AL cycle: 1 / 2
+Labelled set size: 8
+Learning a new task
+
+--> Task 0: 2 classes in total
+Epoch 1/100: Accuracy = 62.5, Loss = 0.6476548314094543
+Epoch 2/100: Accuracy = 100.0, Loss = 0.447693794965744
+Epoch 3/100: Accuracy = 100.0, Loss = 0.004796680063009262
+Epoch 4/100: Accuracy = 100.0, Loss = 0.0013133788015693426
+Epoch 5/100: Accuracy = 100.0, Loss = 0.0009112578118219972
+Epoch 6/100: Accuracy = 100.0, Loss = 0.0006666070548817515
+Epoch 7/100: Accuracy = 100.0, Loss = 0.0004687327309511602
+Epoch 8/100: Accuracy = 100.0, Loss = 0.0003302407858427614
+Epoch 9/100: Accuracy = 100.0, Loss = 0.00024255667813122272
+Epoch 10/100: Accuracy = 100.0, Loss = 0.00018201873172074556
+Epoch 11/100: Accuracy = 100.0, Loss = 0.00014203446335159242
+Epoch 12/100: Accuracy = 100.0, Loss = 0.00013884635700378567
+Epoch 13/100: Accuracy = 100.0, Loss = 0.0001354497071588412
+Epoch 14/100: Accuracy = 100.0, Loss = 0.00013197855150792748
+Epoch 15/100: Accuracy = 100.0, Loss = 0.00012835842790082097
+Epoch 16/100: Accuracy = 100.0, Loss = 0.00012467869964893907
+Epoch 17/100: Accuracy = 100.0, Loss = 0.00012099895684514195
+Epoch 18/100: Accuracy = 100.0, Loss = 0.00011730429105227813
+Epoch 19/100: Accuracy = 100.0, Loss = 0.00011360961070749909
+Epoch 20/100: Accuracy = 100.0, Loss = 0.00010995959746651351
+Epoch 21/100: Accuracy = 100.0, Loss = 0.00010636914521455765
+Epoch 22/100: Accuracy = 100.0, Loss = 0.00010285316966474056
+Epoch 23/100: Accuracy = 100.0, Loss = 9.93669600575231e-05
+Early stopping
+AL cycle: 2 / 2
+Shape of unlabelled data: (175, 315, 3)
+Labelled set size: 8
+Epoch 1/100: Accuracy = 62.5, Loss = 0.6300328373908997
+Epoch 2/100: Accuracy = 62.5, Loss = 0.6005027890205383
+Epoch 3/100: Accuracy = 75.0, Loss = 0.38689911365509033
+Epoch 4/100: Accuracy = 100.0, Loss = 0.20359845459461212
+Epoch 5/100: Accuracy = 100.0, Loss = 0.06754394620656967
+Epoch 6/100: Accuracy = 100.0, Loss = 0.044608063995838165
+Epoch 7/100: Accuracy = 100.0, Loss = 0.02935752645134926
+Epoch 8/100: Accuracy = 100.0, Loss = 0.017488135024905205
+Epoch 9/100: Accuracy = 100.0, Loss = 0.012460492551326752
+Epoch 10/100: Accuracy = 100.0, Loss = 0.011571098119020462
+Epoch 11/100: Accuracy = 100.0, Loss = 0.01067416463047266
+Epoch 12/100: Accuracy = 100.0, Loss = 0.010387619957327843
+Epoch 13/100: Accuracy = 100.0, Loss = 0.009905075654387474
+Epoch 14/100: Accuracy = 100.0, Loss = 0.009298456832766533
+Epoch 15/100: Accuracy = 100.0, Loss = 0.008635163307189941
+Epoch 16/100: Accuracy = 100.0, Loss = 0.007973941043019295
+Epoch 17/100: Accuracy = 100.0, Loss = 0.007356495130807161
+Epoch 18/100: Accuracy = 100.0, Loss = 0.006806181278079748
+Epoch 19/100: Accuracy = 100.0, Loss = 0.006330583710223436
+Epoch 20/100: Accuracy = 100.0, Loss = 0.005926250480115414
+Epoch 21/100: Accuracy = 100.0, Loss = 0.00558690307661891
+Early stopping
+
+ ======== Evaluate on valid set ========
+Task 0: Accuracy == 52.38095238095239, Test CE Loss == 0.7094605565071106 ;
+
+ ======== Evaluate on test set ========
+Task 0: Accuracy == 49.156355455568054, Test CE Loss == 0.7337284684181213 ;
+AL cycle: 1 / 2
+Labelled set size: 8
+Learning a new task
+
+--> Task 1: 4 classes in total
+Epoch 1/100: Accuracy = 68.75, Loss = 0.8244743347167969
+Epoch 2/100: Accuracy = 75.0, Loss = 0.7094628214836121
+Epoch 3/100: Accuracy = 93.75, Loss = 0.21037159860134125
+Epoch 4/100: Accuracy = 100.0, Loss = 0.08038097620010376
+Epoch 5/100: Accuracy = 100.0, Loss = 0.02887272834777832
+Epoch 6/100: Accuracy = 100.0, Loss = 0.013338308781385422
+Epoch 7/100: Accuracy = 100.0, Loss = 0.008916675113141537
+Epoch 8/100: Accuracy = 100.0, Loss = 0.007056389003992081
+Epoch 9/100: Accuracy = 100.0, Loss = 0.005424384959042072
+Epoch 10/100: Accuracy = 100.0, Loss = 0.004148320760577917
+Epoch 11/100: Accuracy = 100.0, Loss = 0.003285300452262163
+Epoch 12/100: Accuracy = 100.0, Loss = 0.00320737948641181
+Epoch 13/100: Accuracy = 100.0, Loss = 0.003117568092420697
+Epoch 14/100: Accuracy = 100.0, Loss = 0.0030196711886674166
+Epoch 15/100: Accuracy = 100.0, Loss = 0.0029157039243727922
+Epoch 16/100: Accuracy = 100.0, Loss = 0.002808229997754097
+Epoch 17/100: Accuracy = 100.0, Loss = 0.0026987616438418627
+Epoch 18/100: Accuracy = 100.0, Loss = 0.0025887670926749706
+Epoch 19/100: Accuracy = 100.0, Loss = 0.0024796873331069946
+Epoch 20/100: Accuracy = 100.0, Loss = 0.0023730893153697252
+Epoch 21/100: Accuracy = 100.0, Loss = 0.0022694424260407686
+Epoch 22/100: Accuracy = 100.0, Loss = 0.0021688758861273527
+Epoch 23/100: Accuracy = 100.0, Loss = 0.002071911236271262
+Epoch 24/100: Accuracy = 100.0, Loss = 0.001979256747290492
+Epoch 25/100: Accuracy = 100.0, Loss = 0.001890840008854866
+Epoch 26/100: Accuracy = 100.0, Loss = 0.001806878368370235
+Epoch 27/100: Accuracy = 100.0, Loss = 0.0017273518024012446
+Epoch 28/100: Accuracy = 100.0, Loss = 0.0016520313220098615
+Epoch 29/100: Accuracy = 100.0, Loss = 0.0015807176241651177
+Epoch 30/100: Accuracy = 100.0, Loss = 0.00151344935875386
+Epoch 31/100: Accuracy = 100.0, Loss = 0.0014501236146315932
+Epoch 32/100: Accuracy = 100.0, Loss = 0.0013906523818150163
+Early stopping
+AL cycle: 2 / 2
+Shape of unlabelled data: (183, 315, 3)
+Labelled set size: 8
+Epoch 1/100: Accuracy = 79.16666666666666, Loss = 0.5449827313423157
+Epoch 2/100: Accuracy = 79.16666666666666, Loss = 0.5319727063179016
+Epoch 3/100: Accuracy = 91.66666666666666, Loss = 0.1754470020532608
+Epoch 4/100: Accuracy = 100.0, Loss = 0.04014705494046211
+Epoch 5/100: Accuracy = 100.0, Loss = 0.050509918481111526
+Epoch 6/100: Accuracy = 100.0, Loss = 0.037494830787181854
+Epoch 7/100: Accuracy = 100.0, Loss = 0.013069829903542995
+Epoch 8/100: Accuracy = 100.0, Loss = 0.007958515547215939
+Epoch 9/100: Accuracy = 100.0, Loss = 0.008039269596338272
+Epoch 10/100: Accuracy = 100.0, Loss = 0.009380550123751163
+Epoch 11/100: Accuracy = 100.0, Loss = 0.009960903786122799
+Epoch 12/100: Accuracy = 100.0, Loss = 0.009863020852208138
+Epoch 13/100: Accuracy = 100.0, Loss = 0.009596250019967556
+Epoch 14/100: Accuracy = 100.0, Loss = 0.00919452216476202
+Epoch 15/100: Accuracy = 100.0, Loss = 0.008698002435266972
+Epoch 16/100: Accuracy = 100.0, Loss = 0.008149082772433758
+Epoch 17/100: Accuracy = 100.0, Loss = 0.00758258206769824
+Epoch 18/100: Accuracy = 100.0, Loss = 0.007022414822131395
+Epoch 19/100: Accuracy = 100.0, Loss = 0.006486842408776283
+Epoch 20/100: Accuracy = 100.0, Loss = 0.005989350378513336
+Epoch 21/100: Accuracy = 100.0, Loss = 0.005534714087843895
+Epoch 22/100: Accuracy = 100.0, Loss = 0.005124431569129229
+Epoch 23/100: Accuracy = 100.0, Loss = 0.004756370559334755
+Early stopping
+
+ ======== Evaluate on valid set ========
+Task 0: Accuracy == 4.761904761904762, Test CE Loss == 3.1788318157196045 ;
+Task 1: Accuracy == 59.09090909090909, Test CE Loss == 0.7352249622344971 ;
+
+ ======== Evaluate on test set ========
+Task 0: Accuracy == 12.935883014623172, Test CE Loss == 3.1942992210388184 ;
+Task 1: Accuracy == 65.64625850340136, Test CE Loss == 0.7321253418922424 ;
+AL cycle: 1 / 2
+Labelled set size: 8
+Learning a new task
+
+--> Task 2: 6 classes in total
+Epoch 1/100: Accuracy = 66.66666666666666, Loss = 0.958442211151123
+Epoch 2/100: Accuracy = 66.66666666666666, Loss = 0.8897935748100281
+Epoch 3/100: Accuracy = 100.0, Loss = 0.18526919186115265
+Epoch 4/100: Accuracy = 100.0, Loss = 0.08748879283666611
+Epoch 5/100: Accuracy = 100.0, Loss = 0.04825592041015625
+Epoch 6/100: Accuracy = 100.0, Loss = 0.03093772940337658
+Epoch 7/100: Accuracy = 100.0, Loss = 0.020863011479377747
+Epoch 8/100: Accuracy = 100.0, Loss = 0.015772216022014618
+Epoch 9/100: Accuracy = 100.0, Loss = 0.0129248620942235
+Epoch 10/100: Accuracy = 100.0, Loss = 0.010698038153350353
+Epoch 11/100: Accuracy = 100.0, Loss = 0.00884332973510027
+Epoch 12/100: Accuracy = 100.0, Loss = 0.008647273294627666
+Epoch 13/100: Accuracy = 100.0, Loss = 0.008397235535085201
+Epoch 14/100: Accuracy = 100.0, Loss = 0.008107748813927174
+Epoch 15/100: Accuracy = 100.0, Loss = 0.007793670054525137
+Epoch 16/100: Accuracy = 100.0, Loss = 0.007467088755220175
+Epoch 17/100: Accuracy = 100.0, Loss = 0.007135424297302961
+Epoch 18/100: Accuracy = 100.0, Loss = 0.006806576158851385
+Epoch 19/100: Accuracy = 100.0, Loss = 0.006487057078629732
+Epoch 20/100: Accuracy = 100.0, Loss = 0.006180217023938894
+Epoch 21/100: Accuracy = 100.0, Loss = 0.005888074170798063
+Epoch 22/100: Accuracy = 100.0, Loss = 0.005612262059003115
+Epoch 23/100: Accuracy = 100.0, Loss = 0.005354149267077446
+Epoch 24/100: Accuracy = 100.0, Loss = 0.005112871062010527
+Epoch 25/100: Accuracy = 100.0, Loss = 0.00488774199038744
+Epoch 26/100: Accuracy = 100.0, Loss = 0.0046779620461165905
+Epoch 27/100: Accuracy = 100.0, Loss = 0.004482080694288015
+Epoch 28/100: Accuracy = 100.0, Loss = 0.004299155902117491
+Epoch 29/100: Accuracy = 100.0, Loss = 0.00412865960970521
+Epoch 30/100: Accuracy = 100.0, Loss = 0.003969233017414808
+Epoch 31/100: Accuracy = 100.0, Loss = 0.0038199846167117357
+Epoch 32/100: Accuracy = 100.0, Loss = 0.003680013120174408
+Epoch 33/100: Accuracy = 100.0, Loss = 0.00354854972101748
+Epoch 34/100: Accuracy = 100.0, Loss = 0.0034250516910105944
+Epoch 35/100: Accuracy = 100.0, Loss = 0.003308756509795785
+Epoch 36/100: Accuracy = 100.0, Loss = 0.003199342405423522
+Epoch 37/100: Accuracy = 100.0, Loss = 0.003095921128988266
+Epoch 38/100: Accuracy = 100.0, Loss = 0.0029980705585330725
+Epoch 39/100: Accuracy = 100.0, Loss = 0.002905559726059437
+Epoch 40/100: Accuracy = 100.0, Loss = 0.0028179993387311697
+Epoch 41/100: Accuracy = 100.0, Loss = 0.002734558889642358
+Epoch 42/100: Accuracy = 100.0, Loss = 0.0026551121845841408
+Epoch 43/100: Accuracy = 100.0, Loss = 0.0025794957764446735
+Epoch 44/100: Accuracy = 100.0, Loss = 0.002507493831217289
+Epoch 45/100: Accuracy = 100.0, Loss = 0.002438922878354788
+Epoch 46/100: Accuracy = 100.0, Loss = 0.002373398281633854
+Epoch 47/100: Accuracy = 100.0, Loss = 0.0023108262103050947
+Epoch 48/100: Accuracy = 100.0, Loss = 0.0022509892005473375
+Epoch 49/100: Accuracy = 100.0, Loss = 0.0021936947014182806
+Epoch 50/100: Accuracy = 100.0, Loss = 0.0021388293243944645
+Epoch 51/100: Accuracy = 100.0, Loss = 0.0020862845703959465
+Epoch 52/100: Accuracy = 100.0, Loss = 0.0020359267946332693
+Epoch 53/100: Accuracy = 100.0, Loss = 0.001987498952075839
+Epoch 54/100: Accuracy = 100.0, Loss = 0.0019410360837355256
+Epoch 55/100: Accuracy = 100.0, Loss = 0.0018963598413392901
+Epoch 56/100: Accuracy = 100.0, Loss = 0.0018533667316660285
+Epoch 57/100: Accuracy = 100.0, Loss = 0.0018119225278496742
+Epoch 58/100: Accuracy = 100.0, Loss = 0.0017719488823786378
+Epoch 59/100: Accuracy = 100.0, Loss = 0.0017333910800516605
+Epoch 60/100: Accuracy = 100.0, Loss = 0.0016961797373369336
+Epoch 61/100: Accuracy = 100.0, Loss = 0.0016603750409558415
+Epoch 62/100: Accuracy = 100.0, Loss = 0.0016258578980341554
+Epoch 63/100: Accuracy = 100.0, Loss = 0.001592593383975327
+Epoch 64/100: Accuracy = 100.0, Loss = 0.00156045809853822
+Epoch 65/100: Accuracy = 100.0, Loss = 0.0015294820768758655
+Epoch 66/100: Accuracy = 100.0, Loss = 0.0014995806850492954
+Epoch 67/100: Accuracy = 100.0, Loss = 0.00147077941801399
+Epoch 68/100: Accuracy = 100.0, Loss = 0.0014430679148063064
+Epoch 69/100: Accuracy = 100.0, Loss = 0.001416361890733242
+Epoch 70/100: Accuracy = 100.0, Loss = 0.0013905282830819488
+Epoch 71/100: Accuracy = 100.0, Loss = 0.0013655467191711068
+Epoch 72/100: Accuracy = 100.0, Loss = 0.0013413828564807773
+Epoch 73/100: Accuracy = 100.0, Loss = 0.0013180860551074147
+Epoch 74/100: Accuracy = 100.0, Loss = 0.001295542693696916
+Epoch 75/100: Accuracy = 100.0, Loss = 0.001273802132345736
+Epoch 76/100: Accuracy = 100.0, Loss = 0.0012527951039373875
+Epoch 77/100: Accuracy = 100.0, Loss = 0.0012325117131695151
+Epoch 78/100: Accuracy = 100.0, Loss = 0.0012128876987844706
+Epoch 79/100: Accuracy = 100.0, Loss = 0.0011939379619434476
+Epoch 80/100: Accuracy = 100.0, Loss = 0.0011755881132557988
+Epoch 81/100: Accuracy = 100.0, Loss = 0.0011578277917578816
+Epoch 82/100: Accuracy = 100.0, Loss = 0.0011406083358451724
+Epoch 83/100: Accuracy = 100.0, Loss = 0.0011238892329856753
+Epoch 84/100: Accuracy = 100.0, Loss = 0.0011076959781348705
+Epoch 85/100: Accuracy = 100.0, Loss = 0.0010919339256361127
+Epoch 86/100: Accuracy = 100.0, Loss = 0.001076652784831822
+Early stopping
+AL cycle: 2 / 2
+Shape of unlabelled data: (165, 315, 3)
+Labelled set size: 8
+Epoch 1/100: Accuracy = 81.25, Loss = 0.4569706320762634
+Epoch 2/100: Accuracy = 81.25, Loss = 0.4440830647945404
+Epoch 3/100: Accuracy = 100.0, Loss = 0.10868030786514282
+Epoch 4/100: Accuracy = 100.0, Loss = 0.026020487770438194
+Epoch 5/100: Accuracy = 100.0, Loss = 0.027607964351773262
+Epoch 6/100: Accuracy = 100.0, Loss = 0.03015156276524067
+Epoch 7/100: Accuracy = 100.0, Loss = 0.0299356859177351
+Epoch 8/100: Accuracy = 100.0, Loss = 0.025274313986301422
+Epoch 9/100: Accuracy = 100.0, Loss = 0.01796712540090084
+Epoch 10/100: Accuracy = 100.0, Loss = 0.013907372020184994
+Epoch 11/100: Accuracy = 100.0, Loss = 0.011768379248678684
+Epoch 12/100: Accuracy = 100.0, Loss = 0.011523859575390816
+Epoch 13/100: Accuracy = 100.0, Loss = 0.011145048774778843
+Epoch 14/100: Accuracy = 100.0, Loss = 0.01066191028803587
+Epoch 15/100: Accuracy = 100.0, Loss = 0.010110018774867058
+Epoch 16/100: Accuracy = 100.0, Loss = 0.009522761218249798
+Epoch 17/100: Accuracy = 100.0, Loss = 0.008928961120545864
+Epoch 18/100: Accuracy = 100.0, Loss = 0.008348839357495308
+Epoch 19/100: Accuracy = 100.0, Loss = 0.007798700127750635
+Epoch 20/100: Accuracy = 100.0, Loss = 0.0072881304658949375
+Epoch 21/100: Accuracy = 100.0, Loss = 0.006825701333582401
+Epoch 22/100: Accuracy = 100.0, Loss = 0.006411273032426834
+Epoch 23/100: Accuracy = 100.0, Loss = 0.006040118169039488
+Epoch 24/100: Accuracy = 100.0, Loss = 0.005708788521587849
+Epoch 25/100: Accuracy = 100.0, Loss = 0.005411993246525526
+Epoch 26/100: Accuracy = 100.0, Loss = 0.005143515765666962
+Epoch 27/100: Accuracy = 100.0, Loss = 0.004898281302303076
+Epoch 28/100: Accuracy = 100.0, Loss = 0.0046707396395504475
+Epoch 29/100: Accuracy = 100.0, Loss = 0.004457281902432442
+Epoch 30/100: Accuracy = 100.0, Loss = 0.004255205392837524
+Epoch 31/100: Accuracy = 100.0, Loss = 0.0040633659809827805
+Epoch 32/100: Accuracy = 100.0, Loss = 0.003880735719576478
+Epoch 33/100: Accuracy = 100.0, Loss = 0.0037075658328831196
+Epoch 34/100: Accuracy = 100.0, Loss = 0.0035440896172076464
+Epoch 35/100: Accuracy = 100.0, Loss = 0.003390542697161436
+Epoch 36/100: Accuracy = 100.0, Loss = 0.0032471222802996635
+Epoch 37/100: Accuracy = 100.0, Loss = 0.003113946644589305
+Epoch 38/100: Accuracy = 100.0, Loss = 0.002991050248965621
+Epoch 39/100: Accuracy = 100.0, Loss = 0.002877318300306797
+Epoch 40/100: Accuracy = 100.0, Loss = 0.002772032981738448
+Epoch 41/100: Accuracy = 100.0, Loss = 0.0026749891694635153
+Epoch 42/100: Accuracy = 100.0, Loss = 0.002585182199254632
+Epoch 43/100: Accuracy = 100.0, Loss = 0.002501831855624914
+Epoch 44/100: Accuracy = 100.0, Loss = 0.0024240275379270315
+Epoch 45/100: Accuracy = 100.0, Loss = 0.002351348288357258
+Epoch 46/100: Accuracy = 100.0, Loss = 0.0022830863017588854
+Epoch 47/100: Accuracy = 100.0, Loss = 0.002219053218141198
+Epoch 48/100: Accuracy = 100.0, Loss = 0.0021589118987321854
+Epoch 49/100: Accuracy = 100.0, Loss = 0.0021020916756242514
+Epoch 50/100: Accuracy = 100.0, Loss = 0.002047942718490958
+Epoch 51/100: Accuracy = 100.0, Loss = 0.001996550476178527
+Epoch 52/100: Accuracy = 100.0, Loss = 0.001947674318216741
+Epoch 53/100: Accuracy = 100.0, Loss = 0.0019010024843737483
+Epoch 54/100: Accuracy = 100.0, Loss = 0.00185640889685601
+Epoch 55/100: Accuracy = 100.0, Loss = 0.0018137047300115228
+Epoch 56/100: Accuracy = 100.0, Loss = 0.0017728753155097365
+Epoch 57/100: Accuracy = 100.0, Loss = 0.0017338092438876629
+Epoch 58/100: Accuracy = 100.0, Loss = 0.0016962913796305656
+Epoch 59/100: Accuracy = 100.0, Loss = 0.0016603512922301888
+Epoch 60/100: Accuracy = 100.0, Loss = 0.0016258708201348782
+Epoch 61/100: Accuracy = 100.0, Loss = 0.0015927940839901567
+Epoch 62/100: Accuracy = 100.0, Loss = 0.0015609428519383073
+Epoch 63/100: Accuracy = 100.0, Loss = 0.0015302503015846014
+Epoch 64/100: Accuracy = 100.0, Loss = 0.0015006349422037601
+Epoch 65/100: Accuracy = 100.0, Loss = 0.0014721154002472758
+Epoch 66/100: Accuracy = 100.0, Loss = 0.0014446396380662918
+Epoch 67/100: Accuracy = 100.0, Loss = 0.0014182040467858315
+Epoch 68/100: Accuracy = 100.0, Loss = 0.0013927272520959377
+Epoch 69/100: Accuracy = 100.0, Loss = 0.0013681903947144747
+Epoch 70/100: Accuracy = 100.0, Loss = 0.0013445006916299462
+Epoch 71/100: Accuracy = 100.0, Loss = 0.0013216915540397167
+Epoch 72/100: Accuracy = 100.0, Loss = 0.0012997002340853214
+Epoch 73/100: Accuracy = 100.0, Loss = 0.0012785227736458182
+Epoch 74/100: Accuracy = 100.0, Loss = 0.0012581032933667302
+Epoch 75/100: Accuracy = 100.0, Loss = 0.0012383454013615847
+Epoch 76/100: Accuracy = 100.0, Loss = 0.001219316152855754
+Epoch 77/100: Accuracy = 100.0, Loss = 0.0012009335914626718
+Epoch 78/100: Accuracy = 100.0, Loss = 0.0011831903830170631
+Epoch 79/100: Accuracy = 100.0, Loss = 0.001166052999906242
+Epoch 80/100: Accuracy = 100.0, Loss = 0.0011494917562231421
+Epoch 81/100: Accuracy = 100.0, Loss = 0.001133473590016365
+Epoch 82/100: Accuracy = 100.0, Loss = 0.0011179608991369605
+Epoch 83/100: Accuracy = 100.0, Loss = 0.00110299838706851
+Epoch 84/100: Accuracy = 100.0, Loss = 0.0010885006049647927
+Epoch 85/100: Accuracy = 100.0, Loss = 0.0010744861792773008
+Epoch 86/100: Accuracy = 100.0, Loss = 0.0010609067976474762
+Epoch 87/100: Accuracy = 100.0, Loss = 0.0010477250907570124
+Epoch 88/100: Accuracy = 100.0, Loss = 0.0010349565418437123
+Epoch 89/100: Accuracy = 100.0, Loss = 0.0010225557489320636
+Epoch 90/100: Accuracy = 100.0, Loss = 0.0010105083929374814
+Epoch 91/100: Accuracy = 100.0, Loss = 0.000998795498162508
+Epoch 92/100: Accuracy = 100.0, Loss = 0.0009874174138531089
+Epoch 93/100: Accuracy = 100.0, Loss = 0.0009763330454006791
+Epoch 94/100: Accuracy = 100.0, Loss = 0.0009655312751419842
+Epoch 95/100: Accuracy = 100.0, Loss = 0.0009550159447826445
+Epoch 96/100: Accuracy = 100.0, Loss = 0.0009447943884879351
+Epoch 97/100: Accuracy = 100.0, Loss = 0.0009348256862722337
+Epoch 98/100: Accuracy = 100.0, Loss = 0.0009251432493329048
+Epoch 99/100: Accuracy = 100.0, Loss = 0.000915669254027307
+Epoch 100/100: Accuracy = 100.0, Loss = 0.0009064517798833549
+
+ ======== Evaluate on valid set ========
+Task 0: Accuracy == 76.19047619047619, Test CE Loss == 0.7440951466560364 ;
+Task 1: Accuracy == 59.09090909090909, Test CE Loss == 1.4417113065719604 ;
+Task 2: Accuracy == 100.0, Test CE Loss == 0.12157891690731049 ;
+
+ ======== Evaluate on test set ========
+Task 0: Accuracy == 79.6400449943757, Test CE Loss == 0.6744633316993713 ;
+Task 1: Accuracy == 59.750566893424036, Test CE Loss == 1.708268404006958 ;
+Task 2: Accuracy == 98.0154355016538, Test CE Loss == 0.09373951703310013 ;
+AL cycle: 1 / 2
+Labelled set size: 8
+Learning a new task
+
+--> Task 3: 8 classes in total
+Epoch 1/100: Accuracy = 75.0, Loss = 1.2285044193267822
+Epoch 2/100: Accuracy = 75.0, Loss = 1.1592148542404175
+Epoch 3/100: Accuracy = 84.375, Loss = 0.3739587068557739
+Epoch 4/100: Accuracy = 96.875, Loss = 0.18083733320236206
+Epoch 5/100: Accuracy = 100.0, Loss = 0.08734234422445297
+Epoch 6/100: Accuracy = 100.0, Loss = 0.05939716845750809
+Epoch 7/100: Accuracy = 100.0, Loss = 0.047481317073106766
+Epoch 8/100: Accuracy = 100.0, Loss = 0.03409142419695854
+Epoch 9/100: Accuracy = 100.0, Loss = 0.025907834991812706
+Epoch 10/100: Accuracy = 100.0, Loss = 0.02151789888739586
+Epoch 11/100: Accuracy = 100.0, Loss = 0.01879284717142582
+Epoch 12/100: Accuracy = 100.0, Loss = 0.018479133024811745
+Epoch 13/100: Accuracy = 100.0, Loss = 0.018019450828433037
+Epoch 14/100: Accuracy = 100.0, Loss = 0.017446566373109818
+Epoch 15/100: Accuracy = 100.0, Loss = 0.016796067357063293
+Epoch 16/100: Accuracy = 100.0, Loss = 0.016101010143756866
+Epoch 17/100: Accuracy = 100.0, Loss = 0.015386833809316158
+Epoch 18/100: Accuracy = 100.0, Loss = 0.014671714045107365
+Epoch 19/100: Accuracy = 100.0, Loss = 0.01397219393402338
+Epoch 20/100: Accuracy = 100.0, Loss = 0.013297149911522865
+Epoch 21/100: Accuracy = 100.0, Loss = 0.012651406228542328
+Epoch 22/100: Accuracy = 100.0, Loss = 0.012038174085319042
+Epoch 23/100: Accuracy = 100.0, Loss = 0.011458400636911392
+Epoch 24/100: Accuracy = 100.0, Loss = 0.010914752259850502
+Epoch 25/100: Accuracy = 100.0, Loss = 0.010406424291431904
+Epoch 26/100: Accuracy = 100.0, Loss = 0.009931787848472595
+Epoch 27/100: Accuracy = 100.0, Loss = 0.009490025229752064
+Epoch 28/100: Accuracy = 100.0, Loss = 0.009079746901988983
+Epoch 29/100: Accuracy = 100.0, Loss = 0.008697561919689178
+Epoch 30/100: Accuracy = 100.0, Loss = 0.008341730572283268
+Epoch 31/100: Accuracy = 100.0, Loss = 0.008010323159396648
+Epoch 32/100: Accuracy = 100.0, Loss = 0.007700784131884575
+Epoch 33/100: Accuracy = 100.0, Loss = 0.007410494610667229
+Epoch 34/100: Accuracy = 100.0, Loss = 0.007138467859476805
+Epoch 35/100: Accuracy = 100.0, Loss = 0.006882756482809782
+Epoch 36/100: Accuracy = 100.0, Loss = 0.006641836371272802
+Epoch 37/100: Accuracy = 100.0, Loss = 0.0064147901721298695
+Epoch 38/100: Accuracy = 100.0, Loss = 0.006200388073921204
+Epoch 39/100: Accuracy = 100.0, Loss = 0.005998493637889624
+Epoch 40/100: Accuracy = 100.0, Loss = 0.00580689636990428
+Epoch 41/100: Accuracy = 100.0, Loss = 0.005625343881547451
+Epoch 42/100: Accuracy = 100.0, Loss = 0.005453664343804121
+Epoch 43/100: Accuracy = 100.0, Loss = 0.005290641915053129
+Epoch 44/100: Accuracy = 100.0, Loss = 0.005135456565767527
+Epoch 45/100: Accuracy = 100.0, Loss = 0.0049874503165483475
+Epoch 46/100: Accuracy = 100.0, Loss = 0.004845906049013138
+Epoch 47/100: Accuracy = 100.0, Loss = 0.004710988141596317
+Epoch 48/100: Accuracy = 100.0, Loss = 0.004582240246236324
+Epoch 49/100: Accuracy = 100.0, Loss = 0.004459272604435682
+Epoch 50/100: Accuracy = 100.0, Loss = 0.004341598134487867
+Epoch 51/100: Accuracy = 100.0, Loss = 0.0042288051918148994
+Epoch 52/100: Accuracy = 100.0, Loss = 0.004120806697756052
+Epoch 53/100: Accuracy = 100.0, Loss = 0.004017394036054611
+Epoch 54/100: Accuracy = 100.0, Loss = 0.00391844566911459
+Epoch 55/100: Accuracy = 100.0, Loss = 0.0038237206172198057
+Epoch 56/100: Accuracy = 100.0, Loss = 0.0037331050261855125
+Epoch 57/100: Accuracy = 100.0, Loss = 0.003645929740741849
+Epoch 58/100: Accuracy = 100.0, Loss = 0.003562232945114374
+Epoch 59/100: Accuracy = 100.0, Loss = 0.0034818118438124657
+Epoch 60/100: Accuracy = 100.0, Loss = 0.0034043751657009125
+Epoch 61/100: Accuracy = 100.0, Loss = 0.003329905215650797
+Epoch 62/100: Accuracy = 100.0, Loss = 0.0032581386622041464
+Epoch 63/100: Accuracy = 100.0, Loss = 0.003188833361491561
+Epoch 64/100: Accuracy = 100.0, Loss = 0.003122029360383749
+Epoch 65/100: Accuracy = 100.0, Loss = 0.0030576542485505342
+Epoch 66/100: Accuracy = 100.0, Loss = 0.002995660062879324
+Epoch 67/100: Accuracy = 100.0, Loss = 0.0029357464518398046
+Epoch 68/100: Accuracy = 100.0, Loss = 0.002877847058698535
+Epoch 69/100: Accuracy = 100.0, Loss = 0.00282187364064157
+Epoch 70/100: Accuracy = 100.0, Loss = 0.00276780454441905
+Epoch 71/100: Accuracy = 100.0, Loss = 0.002715631853789091
+Epoch 72/100: Accuracy = 100.0, Loss = 0.002665434731170535
+Epoch 73/100: Accuracy = 100.0, Loss = 0.0026170536875724792
+Epoch 74/100: Accuracy = 100.0, Loss = 0.0025703476276248693
+Epoch 75/100: Accuracy = 100.0, Loss = 0.00252536591142416
+Epoch 76/100: Accuracy = 100.0, Loss = 0.0024819180835038424
+Epoch 77/100: Accuracy = 100.0, Loss = 0.002440050011500716
+Epoch 78/100: Accuracy = 100.0, Loss = 0.002399620832875371
+Epoch 79/100: Accuracy = 100.0, Loss = 0.002360500628128648
+Epoch 80/100: Accuracy = 100.0, Loss = 0.002322700573131442
+Epoch 81/100: Accuracy = 100.0, Loss = 0.0022861093748360872
+Epoch 82/100: Accuracy = 100.0, Loss = 0.002250805962830782
+Epoch 83/100: Accuracy = 100.0, Loss = 0.0022166746202856302
+Epoch 84/100: Accuracy = 100.0, Loss = 0.0021836673840880394
+Epoch 85/100: Accuracy = 100.0, Loss = 0.00215168041177094
+Epoch 86/100: Accuracy = 100.0, Loss = 0.0021205877419561148
+Epoch 87/100: Accuracy = 100.0, Loss = 0.0020904967095702887
+Epoch 88/100: Accuracy = 100.0, Loss = 0.002061207313090563
+Epoch 89/100: Accuracy = 100.0, Loss = 0.002032823394984007
+Epoch 90/100: Accuracy = 100.0, Loss = 0.0020052525214850903
+Early stopping
+AL cycle: 2 / 2
+Shape of unlabelled data: (167, 315, 3)
+Labelled set size: 8
+Epoch 1/100: Accuracy = 87.5, Loss = 0.4002808630466461
+Epoch 2/100: Accuracy = 90.0, Loss = 0.39307528734207153
+Epoch 3/100: Accuracy = 95.0, Loss = 0.17325259745121002
+Epoch 4/100: Accuracy = 100.0, Loss = 0.04668017476797104
+Epoch 5/100: Accuracy = 100.0, Loss = 0.029422616586089134
+Epoch 6/100: Accuracy = 100.0, Loss = 0.03511353209614754
+Epoch 7/100: Accuracy = 100.0, Loss = 0.03706018626689911
+Epoch 8/100: Accuracy = 100.0, Loss = 0.035557180643081665
+Epoch 9/100: Accuracy = 100.0, Loss = 0.029656047001481056
+Epoch 10/100: Accuracy = 100.0, Loss = 0.023829592391848564
+Epoch 11/100: Accuracy = 100.0, Loss = 0.019955307245254517
+Epoch 12/100: Accuracy = 100.0, Loss = 0.019598452374339104
+Epoch 13/100: Accuracy = 100.0, Loss = 0.019091244786977768
+Epoch 14/100: Accuracy = 100.0, Loss = 0.018462006002664566
+Epoch 15/100: Accuracy = 100.0, Loss = 0.017736714333295822
+Epoch 16/100: Accuracy = 100.0, Loss = 0.01694406382739544
+Epoch 17/100: Accuracy = 100.0, Loss = 0.01611274853348732
+Epoch 18/100: Accuracy = 100.0, Loss = 0.015266220085322857
+Epoch 19/100: Accuracy = 100.0, Loss = 0.014423118904232979
+Epoch 20/100: Accuracy = 100.0, Loss = 0.013598283752799034
+Epoch 21/100: Accuracy = 100.0, Loss = 0.012804435566067696
+Epoch 22/100: Accuracy = 100.0, Loss = 0.012052707374095917
+Epoch 23/100: Accuracy = 100.0, Loss = 0.011345351114869118
+Epoch 24/100: Accuracy = 100.0, Loss = 0.010684848763048649
+Epoch 25/100: Accuracy = 100.0, Loss = 0.010073764249682426
+Epoch 26/100: Accuracy = 100.0, Loss = 0.009510522708296776
+Epoch 27/100: Accuracy = 100.0, Loss = 0.008994624949991703
+Epoch 28/100: Accuracy = 100.0, Loss = 0.008522124961018562
+Epoch 29/100: Accuracy = 100.0, Loss = 0.008090658113360405
+Epoch 30/100: Accuracy = 100.0, Loss = 0.0076966555789113045
+Epoch 31/100: Accuracy = 100.0, Loss = 0.007335095666348934
+Epoch 32/100: Accuracy = 100.0, Loss = 0.007004360668361187
+Epoch 33/100: Accuracy = 100.0, Loss = 0.0067014144733548164
+Epoch 34/100: Accuracy = 100.0, Loss = 0.00642284844070673
+Epoch 35/100: Accuracy = 100.0, Loss = 0.006165497936308384
+Epoch 36/100: Accuracy = 100.0, Loss = 0.005926848389208317
+Epoch 37/100: Accuracy = 100.0, Loss = 0.005704979877918959
+Epoch 38/100: Accuracy = 100.0, Loss = 0.00549820251762867
+Epoch 39/100: Accuracy = 100.0, Loss = 0.0053040883503854275
+Epoch 40/100: Accuracy = 100.0, Loss = 0.0051222494803369045
+Epoch 41/100: Accuracy = 100.0, Loss = 0.004951301962137222
+Epoch 42/100: Accuracy = 100.0, Loss = 0.00478983111679554
+Epoch 43/100: Accuracy = 100.0, Loss = 0.004636988043785095
+Epoch 44/100: Accuracy = 100.0, Loss = 0.004492568783462048
+Epoch 45/100: Accuracy = 100.0, Loss = 0.004356087185442448
+Epoch 46/100: Accuracy = 100.0, Loss = 0.004225968848913908
+Epoch 47/100: Accuracy = 100.0, Loss = 0.0041023786179721355
+Epoch 48/100: Accuracy = 100.0, Loss = 0.003984694369137287
+Epoch 49/100: Accuracy = 100.0, Loss = 0.0038729060906916857
+Epoch 50/100: Accuracy = 100.0, Loss = 0.003766376990824938
+Epoch 51/100: Accuracy = 100.0, Loss = 0.0036650863476097584
+Epoch 52/100: Accuracy = 100.0, Loss = 0.0035687307827174664
+Epoch 53/100: Accuracy = 100.0, Loss = 0.003477546852082014
+Epoch 54/100: Accuracy = 100.0, Loss = 0.0033909075427800417
+Epoch 55/100: Accuracy = 100.0, Loss = 0.0033086840994656086
+Epoch 56/100: Accuracy = 100.0, Loss = 0.0032306548673659563
+Epoch 57/100: Accuracy = 100.0, Loss = 0.00315636838786304
+Early stopping
+
+ ======== Evaluate on valid set ========
+Task 0: Accuracy == 71.42857142857143, Test CE Loss == 1.0260251760482788 ;
+Task 1: Accuracy == 63.63636363636363, Test CE Loss == 1.2622588872909546 ;
+Task 2: Accuracy == 95.23809523809523, Test CE Loss == 0.3262205123901367 ;
+Task 3: Accuracy == 70.0, Test CE Loss == 1.0929529666900635 ;
+Accuracy matrix of all tasks:
+[[ 52.38   0.     0.     0.  ]
+ [  4.76  59.09   0.     0.  ]
+ [ 76.19  59.09 100.     0.  ]
+ [ 71.43  63.64  95.24  70.  ]]
+
+ ======== Evaluate on test set ========
+Task 0: Accuracy == 75.36557930258716, Test CE Loss == 0.8736096024513245 ;
+Task 1: Accuracy == 56.34920634920635, Test CE Loss == 1.7779866456985474 ;
+Task 2: Accuracy == 88.42337375964718, Test CE Loss == 0.39364978671073914 ;
+Task 3: Accuracy == 69.80088495575221, Test CE Loss == 1.0201044082641602 ;
+Accuracy matrix of all tasks:
+[[49.16  0.    0.    0.  ]
+ [12.94 65.65  0.    0.  ]
+ [79.64 59.75 98.02  0.  ]
+ [75.37 56.35 88.42 69.8 ]]
+Len of Acc_multiple_run_test: 2
+
+ Finish Run 1: total 47.34309482574463 sec
+
+ ######## Run 2, cls_order :[2, 6, 0, 5, 4, 1, 7, 3] ########
+Create exp stream : 4 tasks,  classes order [2, 6, 0, 5, 4, 1, 7, 3] 
+Input shape (L, D): (315, 3)
+Training set size: 722; Val set size: 84; Test set size: 3582
+buffer has 40 slots
+ER mode: task, NCM classifier: False
+AL strategy: Uncertainty
+AL cycle: 1 / 2
+Labelled set size: 8
+Learning a new task
+
+--> Task 0: 2 classes in total
+Epoch 1/100: Accuracy = 50.0, Loss = 0.6979939341545105
+Epoch 2/100: Accuracy = 62.5, Loss = 0.5112552046775818
+Epoch 3/100: Accuracy = 87.5, Loss = 0.12591873109340668
+Epoch 4/100: Accuracy = 100.0, Loss = 0.016967304050922394
+Epoch 5/100: Accuracy = 100.0, Loss = 0.007194668985903263
+Epoch 6/100: Accuracy = 100.0, Loss = 0.002531575271859765
+Epoch 7/100: Accuracy = 100.0, Loss = 0.0010703779989853501
+Epoch 8/100: Accuracy = 100.0, Loss = 0.0005605848273262382
+Epoch 9/100: Accuracy = 100.0, Loss = 0.0003521697944961488
+Epoch 10/100: Accuracy = 100.0, Loss = 0.00025778409326449037
+Epoch 11/100: Accuracy = 100.0, Loss = 0.00021338780061341822
+Epoch 12/100: Accuracy = 100.0, Loss = 0.00021045346511527896
+Epoch 13/100: Accuracy = 100.0, Loss = 0.00020751911506522447
+Epoch 14/100: Accuracy = 100.0, Loss = 0.00020442086679395288
+Epoch 15/100: Accuracy = 100.0, Loss = 0.00020123319700360298
+Epoch 16/100: Accuracy = 100.0, Loss = 0.0001979412918444723
+Epoch 17/100: Accuracy = 100.0, Loss = 0.00019460466864984483
+Epoch 18/100: Accuracy = 100.0, Loss = 0.00019119353964924812
+Epoch 19/100: Accuracy = 100.0, Loss = 0.00018773775082081556
+Epoch 20/100: Accuracy = 100.0, Loss = 0.00018422234279569238
+Epoch 21/100: Accuracy = 100.0, Loss = 0.00018061755690723658
+Epoch 22/100: Accuracy = 100.0, Loss = 0.00017698293959256262
+Epoch 23/100: Accuracy = 100.0, Loss = 0.0001733334211166948
+Epoch 24/100: Accuracy = 100.0, Loss = 0.000169683902640827
+Epoch 25/100: Accuracy = 100.0, Loss = 0.00016607904399279505
+Epoch 26/100: Accuracy = 100.0, Loss = 0.00016247417079284787
+Early stopping
+AL cycle: 2 / 2
+Shape of unlabelled data: (168, 315, 3)
+Labelled set size: 8
+Epoch 1/100: Accuracy = 62.5, Loss = 0.7779973149299622
+Epoch 2/100: Accuracy = 62.5, Loss = 0.7395464181900024
+Epoch 3/100: Accuracy = 62.5, Loss = 1.2614610195159912
+Epoch 4/100: Accuracy = 62.5, Loss = 1.3355023860931396
+Epoch 5/100: Accuracy = 62.5, Loss = 0.6810663342475891
+Epoch 6/100: Accuracy = 87.5, Loss = 0.4555526375770569
+Epoch 7/100: Accuracy = 87.5, Loss = 0.40374958515167236
+Epoch 8/100: Accuracy = 100.0, Loss = 0.2512013614177704
+Epoch 9/100: Accuracy = 100.0, Loss = 0.18553957343101501
+Epoch 10/100: Accuracy = 100.0, Loss = 0.156478613615036
+Epoch 11/100: Accuracy = 100.0, Loss = 0.08925361186265945
+Epoch 12/100: Accuracy = 100.0, Loss = 0.08525586873292923
+Epoch 13/100: Accuracy = 100.0, Loss = 0.08063860982656479
+Epoch 14/100: Accuracy = 100.0, Loss = 0.07574106752872467
+Epoch 15/100: Accuracy = 100.0, Loss = 0.0706380307674408
+Epoch 16/100: Accuracy = 100.0, Loss = 0.06531554460525513
+Epoch 17/100: Accuracy = 100.0, Loss = 0.05988982319831848
+Epoch 18/100: Accuracy = 100.0, Loss = 0.05464380979537964
+Epoch 19/100: Accuracy = 100.0, Loss = 0.049800463020801544
+Epoch 20/100: Accuracy = 100.0, Loss = 0.04554179310798645
+Epoch 21/100: Accuracy = 100.0, Loss = 0.04191935434937477
+Early stopping
+
+ ======== Evaluate on valid set ========
+Task 0: Accuracy == 47.61904761904761, Test CE Loss == 0.699184000492096 ;
+
+ ======== Evaluate on test set ========
+Task 0: Accuracy == 50.38845726970034, Test CE Loss == 0.6797230839729309 ;
+AL cycle: 1 / 2
+Labelled set size: 8
+Learning a new task
+
+--> Task 1: 4 classes in total
+Epoch 1/100: Accuracy = 50.0, Loss = 1.3666800260543823
+Epoch 2/100: Accuracy = 50.0, Loss = 1.2157690525054932
+Epoch 3/100: Accuracy = 81.25, Loss = 0.38643941283226013
+Epoch 4/100: Accuracy = 100.0, Loss = 0.1138184443116188
+Epoch 5/100: Accuracy = 100.0, Loss = 0.039025984704494476
+Epoch 6/100: Accuracy = 100.0, Loss = 0.018575772643089294
+Epoch 7/100: Accuracy = 100.0, Loss = 0.010756013914942741
+Epoch 8/100: Accuracy = 100.0, Loss = 0.006940335966646671
+Epoch 9/100: Accuracy = 100.0, Loss = 0.005311376415193081
+Epoch 10/100: Accuracy = 100.0, Loss = 0.004283000249415636
+Epoch 11/100: Accuracy = 100.0, Loss = 0.0035686776973307133
+Epoch 12/100: Accuracy = 100.0, Loss = 0.003482790431007743
+Epoch 13/100: Accuracy = 100.0, Loss = 0.003359520109370351
+Epoch 14/100: Accuracy = 100.0, Loss = 0.0032095080241560936
+Epoch 15/100: Accuracy = 100.0, Loss = 0.003044123062863946
+Epoch 16/100: Accuracy = 100.0, Loss = 0.0028727075550705194
+Epoch 17/100: Accuracy = 100.0, Loss = 0.0027028012555092573
+Epoch 18/100: Accuracy = 100.0, Loss = 0.0025402349419891834
+Epoch 19/100: Accuracy = 100.0, Loss = 0.002388729713857174
+Epoch 20/100: Accuracy = 100.0, Loss = 0.002250781049951911
+Epoch 21/100: Accuracy = 100.0, Loss = 0.002126493491232395
+Epoch 22/100: Accuracy = 100.0, Loss = 0.0020144556183367968
+Epoch 23/100: Accuracy = 100.0, Loss = 0.0019141787197440863
+Epoch 24/100: Accuracy = 100.0, Loss = 0.0018236989853903651
+Epoch 25/100: Accuracy = 100.0, Loss = 0.0017420476069673896
+Epoch 26/100: Accuracy = 100.0, Loss = 0.0016681170091032982
+Epoch 27/100: Accuracy = 100.0, Loss = 0.0016007793601602316
+Epoch 28/100: Accuracy = 100.0, Loss = 0.001539202407002449
+Epoch 29/100: Accuracy = 100.0, Loss = 0.0014827295672148466
+Epoch 30/100: Accuracy = 100.0, Loss = 0.0014307324308902025
+Epoch 31/100: Accuracy = 100.0, Loss = 0.0013824549969285727
+Epoch 32/100: Accuracy = 100.0, Loss = 0.0013373788679018617
+Epoch 33/100: Accuracy = 100.0, Loss = 0.0012951928656548262
+Epoch 34/100: Accuracy = 100.0, Loss = 0.0012554589193314314
+Epoch 35/100: Accuracy = 100.0, Loss = 0.0012178728356957436
+Epoch 36/100: Accuracy = 100.0, Loss = 0.0011820112122222781
+Epoch 37/100: Accuracy = 100.0, Loss = 0.0011475691571831703
+Early stopping
+AL cycle: 2 / 2
+Shape of unlabelled data: (177, 315, 3)
+Labelled set size: 8
+Epoch 1/100: Accuracy = 66.66666666666666, Loss = 1.1859339475631714
+Epoch 2/100: Accuracy = 66.66666666666666, Loss = 1.169488549232483
+Epoch 3/100: Accuracy = 79.16666666666666, Loss = 0.5768997073173523
+Epoch 4/100: Accuracy = 95.83333333333334, Loss = 0.1669945865869522
+Epoch 5/100: Accuracy = 100.0, Loss = 0.055709853768348694
+Epoch 6/100: Accuracy = 100.0, Loss = 0.05145462974905968
+Epoch 7/100: Accuracy = 100.0, Loss = 0.033480364829301834
+Epoch 8/100: Accuracy = 100.0, Loss = 0.02236502803862095
+Epoch 9/100: Accuracy = 100.0, Loss = 0.01771022193133831
+Epoch 10/100: Accuracy = 100.0, Loss = 0.014853802509605885
+Epoch 11/100: Accuracy = 100.0, Loss = 0.012647143565118313
+Epoch 12/100: Accuracy = 100.0, Loss = 0.01239811535924673
+Epoch 13/100: Accuracy = 100.0, Loss = 0.012038175947964191
+Epoch 14/100: Accuracy = 100.0, Loss = 0.011591884307563305
+Epoch 15/100: Accuracy = 100.0, Loss = 0.011084466241300106
+Epoch 16/100: Accuracy = 100.0, Loss = 0.010541862808167934
+Epoch 17/100: Accuracy = 100.0, Loss = 0.009984920732676983
+Epoch 18/100: Accuracy = 100.0, Loss = 0.00942996982485056
+Epoch 19/100: Accuracy = 100.0, Loss = 0.008887904696166515
+Epoch 20/100: Accuracy = 100.0, Loss = 0.008368792943656445
+Epoch 21/100: Accuracy = 100.0, Loss = 0.007878818549215794
+Epoch 22/100: Accuracy = 100.0, Loss = 0.0074164979159832
+Epoch 23/100: Accuracy = 100.0, Loss = 0.006983656901866198
+Epoch 24/100: Accuracy = 100.0, Loss = 0.006582232657819986
+Epoch 25/100: Accuracy = 100.0, Loss = 0.0062091718427836895
+Epoch 26/100: Accuracy = 100.0, Loss = 0.005860345903784037
+Epoch 27/100: Accuracy = 100.0, Loss = 0.005535699427127838
+Epoch 28/100: Accuracy = 100.0, Loss = 0.005233982112258673
+Epoch 29/100: Accuracy = 100.0, Loss = 0.004954838659614325
+Epoch 30/100: Accuracy = 100.0, Loss = 0.004697705153375864
+Epoch 31/100: Accuracy = 100.0, Loss = 0.004457884933799505
+Epoch 32/100: Accuracy = 100.0, Loss = 0.004234740044921637
+Epoch 33/100: Accuracy = 100.0, Loss = 0.004027518443763256
+Epoch 34/100: Accuracy = 100.0, Loss = 0.00383452489040792
+Epoch 35/100: Accuracy = 100.0, Loss = 0.003654268803074956
+Epoch 36/100: Accuracy = 100.0, Loss = 0.003485762747004628
+Epoch 37/100: Accuracy = 100.0, Loss = 0.0033289454877376556
+Epoch 38/100: Accuracy = 100.0, Loss = 0.003183747408911586
+Epoch 39/100: Accuracy = 100.0, Loss = 0.0030488783959299326
+Epoch 40/100: Accuracy = 100.0, Loss = 0.00292324204929173
+Epoch 41/100: Accuracy = 100.0, Loss = 0.0028060516342520714
+Epoch 42/100: Accuracy = 100.0, Loss = 0.0026966489385813475
+Epoch 43/100: Accuracy = 100.0, Loss = 0.002594427904114127
+Epoch 44/100: Accuracy = 100.0, Loss = 0.002499244874343276
+Epoch 45/100: Accuracy = 100.0, Loss = 0.0024100912269204855
+Epoch 46/100: Accuracy = 100.0, Loss = 0.002326901303604245
+Epoch 47/100: Accuracy = 100.0, Loss = 0.0022489430848509073
+Epoch 48/100: Accuracy = 100.0, Loss = 0.002175797475501895
+Epoch 49/100: Accuracy = 100.0, Loss = 0.0021070109214633703
+Early stopping
+
+ ======== Evaluate on valid set ========
+Task 0: Accuracy == 47.61904761904761, Test CE Loss == 1.2725980281829834 ;
+Task 1: Accuracy == 100.0, Test CE Loss == 0.08105197548866272 ;
+
+ ======== Evaluate on test set ========
+Task 0: Accuracy == 53.94006659267481, Test CE Loss == 1.2479870319366455 ;
+Task 1: Accuracy == 82.84424379232506, Test CE Loss == 0.680278480052948 ;
+AL cycle: 1 / 2
+Labelled set size: 8
+Learning a new task
+
+--> Task 2: 6 classes in total
+Epoch 1/100: Accuracy = 66.66666666666666, Loss = 1.4171870946884155
+Epoch 2/100: Accuracy = 66.66666666666666, Loss = 1.3556857109069824
+Epoch 3/100: Accuracy = 87.5, Loss = 0.44087469577789307
+Epoch 4/100: Accuracy = 100.0, Loss = 0.2512489855289459
+Epoch 5/100: Accuracy = 100.0, Loss = 0.14692287147045135
+Epoch 6/100: Accuracy = 100.0, Loss = 0.08020684123039246
+Epoch 7/100: Accuracy = 100.0, Loss = 0.0518786646425724
+Epoch 8/100: Accuracy = 100.0, Loss = 0.03691961243748665
+Epoch 9/100: Accuracy = 100.0, Loss = 0.027987657114863396
+Epoch 10/100: Accuracy = 100.0, Loss = 0.022334272041916847
+Epoch 11/100: Accuracy = 100.0, Loss = 0.018275616690516472
+Epoch 12/100: Accuracy = 100.0, Loss = 0.017857026308774948
+Epoch 13/100: Accuracy = 100.0, Loss = 0.017320288345217705
+Epoch 14/100: Accuracy = 100.0, Loss = 0.016695572063326836
+Epoch 15/100: Accuracy = 100.0, Loss = 0.01601252518594265
+Epoch 16/100: Accuracy = 100.0, Loss = 0.015295335091650486
+Epoch 17/100: Accuracy = 100.0, Loss = 0.014566690661013126
+Epoch 18/100: Accuracy = 100.0, Loss = 0.013843938708305359
+Epoch 19/100: Accuracy = 100.0, Loss = 0.013139490969479084
+Epoch 20/100: Accuracy = 100.0, Loss = 0.012459922581911087
+Epoch 21/100: Accuracy = 100.0, Loss = 0.011817981489002705
+Epoch 22/100: Accuracy = 100.0, Loss = 0.011214513331651688
+Epoch 23/100: Accuracy = 100.0, Loss = 0.01064531784504652
+Epoch 24/100: Accuracy = 100.0, Loss = 0.010114175267517567
+Epoch 25/100: Accuracy = 100.0, Loss = 0.009620352648198605
+Epoch 26/100: Accuracy = 100.0, Loss = 0.009162004105746746
+Epoch 27/100: Accuracy = 100.0, Loss = 0.008735401555895805
+Epoch 28/100: Accuracy = 100.0, Loss = 0.00833794753998518
+Epoch 29/100: Accuracy = 100.0, Loss = 0.007966721430420876
+Epoch 30/100: Accuracy = 100.0, Loss = 0.007620639633387327
+Epoch 31/100: Accuracy = 100.0, Loss = 0.0072981021367013454
+Epoch 32/100: Accuracy = 100.0, Loss = 0.006995758507400751
+Epoch 33/100: Accuracy = 100.0, Loss = 0.006711708381772041
+Epoch 34/100: Accuracy = 100.0, Loss = 0.006443677004426718
+Epoch 35/100: Accuracy = 100.0, Loss = 0.006191018968820572
+Epoch 36/100: Accuracy = 100.0, Loss = 0.005952764768153429
+Epoch 37/100: Accuracy = 100.0, Loss = 0.0057280962355434895
+Epoch 38/100: Accuracy = 100.0, Loss = 0.005515820812433958
+Epoch 39/100: Accuracy = 100.0, Loss = 0.005316032096743584
+Epoch 40/100: Accuracy = 100.0, Loss = 0.0051276059821248055
+Epoch 41/100: Accuracy = 100.0, Loss = 0.0049503277987241745
+Epoch 42/100: Accuracy = 100.0, Loss = 0.004782986827194691
+Epoch 43/100: Accuracy = 100.0, Loss = 0.004624791443347931
+Epoch 44/100: Accuracy = 100.0, Loss = 0.004475434310734272
+Epoch 45/100: Accuracy = 100.0, Loss = 0.0043344018049538136
+Epoch 46/100: Accuracy = 100.0, Loss = 0.00420093210414052
+Epoch 47/100: Accuracy = 100.0, Loss = 0.004074567928910255
+Epoch 48/100: Accuracy = 100.0, Loss = 0.003954922314733267
+Epoch 49/100: Accuracy = 100.0, Loss = 0.003841845318675041
+Early stopping
+AL cycle: 2 / 2
+Shape of unlabelled data: (181, 315, 3)
+Labelled set size: 8
+Epoch 1/100: Accuracy = 87.5, Loss = 0.3454807996749878
+Epoch 2/100: Accuracy = 87.5, Loss = 0.33859726786613464
+Epoch 3/100: Accuracy = 96.875, Loss = 0.15592846274375916
+Epoch 4/100: Accuracy = 100.0, Loss = 0.07181297987699509
+Epoch 5/100: Accuracy = 100.0, Loss = 0.04354197159409523
+Epoch 6/100: Accuracy = 100.0, Loss = 0.039521723985672
+Epoch 7/100: Accuracy = 100.0, Loss = 0.03380263224244118
+Epoch 8/100: Accuracy = 100.0, Loss = 0.027653450146317482
+Epoch 9/100: Accuracy = 100.0, Loss = 0.023518232628703117
+Epoch 10/100: Accuracy = 100.0, Loss = 0.021890411153435707
+Epoch 11/100: Accuracy = 100.0, Loss = 0.020871225744485855
+Epoch 12/100: Accuracy = 100.0, Loss = 0.020497266203165054
+Epoch 13/100: Accuracy = 100.0, Loss = 0.019780708476901054
+Epoch 14/100: Accuracy = 100.0, Loss = 0.0188229288905859
+Epoch 15/100: Accuracy = 100.0, Loss = 0.017734471708536148
+Epoch 16/100: Accuracy = 100.0, Loss = 0.016606371849775314
+Epoch 17/100: Accuracy = 100.0, Loss = 0.015495243482291698
+Epoch 18/100: Accuracy = 100.0, Loss = 0.014441873878240585
+Epoch 19/100: Accuracy = 100.0, Loss = 0.013470594771206379
+Epoch 20/100: Accuracy = 100.0, Loss = 0.012582783587276936
+Epoch 21/100: Accuracy = 100.0, Loss = 0.011780746281147003
+Epoch 22/100: Accuracy = 100.0, Loss = 0.01106348168104887
+Early stopping
+
+ ======== Evaluate on valid set ========
+Task 0: Accuracy == 76.19047619047619, Test CE Loss == 0.6313514113426208 ;
+Task 1: Accuracy == 80.95238095238095, Test CE Loss == 0.5710256695747375 ;
+Task 2: Accuracy == 86.36363636363636, Test CE Loss == 0.7026957869529724 ;
+
+ ======== Evaluate on test set ========
+Task 0: Accuracy == 80.2441731409545, Test CE Loss == 0.7243421673774719 ;
+Task 1: Accuracy == 71.33182844243792, Test CE Loss == 1.13448965549469 ;
+Task 2: Accuracy == 89.60451977401131, Test CE Loss == 0.38882723450660706 ;
+AL cycle: 1 / 2
+Labelled set size: 8
+Learning a new task
+
+--> Task 3: 8 classes in total
+Epoch 1/100: Accuracy = 75.0, Loss = 0.747320294380188
+Epoch 2/100: Accuracy = 75.0, Loss = 0.7098708152770996
+Epoch 3/100: Accuracy = 100.0, Loss = 0.2033083587884903
+Epoch 4/100: Accuracy = 100.0, Loss = 0.11367148160934448
+Epoch 5/100: Accuracy = 100.0, Loss = 0.07971742749214172
+Epoch 6/100: Accuracy = 100.0, Loss = 0.06260424852371216
+Epoch 7/100: Accuracy = 100.0, Loss = 0.04935271292924881
+Epoch 8/100: Accuracy = 100.0, Loss = 0.03809705004096031
+Epoch 9/100: Accuracy = 100.0, Loss = 0.030221208930015564
+Epoch 10/100: Accuracy = 100.0, Loss = 0.024804778397083282
+Epoch 11/100: Accuracy = 100.0, Loss = 0.02110324241220951
+Epoch 12/100: Accuracy = 100.0, Loss = 0.020716117694973946
+Epoch 13/100: Accuracy = 100.0, Loss = 0.020216654986143112
+Epoch 14/100: Accuracy = 100.0, Loss = 0.01962999440729618
+Epoch 15/100: Accuracy = 100.0, Loss = 0.01898198574781418
+Epoch 16/100: Accuracy = 100.0, Loss = 0.01829082891345024
+Epoch 17/100: Accuracy = 100.0, Loss = 0.01757722906768322
+Epoch 18/100: Accuracy = 100.0, Loss = 0.01685819961130619
+Epoch 19/100: Accuracy = 100.0, Loss = 0.016147393733263016
+Epoch 20/100: Accuracy = 100.0, Loss = 0.0154547318816185
+Epoch 21/100: Accuracy = 100.0, Loss = 0.014783736318349838
+Epoch 22/100: Accuracy = 100.0, Loss = 0.014141466468572617
+Epoch 23/100: Accuracy = 100.0, Loss = 0.013531259261071682
+Epoch 24/100: Accuracy = 100.0, Loss = 0.012954533100128174
+Epoch 25/100: Accuracy = 100.0, Loss = 0.01241107564419508
+Epoch 26/100: Accuracy = 100.0, Loss = 0.011898490600287914
+Epoch 27/100: Accuracy = 100.0, Loss = 0.011417037807404995
+Epoch 28/100: Accuracy = 100.0, Loss = 0.01096418034285307
+Epoch 29/100: Accuracy = 100.0, Loss = 0.010537042282521725
+Epoch 30/100: Accuracy = 100.0, Loss = 0.010134612210094929
+Early stopping
+AL cycle: 2 / 2
+Shape of unlabelled data: (164, 315, 3)
+Labelled set size: 8
+Epoch 1/100: Accuracy = 80.0, Loss = 0.4850977957248688
+Epoch 2/100: Accuracy = 80.0, Loss = 0.47975316643714905
+Epoch 3/100: Accuracy = 90.0, Loss = 0.3113102614879608
+Epoch 4/100: Accuracy = 95.0, Loss = 0.20743362605571747
+Epoch 5/100: Accuracy = 97.5, Loss = 0.14913660287857056
+Epoch 6/100: Accuracy = 97.5, Loss = 0.11043214797973633
+Epoch 7/100: Accuracy = 100.0, Loss = 0.08075012266635895
+Epoch 8/100: Accuracy = 100.0, Loss = 0.058697037398815155
+Epoch 9/100: Accuracy = 100.0, Loss = 0.04383299499750137
+Epoch 10/100: Accuracy = 100.0, Loss = 0.03646616265177727
+Epoch 11/100: Accuracy = 100.0, Loss = 0.03307057172060013
+Epoch 12/100: Accuracy = 100.0, Loss = 0.03250992298126221
+Epoch 13/100: Accuracy = 100.0, Loss = 0.031465549021959305
+Epoch 14/100: Accuracy = 100.0, Loss = 0.03006654605269432
+Epoch 15/100: Accuracy = 100.0, Loss = 0.02845141291618347
+Epoch 16/100: Accuracy = 100.0, Loss = 0.02674758806824684
+Epoch 17/100: Accuracy = 100.0, Loss = 0.02505655586719513
+Epoch 18/100: Accuracy = 100.0, Loss = 0.023450640961527824
+Epoch 19/100: Accuracy = 100.0, Loss = 0.021965721622109413
+Epoch 20/100: Accuracy = 100.0, Loss = 0.02062598243355751
+Epoch 21/100: Accuracy = 100.0, Loss = 0.019437234848737717
+Epoch 22/100: Accuracy = 100.0, Loss = 0.018388155847787857
+Epoch 23/100: Accuracy = 100.0, Loss = 0.017461199313402176
+Early stopping
+
+ ======== Evaluate on valid set ========
+Task 0: Accuracy == 47.61904761904761, Test CE Loss == 1.8872560262680054 ;
+Task 1: Accuracy == 76.19047619047619, Test CE Loss == 0.7815772294998169 ;
+Task 2: Accuracy == 59.09090909090909, Test CE Loss == 1.3164855241775513 ;
+Task 3: Accuracy == 95.0, Test CE Loss == 0.21087884902954102 ;
+Accuracy matrix of all tasks:
+[[ 47.62   0.     0.     0.  ]
+ [ 47.62 100.     0.     0.  ]
+ [ 76.19  80.95  86.36   0.  ]
+ [ 47.62  76.19  59.09  95.  ]]
+
+ ======== Evaluate on test set ========
+Task 0: Accuracy == 43.06326304106548, Test CE Loss == 1.7712712287902832 ;
+Task 1: Accuracy == 67.49435665914221, Test CE Loss == 1.2101579904556274 ;
+Task 2: Accuracy == 64.63276836158191, Test CE Loss == 1.1360642910003662 ;
+Task 3: Accuracy == 88.57142857142857, Test CE Loss == 0.35792985558509827 ;
+Accuracy matrix of all tasks:
+[[50.39  0.    0.    0.  ]
+ [53.94 82.84  0.    0.  ]
+ [80.24 71.33 89.6   0.  ]
+ [43.06 67.49 64.63 88.57]]
+Len of Acc_multiple_run_test: 3
+
+ Finish Run 2: total 29.911919355392456 sec
+
+ ######## Run 3, cls_order :[5, 0, 6, 7, 2, 4, 1, 3] ########
+Create exp stream : 4 tasks,  classes order [5, 0, 6, 7, 2, 4, 1, 3] 
+Input shape (L, D): (315, 3)
+Training set size: 722; Val set size: 84; Test set size: 3582
+buffer has 40 slots
+ER mode: task, NCM classifier: False
+AL strategy: Uncertainty
+AL cycle: 1 / 2
+Labelled set size: 8
+Learning a new task
+
+--> Task 0: 2 classes in total
+Epoch 1/100: Accuracy = 62.5, Loss = 0.5699058771133423
+Epoch 2/100: Accuracy = 87.5, Loss = 0.3550776541233063
+Epoch 3/100: Accuracy = 100.0, Loss = 0.07725800573825836
+Epoch 4/100: Accuracy = 100.0, Loss = 0.011042878963053226
+Epoch 5/100: Accuracy = 100.0, Loss = 0.006984901614487171
+Epoch 6/100: Accuracy = 100.0, Loss = 0.002206770470365882
+Epoch 7/100: Accuracy = 100.0, Loss = 0.0011211190139874816
+Epoch 8/100: Accuracy = 100.0, Loss = 0.0007443342474289238
+Epoch 9/100: Accuracy = 100.0, Loss = 0.0005486505688168108
+Epoch 10/100: Accuracy = 100.0, Loss = 0.00043459670268930495
+Epoch 11/100: Accuracy = 100.0, Loss = 0.0003646939294412732
+Epoch 12/100: Accuracy = 100.0, Loss = 0.00035884539829567075
+Epoch 13/100: Accuracy = 100.0, Loss = 0.0003521184262353927
+Epoch 14/100: Accuracy = 100.0, Loss = 0.00034457241417840123
+Epoch 15/100: Accuracy = 100.0, Loss = 0.0003363710129633546
+Epoch 16/100: Accuracy = 100.0, Loss = 0.00032758855377323925
+Epoch 17/100: Accuracy = 100.0, Loss = 0.00031846322235651314
+Epoch 18/100: Accuracy = 100.0, Loss = 0.00030912901274859905
+Epoch 19/100: Accuracy = 100.0, Loss = 0.00029969008755870163
+Epoch 20/100: Accuracy = 100.0, Loss = 0.0002902059641201049
+Epoch 21/100: Accuracy = 100.0, Loss = 0.0002808108110912144
+Epoch 22/100: Accuracy = 100.0, Loss = 0.0002715343434829265
+Epoch 23/100: Accuracy = 100.0, Loss = 0.0002624808985274285
+Epoch 24/100: Accuracy = 100.0, Loss = 0.0002536206447985023
+Epoch 25/100: Accuracy = 100.0, Loss = 0.00024502817541360855
+Epoch 26/100: Accuracy = 100.0, Loss = 0.00023670349037274718
+Epoch 27/100: Accuracy = 100.0, Loss = 0.00022864658967591822
+Epoch 28/100: Accuracy = 100.0, Loss = 0.00022085757518652827
+Epoch 29/100: Accuracy = 100.0, Loss = 0.000213321516639553
+Epoch 30/100: Accuracy = 100.0, Loss = 0.00020611294894479215
+Epoch 31/100: Accuracy = 100.0, Loss = 0.00019920208433177322
+Epoch 32/100: Accuracy = 100.0, Loss = 0.00019261879788246006
+Epoch 33/100: Accuracy = 100.0, Loss = 0.00018631834245752543
+Epoch 34/100: Accuracy = 100.0, Loss = 0.00018036038090940565
+Epoch 35/100: Accuracy = 100.0, Loss = 0.00017462571850046515
+Epoch 36/100: Accuracy = 100.0, Loss = 0.00016923357907216996
+Epoch 37/100: Accuracy = 100.0, Loss = 0.00016415418940596282
+Epoch 38/100: Accuracy = 100.0, Loss = 0.0001592832268215716
+Epoch 39/100: Accuracy = 100.0, Loss = 0.00015468033961951733
+Epoch 40/100: Accuracy = 100.0, Loss = 0.00015034552779980004
+Early stopping
+AL cycle: 2 / 2
+Shape of unlabelled data: (177, 315, 3)
+Labelled set size: 8
+Epoch 1/100: Accuracy = 50.0, Loss = 1.098473310470581
+Epoch 2/100: Accuracy = 50.0, Loss = 1.0432636737823486
+Epoch 3/100: Accuracy = 100.0, Loss = 0.12566739320755005
+Epoch 4/100: Accuracy = 100.0, Loss = 0.013269016519188881
+Epoch 5/100: Accuracy = 100.0, Loss = 0.001198604586534202
+Epoch 6/100: Accuracy = 100.0, Loss = 0.00039452488999813795
+Epoch 7/100: Accuracy = 100.0, Loss = 0.00025269962497986853
+Epoch 8/100: Accuracy = 100.0, Loss = 0.00021947591449134052
+Epoch 9/100: Accuracy = 100.0, Loss = 0.00023035732738208026
+Epoch 10/100: Accuracy = 100.0, Loss = 0.00026207705377601087
+Epoch 11/100: Accuracy = 100.0, Loss = 0.0003058452857658267
+Epoch 12/100: Accuracy = 100.0, Loss = 0.00031018920708447695
+Epoch 13/100: Accuracy = 100.0, Loss = 0.0003134325088467449
+Epoch 14/100: Accuracy = 100.0, Loss = 0.0003154563019052148
+Epoch 15/100: Accuracy = 100.0, Loss = 0.00031620124354958534
+Epoch 16/100: Accuracy = 100.0, Loss = 0.00031572658917866647
+Epoch 17/100: Accuracy = 100.0, Loss = 0.00031410681549459696
+Epoch 18/100: Accuracy = 100.0, Loss = 0.00031152027077041566
+Epoch 19/100: Accuracy = 100.0, Loss = 0.0003079668967984617
+Epoch 20/100: Accuracy = 100.0, Loss = 0.0003035803383681923
+Epoch 21/100: Accuracy = 100.0, Loss = 0.0002985093742609024
+Epoch 22/100: Accuracy = 100.0, Loss = 0.00029302158509381115
+Early stopping
+
+ ======== Evaluate on valid set ========
+Task 0: Accuracy == 76.19047619047619, Test CE Loss == 0.39714980125427246 ;
+
+ ======== Evaluate on test set ========
+Task 0: Accuracy == 80.58690744920993, Test CE Loss == 0.5205397009849548 ;
+AL cycle: 1 / 2
+Labelled set size: 8
+Learning a new task
+
+--> Task 1: 4 classes in total
+Epoch 1/100: Accuracy = 56.25, Loss = 1.0831643342971802
+Epoch 2/100: Accuracy = 56.25, Loss = 0.9736477136611938
+Epoch 3/100: Accuracy = 68.75, Loss = 0.7136906981468201
+Epoch 4/100: Accuracy = 87.5, Loss = 0.28464242815971375
+Epoch 5/100: Accuracy = 100.0, Loss = 0.10954093188047409
+Epoch 6/100: Accuracy = 100.0, Loss = 0.04619975760579109
+Epoch 7/100: Accuracy = 100.0, Loss = 0.029873868450522423
+Epoch 8/100: Accuracy = 100.0, Loss = 0.023015975952148438
+Epoch 9/100: Accuracy = 100.0, Loss = 0.01715213432908058
+Epoch 10/100: Accuracy = 100.0, Loss = 0.013106618076562881
+Epoch 11/100: Accuracy = 100.0, Loss = 0.010582664981484413
+Epoch 12/100: Accuracy = 100.0, Loss = 0.010341063141822815
+Epoch 13/100: Accuracy = 100.0, Loss = 0.010042657144367695
+Epoch 14/100: Accuracy = 100.0, Loss = 0.009699275717139244
+Epoch 15/100: Accuracy = 100.0, Loss = 0.009324506856501102
+Epoch 16/100: Accuracy = 100.0, Loss = 0.008930416777729988
+Epoch 17/100: Accuracy = 100.0, Loss = 0.008527419529855251
+Epoch 18/100: Accuracy = 100.0, Loss = 0.008124719373881817
+Epoch 19/100: Accuracy = 100.0, Loss = 0.0077294898219406605
+Epoch 20/100: Accuracy = 100.0, Loss = 0.007344015408307314
+Epoch 21/100: Accuracy = 100.0, Loss = 0.006971981842070818
+Epoch 22/100: Accuracy = 100.0, Loss = 0.0066152215003967285
+Epoch 23/100: Accuracy = 100.0, Loss = 0.006277048960328102
+Epoch 24/100: Accuracy = 100.0, Loss = 0.005958070978522301
+Epoch 25/100: Accuracy = 100.0, Loss = 0.005659337155520916
+Epoch 26/100: Accuracy = 100.0, Loss = 0.005380110815167427
+Epoch 27/100: Accuracy = 100.0, Loss = 0.00511976471170783
+Epoch 28/100: Accuracy = 100.0, Loss = 0.004877537954598665
+Epoch 29/100: Accuracy = 100.0, Loss = 0.004652450792491436
+Epoch 30/100: Accuracy = 100.0, Loss = 0.004443375859409571
+Early stopping
+AL cycle: 2 / 2
+Shape of unlabelled data: (165, 315, 3)
+Labelled set size: 8
+Epoch 1/100: Accuracy = 83.33333333333334, Loss = 0.42813166975975037
+Epoch 2/100: Accuracy = 83.33333333333334, Loss = 0.4202916920185089
+Epoch 3/100: Accuracy = 95.83333333333334, Loss = 0.17974649369716644
+Epoch 4/100: Accuracy = 100.0, Loss = 0.05976186320185661
+Epoch 5/100: Accuracy = 100.0, Loss = 0.0330820269882679
+Epoch 6/100: Accuracy = 100.0, Loss = 0.035566676408052444
+Epoch 7/100: Accuracy = 100.0, Loss = 0.03650253638625145
+Epoch 8/100: Accuracy = 100.0, Loss = 0.03267510235309601
+Epoch 9/100: Accuracy = 100.0, Loss = 0.02964404970407486
+Epoch 10/100: Accuracy = 100.0, Loss = 0.026381105184555054
+Epoch 11/100: Accuracy = 100.0, Loss = 0.021442798897624016
+Epoch 12/100: Accuracy = 100.0, Loss = 0.020797327160835266
+Epoch 13/100: Accuracy = 100.0, Loss = 0.019925003871321678
+Epoch 14/100: Accuracy = 100.0, Loss = 0.018902795389294624
+Epoch 15/100: Accuracy = 100.0, Loss = 0.017799150198698044
+Epoch 16/100: Accuracy = 100.0, Loss = 0.016670508310198784
+Epoch 17/100: Accuracy = 100.0, Loss = 0.015561048872768879
+Epoch 18/100: Accuracy = 100.0, Loss = 0.014495045877993107
+Epoch 19/100: Accuracy = 100.0, Loss = 0.01349391508847475
+Epoch 20/100: Accuracy = 100.0, Loss = 0.012565107084810734
+Epoch 21/100: Accuracy = 100.0, Loss = 0.01171641144901514
+Epoch 22/100: Accuracy = 100.0, Loss = 0.010950390249490738
+Early stopping
+
+ ======== Evaluate on valid set ========
+Task 0: Accuracy == 71.42857142857143, Test CE Loss == 1.1679823398590088 ;
+Task 1: Accuracy == 100.0, Test CE Loss == 0.022743860259652138 ;
+
+ ======== Evaluate on test set ========
+Task 0: Accuracy == 69.07449209932281, Test CE Loss == 1.08035147190094 ;
+Task 1: Accuracy == 99.22822491730982, Test CE Loss == 0.05740123614668846 ;
+AL cycle: 1 / 2
+Labelled set size: 8
+Learning a new task
+
+--> Task 2: 6 classes in total
+Epoch 1/100: Accuracy = 66.66666666666666, Loss = 1.094954013824463
+Epoch 2/100: Accuracy = 66.66666666666666, Loss = 1.0409609079360962
+Epoch 3/100: Accuracy = 79.16666666666666, Loss = 0.43156591057777405
+Epoch 4/100: Accuracy = 95.83333333333334, Loss = 0.2950972020626068
+Epoch 5/100: Accuracy = 100.0, Loss = 0.1996239870786667
+Epoch 6/100: Accuracy = 100.0, Loss = 0.12131533026695251
+Epoch 7/100: Accuracy = 100.0, Loss = 0.080214723944664
+Epoch 8/100: Accuracy = 100.0, Loss = 0.06072345748543739
+Epoch 9/100: Accuracy = 100.0, Loss = 0.050611063838005066
+Epoch 10/100: Accuracy = 100.0, Loss = 0.04111601039767265
+Epoch 11/100: Accuracy = 100.0, Loss = 0.032030511647462845
+Epoch 12/100: Accuracy = 100.0, Loss = 0.031086236238479614
+Epoch 13/100: Accuracy = 100.0, Loss = 0.02992311120033264
+Epoch 14/100: Accuracy = 100.0, Loss = 0.028633425012230873
+Epoch 15/100: Accuracy = 100.0, Loss = 0.027283502742648125
+Epoch 16/100: Accuracy = 100.0, Loss = 0.025931870564818382
+Epoch 17/100: Accuracy = 100.0, Loss = 0.02462129294872284
+Epoch 18/100: Accuracy = 100.0, Loss = 0.023370729759335518
+Epoch 19/100: Accuracy = 100.0, Loss = 0.022198565304279327
+Epoch 20/100: Accuracy = 100.0, Loss = 0.021110376343131065
+Epoch 21/100: Accuracy = 100.0, Loss = 0.020109981298446655
+Epoch 22/100: Accuracy = 100.0, Loss = 0.019190149381756783
+Epoch 23/100: Accuracy = 100.0, Loss = 0.018350373953580856
+Epoch 24/100: Accuracy = 100.0, Loss = 0.017578357830643654
+Epoch 25/100: Accuracy = 100.0, Loss = 0.016864871606230736
+Epoch 26/100: Accuracy = 100.0, Loss = 0.0162030216306448
+Early stopping
+AL cycle: 2 / 2
+Shape of unlabelled data: (181, 315, 3)
+Labelled set size: 8
+Epoch 1/100: Accuracy = 84.375, Loss = 0.5059341788291931
+Epoch 2/100: Accuracy = 84.375, Loss = 0.5001723170280457
+Epoch 3/100: Accuracy = 90.625, Loss = 0.32177281379699707
+Epoch 4/100: Accuracy = 93.75, Loss = 0.24106940627098083
+Epoch 5/100: Accuracy = 96.875, Loss = 0.21355056762695312
+Epoch 6/100: Accuracy = 96.875, Loss = 0.16380995512008667
+Epoch 7/100: Accuracy = 100.0, Loss = 0.10616550594568253
+Epoch 8/100: Accuracy = 100.0, Loss = 0.07297289371490479
+Epoch 9/100: Accuracy = 100.0, Loss = 0.05861438065767288
+Epoch 10/100: Accuracy = 100.0, Loss = 0.04657901078462601
+Epoch 11/100: Accuracy = 100.0, Loss = 0.03788090869784355
+Epoch 12/100: Accuracy = 100.0, Loss = 0.03701671585440636
+Epoch 13/100: Accuracy = 100.0, Loss = 0.03586817532777786
+Epoch 14/100: Accuracy = 100.0, Loss = 0.03451104089617729
+Epoch 15/100: Accuracy = 100.0, Loss = 0.03301214426755905
+Epoch 16/100: Accuracy = 100.0, Loss = 0.0314362607896328
+Epoch 17/100: Accuracy = 100.0, Loss = 0.029840949922800064
+Epoch 18/100: Accuracy = 100.0, Loss = 0.02826949581503868
+Epoch 19/100: Accuracy = 100.0, Loss = 0.026742540299892426
+Epoch 20/100: Accuracy = 100.0, Loss = 0.02527853287756443
+Epoch 21/100: Accuracy = 100.0, Loss = 0.02389371395111084
+Epoch 22/100: Accuracy = 100.0, Loss = 0.022589556872844696
+Epoch 23/100: Accuracy = 100.0, Loss = 0.021366240456700325
+Epoch 24/100: Accuracy = 100.0, Loss = 0.02022731490433216
+Epoch 25/100: Accuracy = 100.0, Loss = 0.019171327352523804
+Epoch 26/100: Accuracy = 100.0, Loss = 0.018196597695350647
+Epoch 27/100: Accuracy = 100.0, Loss = 0.017287664115428925
+Epoch 28/100: Accuracy = 100.0, Loss = 0.01644381321966648
+Epoch 29/100: Accuracy = 100.0, Loss = 0.015661511570215225
+Epoch 30/100: Accuracy = 100.0, Loss = 0.014936895109713078
+Epoch 31/100: Accuracy = 100.0, Loss = 0.01426458265632391
+Epoch 32/100: Accuracy = 100.0, Loss = 0.013641264289617538
+Epoch 33/100: Accuracy = 100.0, Loss = 0.01306494977325201
+Epoch 34/100: Accuracy = 100.0, Loss = 0.012529316358268261
+Epoch 35/100: Accuracy = 100.0, Loss = 0.01203216053545475
+Epoch 36/100: Accuracy = 100.0, Loss = 0.011568745598196983
+Epoch 37/100: Accuracy = 100.0, Loss = 0.011135099455714226
+Epoch 38/100: Accuracy = 100.0, Loss = 0.010727455839514732
+Epoch 39/100: Accuracy = 100.0, Loss = 0.0103433383628726
+Epoch 40/100: Accuracy = 100.0, Loss = 0.009982076473534107
+Epoch 41/100: Accuracy = 100.0, Loss = 0.009641420096158981
+Epoch 42/100: Accuracy = 100.0, Loss = 0.00931805931031704
+Epoch 43/100: Accuracy = 100.0, Loss = 0.00901305302977562
+Epoch 44/100: Accuracy = 100.0, Loss = 0.008724985644221306
+Epoch 45/100: Accuracy = 100.0, Loss = 0.008451065979897976
+Epoch 46/100: Accuracy = 100.0, Loss = 0.008191141299903393
+Epoch 47/100: Accuracy = 100.0, Loss = 0.007944653742015362
+Epoch 48/100: Accuracy = 100.0, Loss = 0.007709531579166651
+Epoch 49/100: Accuracy = 100.0, Loss = 0.007486378308385611
+Epoch 50/100: Accuracy = 100.0, Loss = 0.0072739943861961365
+Epoch 51/100: Accuracy = 100.0, Loss = 0.007070890162140131
+Epoch 52/100: Accuracy = 100.0, Loss = 0.006876910105347633
+Epoch 53/100: Accuracy = 100.0, Loss = 0.00669097201898694
+Epoch 54/100: Accuracy = 100.0, Loss = 0.006513342261314392
+Epoch 55/100: Accuracy = 100.0, Loss = 0.00634305365383625
+Epoch 56/100: Accuracy = 100.0, Loss = 0.0061799935065209866
+Epoch 57/100: Accuracy = 100.0, Loss = 0.0060235788114368916
+Epoch 58/100: Accuracy = 100.0, Loss = 0.0058733741752803326
+Epoch 59/100: Accuracy = 100.0, Loss = 0.00572850601747632
+Epoch 60/100: Accuracy = 100.0, Loss = 0.005589379463344812
+Epoch 61/100: Accuracy = 100.0, Loss = 0.005456048529595137
+Epoch 62/100: Accuracy = 100.0, Loss = 0.005327478516846895
+Epoch 63/100: Accuracy = 100.0, Loss = 0.005203737877309322
+Epoch 64/100: Accuracy = 100.0, Loss = 0.005084615666419268
+Epoch 65/100: Accuracy = 100.0, Loss = 0.004970008507370949
+Epoch 66/100: Accuracy = 100.0, Loss = 0.004859547596424818
+Epoch 67/100: Accuracy = 100.0, Loss = 0.004753346089273691
+Epoch 68/100: Accuracy = 100.0, Loss = 0.0046512954868376255
+Epoch 69/100: Accuracy = 100.0, Loss = 0.004553086124360561
+Epoch 70/100: Accuracy = 100.0, Loss = 0.00445837527513504
+Epoch 71/100: Accuracy = 100.0, Loss = 0.004367053043097258
+Epoch 72/100: Accuracy = 100.0, Loss = 0.004279147833585739
+Epoch 73/100: Accuracy = 100.0, Loss = 0.004194307141005993
+Epoch 74/100: Accuracy = 100.0, Loss = 0.004112391732633114
+Epoch 75/100: Accuracy = 100.0, Loss = 0.004033151548355818
+Epoch 76/100: Accuracy = 100.0, Loss = 0.003956838045269251
+Epoch 77/100: Accuracy = 100.0, Loss = 0.0038832426071166992
+Epoch 78/100: Accuracy = 100.0, Loss = 0.0038121824618428946
+Epoch 79/100: Accuracy = 100.0, Loss = 0.003743684384971857
+Epoch 80/100: Accuracy = 100.0, Loss = 0.0036779821384698153
+Epoch 81/100: Accuracy = 100.0, Loss = 0.003614817513152957
+Epoch 82/100: Accuracy = 100.0, Loss = 0.003554180497303605
+Epoch 83/100: Accuracy = 100.0, Loss = 0.003495733952149749
+Epoch 84/100: Accuracy = 100.0, Loss = 0.003439274150878191
+Epoch 85/100: Accuracy = 100.0, Loss = 0.0033849943429231644
+Epoch 86/100: Accuracy = 100.0, Loss = 0.003332509659230709
+Epoch 87/100: Accuracy = 100.0, Loss = 0.0032818466424942017
+Epoch 88/100: Accuracy = 100.0, Loss = 0.003232908435165882
+Epoch 89/100: Accuracy = 100.0, Loss = 0.0031856736168265343
+Epoch 90/100: Accuracy = 100.0, Loss = 0.0031401237938553095
+Epoch 91/100: Accuracy = 100.0, Loss = 0.0030960403382778168
+Epoch 92/100: Accuracy = 100.0, Loss = 0.003053168533369899
+Epoch 93/100: Accuracy = 100.0, Loss = 0.0030114927794784307
+Epoch 94/100: Accuracy = 100.0, Loss = 0.002970961155369878
+Epoch 95/100: Accuracy = 100.0, Loss = 0.002931575058028102
+Epoch 96/100: Accuracy = 100.0, Loss = 0.002893207361921668
+Epoch 97/100: Accuracy = 100.0, Loss = 0.0028558254707604647
+Epoch 98/100: Accuracy = 100.0, Loss = 0.002819407032802701
+Epoch 99/100: Accuracy = 100.0, Loss = 0.0027838891837745905
+Epoch 100/100: Accuracy = 100.0, Loss = 0.0027491676155477762
+
+ ======== Evaluate on valid set ========
+Task 0: Accuracy == 61.904761904761905, Test CE Loss == 1.8007763624191284 ;
+Task 1: Accuracy == 95.23809523809523, Test CE Loss == 0.16112610697746277 ;
+Task 2: Accuracy == 95.45454545454545, Test CE Loss == 0.22942334413528442 ;
+
+ ======== Evaluate on test set ========
+Task 0: Accuracy == 60.94808126410835, Test CE Loss == 1.4673796892166138 ;
+Task 1: Accuracy == 92.17199558985666, Test CE Loss == 0.26134446263313293 ;
+Task 2: Accuracy == 77.67756482525367, Test CE Loss == 0.7723930478096008 ;
+AL cycle: 1 / 2
+Labelled set size: 8
+Learning a new task
+
+--> Task 3: 8 classes in total
+Epoch 1/100: Accuracy = 75.0, Loss = 0.889083206653595
+Epoch 2/100: Accuracy = 75.0, Loss = 0.8505773544311523
+Epoch 3/100: Accuracy = 87.5, Loss = 0.3792494237422943
+Epoch 4/100: Accuracy = 96.875, Loss = 0.21842610836029053
+Epoch 5/100: Accuracy = 100.0, Loss = 0.12933380901813507
+Epoch 6/100: Accuracy = 100.0, Loss = 0.08953031897544861
+Epoch 7/100: Accuracy = 100.0, Loss = 0.07253963500261307
+Epoch 8/100: Accuracy = 100.0, Loss = 0.059588540345430374
+Epoch 9/100: Accuracy = 100.0, Loss = 0.04863365739583969
+Epoch 10/100: Accuracy = 100.0, Loss = 0.03895484283566475
+Epoch 11/100: Accuracy = 100.0, Loss = 0.031762272119522095
+Epoch 12/100: Accuracy = 100.0, Loss = 0.0310971736907959
+Epoch 13/100: Accuracy = 100.0, Loss = 0.03026089072227478
+Epoch 14/100: Accuracy = 100.0, Loss = 0.029292434453964233
+Epoch 15/100: Accuracy = 100.0, Loss = 0.028238525614142418
+Epoch 16/100: Accuracy = 100.0, Loss = 0.027135688811540604
+Epoch 17/100: Accuracy = 100.0, Loss = 0.026014912873506546
+Epoch 18/100: Accuracy = 100.0, Loss = 0.024902038276195526
+Epoch 19/100: Accuracy = 100.0, Loss = 0.023810334503650665
+Epoch 20/100: Accuracy = 100.0, Loss = 0.022763723507523537
+Epoch 21/100: Accuracy = 100.0, Loss = 0.021779198199510574
+Epoch 22/100: Accuracy = 100.0, Loss = 0.020852038636803627
+Epoch 23/100: Accuracy = 100.0, Loss = 0.01998336985707283
+Epoch 24/100: Accuracy = 100.0, Loss = 0.01916949637234211
+Epoch 25/100: Accuracy = 100.0, Loss = 0.018410392105579376
+Epoch 26/100: Accuracy = 100.0, Loss = 0.017700817435979843
+Epoch 27/100: Accuracy = 100.0, Loss = 0.017037518322467804
+Early stopping
+AL cycle: 2 / 2
+Shape of unlabelled data: (167, 315, 3)
+Labelled set size: 8
+Epoch 1/100: Accuracy = 80.0, Loss = 0.408958375453949
+Epoch 2/100: Accuracy = 80.0, Loss = 0.4030783772468567
+Epoch 3/100: Accuracy = 97.5, Loss = 0.21972450613975525
+Epoch 4/100: Accuracy = 100.0, Loss = 0.13307282328605652
+Epoch 5/100: Accuracy = 100.0, Loss = 0.1161402016878128
+Epoch 6/100: Accuracy = 100.0, Loss = 0.09485384821891785
+Epoch 7/100: Accuracy = 100.0, Loss = 0.06726007163524628
+Epoch 8/100: Accuracy = 100.0, Loss = 0.05470021814107895
+Epoch 9/100: Accuracy = 100.0, Loss = 0.05104251950979233
+Epoch 10/100: Accuracy = 100.0, Loss = 0.045545242726802826
+Epoch 11/100: Accuracy = 100.0, Loss = 0.037701480090618134
+Epoch 12/100: Accuracy = 100.0, Loss = 0.03681475669145584
+Epoch 13/100: Accuracy = 100.0, Loss = 0.03558715432882309
+Epoch 14/100: Accuracy = 100.0, Loss = 0.03411218896508217
+Epoch 15/100: Accuracy = 100.0, Loss = 0.03248037397861481
+Epoch 16/100: Accuracy = 100.0, Loss = 0.030776893720030785
+Epoch 17/100: Accuracy = 100.0, Loss = 0.029057949781417847
+Epoch 18/100: Accuracy = 100.0, Loss = 0.027384111657738686
+Epoch 19/100: Accuracy = 100.0, Loss = 0.02579350769519806
+Epoch 20/100: Accuracy = 100.0, Loss = 0.024308601394295692
+Epoch 21/100: Accuracy = 100.0, Loss = 0.022943217307329178
+Epoch 22/100: Accuracy = 100.0, Loss = 0.021693812683224678
+Epoch 23/100: Accuracy = 100.0, Loss = 0.020563405007123947
+Epoch 24/100: Accuracy = 100.0, Loss = 0.019539065659046173
+Epoch 25/100: Accuracy = 100.0, Loss = 0.018618425354361534
+Epoch 26/100: Accuracy = 100.0, Loss = 0.01778719574213028
+Epoch 27/100: Accuracy = 100.0, Loss = 0.017036978155374527
+Epoch 28/100: Accuracy = 100.0, Loss = 0.016359489411115646
+Epoch 29/100: Accuracy = 100.0, Loss = 0.01574481837451458
+Epoch 30/100: Accuracy = 100.0, Loss = 0.015185053460299969
+Epoch 31/100: Accuracy = 100.0, Loss = 0.014667843468487263
+Epoch 32/100: Accuracy = 100.0, Loss = 0.014185754582285881
+Epoch 33/100: Accuracy = 100.0, Loss = 0.013734670355916023
+Epoch 34/100: Accuracy = 100.0, Loss = 0.013311888091266155
+Epoch 35/100: Accuracy = 100.0, Loss = 0.012917676940560341
+Epoch 36/100: Accuracy = 100.0, Loss = 0.012545792385935783
+Epoch 37/100: Accuracy = 100.0, Loss = 0.012193286791443825
+Epoch 38/100: Accuracy = 100.0, Loss = 0.011858495883643627
+Epoch 39/100: Accuracy = 100.0, Loss = 0.011538472026586533
+Epoch 40/100: Accuracy = 100.0, Loss = 0.011232396587729454
+Epoch 41/100: Accuracy = 100.0, Loss = 0.010939442552626133
+Epoch 42/100: Accuracy = 100.0, Loss = 0.010657427832484245
+Epoch 43/100: Accuracy = 100.0, Loss = 0.010385578498244286
+Epoch 44/100: Accuracy = 100.0, Loss = 0.010124688036739826
+Epoch 45/100: Accuracy = 100.0, Loss = 0.009873127564787865
+Epoch 46/100: Accuracy = 100.0, Loss = 0.009631173685193062
+Epoch 47/100: Accuracy = 100.0, Loss = 0.009399021044373512
+Epoch 48/100: Accuracy = 100.0, Loss = 0.009176021441817284
+Epoch 49/100: Accuracy = 100.0, Loss = 0.008962186984717846
+Epoch 50/100: Accuracy = 100.0, Loss = 0.008756683208048344
+Epoch 51/100: Accuracy = 100.0, Loss = 0.008559375070035458
+Epoch 52/100: Accuracy = 100.0, Loss = 0.008370043709874153
+Epoch 53/100: Accuracy = 100.0, Loss = 0.008188897743821144
+Epoch 54/100: Accuracy = 100.0, Loss = 0.008015683852136135
+Epoch 55/100: Accuracy = 100.0, Loss = 0.007849762216210365
+Epoch 56/100: Accuracy = 100.0, Loss = 0.007690535392612219
+Epoch 57/100: Accuracy = 100.0, Loss = 0.007537294179201126
+Epoch 58/100: Accuracy = 100.0, Loss = 0.0073900381103158
+Epoch 59/100: Accuracy = 100.0, Loss = 0.007247937377542257
+Epoch 60/100: Accuracy = 100.0, Loss = 0.0071104420349001884
+Epoch 61/100: Accuracy = 100.0, Loss = 0.006977560464292765
+Epoch 62/100: Accuracy = 100.0, Loss = 0.006848341319710016
+Epoch 63/100: Accuracy = 100.0, Loss = 0.006722606718540192
+Epoch 64/100: Accuracy = 100.0, Loss = 0.0066003440879285336
+Epoch 65/100: Accuracy = 100.0, Loss = 0.006481476128101349
+Epoch 66/100: Accuracy = 100.0, Loss = 0.006365836597979069
+Epoch 67/100: Accuracy = 100.0, Loss = 0.006253231316804886
+Epoch 68/100: Accuracy = 100.0, Loss = 0.006143561098724604
+Epoch 69/100: Accuracy = 100.0, Loss = 0.0060369111597537994
+Epoch 70/100: Accuracy = 100.0, Loss = 0.005933044478297234
+Epoch 71/100: Accuracy = 100.0, Loss = 0.005831769201904535
+Epoch 72/100: Accuracy = 100.0, Loss = 0.00573344761505723
+Epoch 73/100: Accuracy = 100.0, Loss = 0.005637868773192167
+Epoch 74/100: Accuracy = 100.0, Loss = 0.005544913001358509
+Epoch 75/100: Accuracy = 100.0, Loss = 0.005454602185636759
+Epoch 76/100: Accuracy = 100.0, Loss = 0.005366961471736431
+Epoch 77/100: Accuracy = 100.0, Loss = 0.00528187770396471
+Epoch 78/100: Accuracy = 100.0, Loss = 0.0051992712542414665
+Epoch 79/100: Accuracy = 100.0, Loss = 0.005119280889630318
+Epoch 80/100: Accuracy = 100.0, Loss = 0.005041785072535276
+Epoch 81/100: Accuracy = 100.0, Loss = 0.004966810345649719
+Epoch 82/100: Accuracy = 100.0, Loss = 0.004894091747701168
+Epoch 83/100: Accuracy = 100.0, Loss = 0.004823640454560518
+Epoch 84/100: Accuracy = 100.0, Loss = 0.004755592904984951
+Epoch 85/100: Accuracy = 100.0, Loss = 0.004689759574830532
+Epoch 86/100: Accuracy = 100.0, Loss = 0.0046260179951786995
+Epoch 87/100: Accuracy = 100.0, Loss = 0.004564071074128151
+Epoch 88/100: Accuracy = 100.0, Loss = 0.004503968171775341
+Epoch 89/100: Accuracy = 100.0, Loss = 0.004445554688572884
+Epoch 90/100: Accuracy = 100.0, Loss = 0.004388723988085985
+Epoch 91/100: Accuracy = 100.0, Loss = 0.004333532880991697
+Epoch 92/100: Accuracy = 100.0, Loss = 0.004279817454516888
+Epoch 93/100: Accuracy = 100.0, Loss = 0.004227585159242153
+Epoch 94/100: Accuracy = 100.0, Loss = 0.004176618065685034
+Epoch 95/100: Accuracy = 100.0, Loss = 0.00412681233137846
+Epoch 96/100: Accuracy = 100.0, Loss = 0.004078115336596966
+Epoch 97/100: Accuracy = 100.0, Loss = 0.0040305727161467075
+Epoch 98/100: Accuracy = 100.0, Loss = 0.003984058741480112
+Epoch 99/100: Accuracy = 100.0, Loss = 0.003938592039048672
+Epoch 100/100: Accuracy = 100.0, Loss = 0.00389403966255486
+
+ ======== Evaluate on valid set ========
+Task 0: Accuracy == 57.14285714285714, Test CE Loss == 1.6853513717651367 ;
+Task 1: Accuracy == 100.0, Test CE Loss == 0.10826283693313599 ;
+Task 2: Accuracy == 77.27272727272727, Test CE Loss == 0.7156930565834045 ;
+Task 3: Accuracy == 95.0, Test CE Loss == 0.28105640411376953 ;
+Accuracy matrix of all tasks:
+[[ 76.19   0.     0.     0.  ]
+ [ 71.43 100.     0.     0.  ]
+ [ 61.9   95.24  95.45   0.  ]
+ [ 57.14 100.    77.27  95.  ]]
+
+ ======== Evaluate on test set ========
+Task 0: Accuracy == 57.78781038374717, Test CE Loss == 1.7125507593154907 ;
+Task 1: Accuracy == 92.8335170893054, Test CE Loss == 0.2749062776565552 ;
+Task 2: Accuracy == 60.42841037204059, Test CE Loss == 1.0954564809799194 ;
+Task 3: Accuracy == 89.80044345898004, Test CE Loss == 0.40105852484703064 ;
+Accuracy matrix of all tasks:
+[[80.59  0.    0.    0.  ]
+ [69.07 99.23  0.    0.  ]
+ [60.95 92.17 77.68  0.  ]
+ [57.79 92.83 60.43 89.8 ]]
+Len of Acc_multiple_run_test: 4
+
+ Finish Run 3: total 43.23264145851135 sec
+
+ ######## Run 4, cls_order :[1, 0, 3, 7, 2, 5, 6, 4] ########
+Create exp stream : 4 tasks,  classes order [1, 0, 3, 7, 2, 5, 6, 4] 
+Input shape (L, D): (315, 3)
+Training set size: 722; Val set size: 84; Test set size: 3582
+buffer has 40 slots
+ER mode: task, NCM classifier: False
+AL strategy: Uncertainty
+AL cycle: 1 / 2
+Labelled set size: 8
+Learning a new task
+
+--> Task 0: 2 classes in total
+Epoch 1/100: Accuracy = 75.0, Loss = 0.49317750334739685
+Epoch 2/100: Accuracy = 87.5, Loss = 0.346866637468338
+Epoch 3/100: Accuracy = 100.0, Loss = 0.006414765026420355
+Epoch 4/100: Accuracy = 100.0, Loss = 0.0027109684888273478
+Epoch 5/100: Accuracy = 100.0, Loss = 0.001540477853268385
+Epoch 6/100: Accuracy = 100.0, Loss = 0.0009090160601772368
+Epoch 7/100: Accuracy = 100.0, Loss = 0.0006607381510548294
+Epoch 8/100: Accuracy = 100.0, Loss = 0.000501318252645433
+Epoch 9/100: Accuracy = 100.0, Loss = 0.0003798548714257777
+Epoch 10/100: Accuracy = 100.0, Loss = 0.00030655760201625526
+Epoch 11/100: Accuracy = 100.0, Loss = 0.00026456889463588595
+Epoch 12/100: Accuracy = 100.0, Loss = 0.00026005576364696026
+Epoch 13/100: Accuracy = 100.0, Loss = 0.000254068203503266
+Epoch 14/100: Accuracy = 100.0, Loss = 0.00024682958610355854
+Epoch 15/100: Accuracy = 100.0, Loss = 0.00023862277157604694
+Epoch 16/100: Accuracy = 100.0, Loss = 0.00022971586440689862
+Epoch 17/100: Accuracy = 100.0, Loss = 0.00022033220739103854
+Epoch 18/100: Accuracy = 100.0, Loss = 0.00021073981770314276
+Epoch 19/100: Accuracy = 100.0, Loss = 0.00020107277669012547
+Epoch 20/100: Accuracy = 100.0, Loss = 0.0001914949098136276
+Epoch 21/100: Accuracy = 100.0, Loss = 0.00018222967628389597
+Epoch 22/100: Accuracy = 100.0, Loss = 0.00017336643941234797
+Epoch 23/100: Accuracy = 100.0, Loss = 0.00016493501607328653
+Epoch 24/100: Accuracy = 100.0, Loss = 0.00015702482778578997
+Epoch 25/100: Accuracy = 100.0, Loss = 0.00014966566232033074
+Epoch 26/100: Accuracy = 100.0, Loss = 0.0001429022813681513
+Epoch 27/100: Accuracy = 100.0, Loss = 0.00013663039135280997
+Epoch 28/100: Accuracy = 100.0, Loss = 0.0001309096405748278
+Epoch 29/100: Accuracy = 100.0, Loss = 0.00012569532555062324
+Epoch 30/100: Accuracy = 100.0, Loss = 0.00012095768033759668
+Epoch 31/100: Accuracy = 100.0, Loss = 0.00011657753202598542
+Epoch 32/100: Accuracy = 100.0, Loss = 0.00011265918146818876
+Epoch 33/100: Accuracy = 100.0, Loss = 0.00010905366798397154
+Epoch 34/100: Accuracy = 100.0, Loss = 0.00010579078661976382
+Epoch 35/100: Accuracy = 100.0, Loss = 0.00010282585571985692
+Epoch 36/100: Accuracy = 100.0, Loss = 0.00010006948286900297
+Epoch 37/100: Accuracy = 100.0, Loss = 9.759618114912882e-05
+Epoch 38/100: Accuracy = 100.0, Loss = 9.528676309855655e-05
+Epoch 39/100: Accuracy = 100.0, Loss = 9.317100921180099e-05
+Epoch 40/100: Accuracy = 100.0, Loss = 9.117444278672338e-05
+Epoch 41/100: Accuracy = 100.0, Loss = 8.934176730690524e-05
+Epoch 42/100: Accuracy = 100.0, Loss = 8.76133781275712e-05
+Epoch 43/100: Accuracy = 100.0, Loss = 8.594458631705493e-05
+Epoch 44/100: Accuracy = 100.0, Loss = 8.439499652013183e-05
+Epoch 45/100: Accuracy = 100.0, Loss = 8.286029333248734e-05
+Epoch 46/100: Accuracy = 100.0, Loss = 8.14000959508121e-05
+Epoch 47/100: Accuracy = 100.0, Loss = 7.999951048986986e-05
+Epoch 48/100: Accuracy = 100.0, Loss = 7.861381163820624e-05
+Epoch 49/100: Accuracy = 100.0, Loss = 7.728773198323324e-05
+Epoch 50/100: Accuracy = 100.0, Loss = 7.591693429276347e-05
+Epoch 51/100: Accuracy = 100.0, Loss = 7.463555812137201e-05
+Epoch 52/100: Accuracy = 100.0, Loss = 7.332437235163525e-05
+Epoch 53/100: Accuracy = 100.0, Loss = 7.201320113381371e-05
+Epoch 54/100: Accuracy = 100.0, Loss = 7.07467261236161e-05
+Early stopping
+AL cycle: 2 / 2
+Shape of unlabelled data: (175, 315, 3)
+Labelled set size: 8
+Epoch 1/100: Accuracy = 87.5, Loss = 0.3149116039276123
+Epoch 2/100: Accuracy = 100.0, Loss = 0.28288009762763977
+Epoch 3/100: Accuracy = 100.0, Loss = 0.05317295342683792
+Epoch 4/100: Accuracy = 100.0, Loss = 0.024537455290555954
+Epoch 5/100: Accuracy = 100.0, Loss = 0.00771926436573267
+Epoch 6/100: Accuracy = 100.0, Loss = 0.00873599573969841
+Epoch 7/100: Accuracy = 100.0, Loss = 0.00567478034645319
+Epoch 8/100: Accuracy = 100.0, Loss = 0.003608537372201681
+Epoch 9/100: Accuracy = 100.0, Loss = 0.002952578477561474
+Epoch 10/100: Accuracy = 100.0, Loss = 0.002581004984676838
+Epoch 11/100: Accuracy = 100.0, Loss = 0.002383129671216011
+Epoch 12/100: Accuracy = 100.0, Loss = 0.002352084033191204
+Epoch 13/100: Accuracy = 100.0, Loss = 0.0022950456477701664
+Epoch 14/100: Accuracy = 100.0, Loss = 0.0022163530811667442
+Epoch 15/100: Accuracy = 100.0, Loss = 0.0021222829818725586
+Epoch 16/100: Accuracy = 100.0, Loss = 0.002019547624513507
+Epoch 17/100: Accuracy = 100.0, Loss = 0.0019134018803015351
+Epoch 18/100: Accuracy = 100.0, Loss = 0.0018089183140546083
+Epoch 19/100: Accuracy = 100.0, Loss = 0.00170867086853832
+Epoch 20/100: Accuracy = 100.0, Loss = 0.0016142255626618862
+Epoch 21/100: Accuracy = 100.0, Loss = 0.0015271066222339869
+Epoch 22/100: Accuracy = 100.0, Loss = 0.0014482144033536315
+Epoch 23/100: Accuracy = 100.0, Loss = 0.0013770963996648788
+Epoch 24/100: Accuracy = 100.0, Loss = 0.0013135652989149094
+Early stopping
+
+ ======== Evaluate on valid set ========
+Task 0: Accuracy == 85.71428571428571, Test CE Loss == 0.37511762976646423 ;
+
+ ======== Evaluate on test set ========
+Task 0: Accuracy == 91.90101237345331, Test CE Loss == 0.23330621421337128 ;
+AL cycle: 1 / 2
+Labelled set size: 8
+Learning a new task
+
+--> Task 1: 4 classes in total
+Epoch 1/100: Accuracy = 50.0, Loss = 1.1230294704437256
+Epoch 2/100: Accuracy = 50.0, Loss = 1.0150381326675415
+Epoch 3/100: Accuracy = 62.5, Loss = 0.5430373549461365
+Epoch 4/100: Accuracy = 100.0, Loss = 0.1656031608581543
+Epoch 5/100: Accuracy = 100.0, Loss = 0.08241556584835052
+Epoch 6/100: Accuracy = 100.0, Loss = 0.043320223689079285
+Epoch 7/100: Accuracy = 100.0, Loss = 0.021712739020586014
+Epoch 8/100: Accuracy = 100.0, Loss = 0.012884976342320442
+Epoch 9/100: Accuracy = 100.0, Loss = 0.008809918537735939
+Epoch 10/100: Accuracy = 100.0, Loss = 0.006677271332591772
+Epoch 11/100: Accuracy = 100.0, Loss = 0.005290676839649677
+Epoch 12/100: Accuracy = 100.0, Loss = 0.005159619729965925
+Epoch 13/100: Accuracy = 100.0, Loss = 0.005007438361644745
+Epoch 14/100: Accuracy = 100.0, Loss = 0.004839567467570305
+Epoch 15/100: Accuracy = 100.0, Loss = 0.0046611023135483265
+Epoch 16/100: Accuracy = 100.0, Loss = 0.00447676470503211
+Epoch 17/100: Accuracy = 100.0, Loss = 0.004290428012609482
+Epoch 18/100: Accuracy = 100.0, Loss = 0.004104794934391975
+Epoch 19/100: Accuracy = 100.0, Loss = 0.0039230044931173325
+Epoch 20/100: Accuracy = 100.0, Loss = 0.0037464676424860954
+Epoch 21/100: Accuracy = 100.0, Loss = 0.003576545277610421
+Epoch 22/100: Accuracy = 100.0, Loss = 0.0034143966622650623
+Epoch 23/100: Accuracy = 100.0, Loss = 0.0032600166741758585
+Epoch 24/100: Accuracy = 100.0, Loss = 0.003113969461992383
+Epoch 25/100: Accuracy = 100.0, Loss = 0.0029764417558908463
+Epoch 26/100: Accuracy = 100.0, Loss = 0.002847129013389349
+Early stopping
+AL cycle: 2 / 2
+Shape of unlabelled data: (164, 315, 3)
+Labelled set size: 8
+Epoch 1/100: Accuracy = 66.66666666666666, Loss = 0.5838969945907593
+Epoch 2/100: Accuracy = 66.66666666666666, Loss = 0.5710827708244324
+Epoch 3/100: Accuracy = 91.66666666666666, Loss = 0.22349674999713898
+Epoch 4/100: Accuracy = 100.0, Loss = 0.08346721529960632
+Epoch 5/100: Accuracy = 100.0, Loss = 0.05072858929634094
+Epoch 6/100: Accuracy = 100.0, Loss = 0.04889039695262909
+Epoch 7/100: Accuracy = 100.0, Loss = 0.043519821017980576
+Epoch 8/100: Accuracy = 100.0, Loss = 0.03562864661216736
+Epoch 9/100: Accuracy = 100.0, Loss = 0.029100241139531136
+Epoch 10/100: Accuracy = 100.0, Loss = 0.02348359115421772
+Epoch 11/100: Accuracy = 100.0, Loss = 0.01880037970840931
+Epoch 12/100: Accuracy = 100.0, Loss = 0.018299730494618416
+Epoch 13/100: Accuracy = 100.0, Loss = 0.01765328086912632
+Epoch 14/100: Accuracy = 100.0, Loss = 0.01690162532031536
+Epoch 15/100: Accuracy = 100.0, Loss = 0.016079485416412354
+Epoch 16/100: Accuracy = 100.0, Loss = 0.01521831750869751
+Epoch 17/100: Accuracy = 100.0, Loss = 0.01434975117444992
+Epoch 18/100: Accuracy = 100.0, Loss = 0.013494286686182022
+Epoch 19/100: Accuracy = 100.0, Loss = 0.012666735798120499
+Epoch 20/100: Accuracy = 100.0, Loss = 0.011881411075592041
+Epoch 21/100: Accuracy = 100.0, Loss = 0.011142869479954243
+Epoch 22/100: Accuracy = 100.0, Loss = 0.010456550866365433
+Epoch 23/100: Accuracy = 100.0, Loss = 0.009825310669839382
+Epoch 24/100: Accuracy = 100.0, Loss = 0.009247020818293095
+Epoch 25/100: Accuracy = 100.0, Loss = 0.008716775104403496
+Epoch 26/100: Accuracy = 100.0, Loss = 0.008227702230215073
+Epoch 27/100: Accuracy = 100.0, Loss = 0.0077807907946407795
+Epoch 28/100: Accuracy = 100.0, Loss = 0.0073707555420696735
+Epoch 29/100: Accuracy = 100.0, Loss = 0.006994341965764761
+Epoch 30/100: Accuracy = 100.0, Loss = 0.006646949797868729
+Epoch 31/100: Accuracy = 100.0, Loss = 0.0063274628482759
+Epoch 32/100: Accuracy = 100.0, Loss = 0.006032624747604132
+Epoch 33/100: Accuracy = 100.0, Loss = 0.005759020801633596
+Epoch 34/100: Accuracy = 100.0, Loss = 0.005503073334693909
+Epoch 35/100: Accuracy = 100.0, Loss = 0.005263180937618017
+Epoch 36/100: Accuracy = 100.0, Loss = 0.00503907073289156
+Epoch 37/100: Accuracy = 100.0, Loss = 0.004830284509807825
+Epoch 38/100: Accuracy = 100.0, Loss = 0.004635134246200323
+Epoch 39/100: Accuracy = 100.0, Loss = 0.004451702814549208
+Epoch 40/100: Accuracy = 100.0, Loss = 0.004279380664229393
+Epoch 41/100: Accuracy = 100.0, Loss = 0.004117516800761223
+Epoch 42/100: Accuracy = 100.0, Loss = 0.0039656939916312695
+Epoch 43/100: Accuracy = 100.0, Loss = 0.0038226002361625433
+Epoch 44/100: Accuracy = 100.0, Loss = 0.0036873978096991777
+Epoch 45/100: Accuracy = 100.0, Loss = 0.003559725359082222
+Epoch 46/100: Accuracy = 100.0, Loss = 0.003439662978053093
+Epoch 47/100: Accuracy = 100.0, Loss = 0.003326009027659893
+Epoch 48/100: Accuracy = 100.0, Loss = 0.003218133933842182
+Epoch 49/100: Accuracy = 100.0, Loss = 0.0031161794904619455
+Epoch 50/100: Accuracy = 100.0, Loss = 0.0030194728169590235
+Epoch 51/100: Accuracy = 100.0, Loss = 0.0029275722336024046
+Epoch 52/100: Accuracy = 100.0, Loss = 0.0028402579482644796
+Epoch 53/100: Accuracy = 100.0, Loss = 0.002757180482149124
+Epoch 54/100: Accuracy = 100.0, Loss = 0.002677813172340393
+Epoch 55/100: Accuracy = 100.0, Loss = 0.0026023744139820337
+Epoch 56/100: Accuracy = 100.0, Loss = 0.0025306781753897667
+Epoch 57/100: Accuracy = 100.0, Loss = 0.002462464151903987
+Epoch 58/100: Accuracy = 100.0, Loss = 0.0023974752984941006
+Epoch 59/100: Accuracy = 100.0, Loss = 0.0023355951998382807
+Epoch 60/100: Accuracy = 100.0, Loss = 0.0022766462061554193
+Epoch 61/100: Accuracy = 100.0, Loss = 0.002220451133325696
+Epoch 62/100: Accuracy = 100.0, Loss = 0.002166862366721034
+Epoch 63/100: Accuracy = 100.0, Loss = 0.0021157474257051945
+Epoch 64/100: Accuracy = 100.0, Loss = 0.0020667745266109705
+Epoch 65/100: Accuracy = 100.0, Loss = 0.0020200100261718035
+Epoch 66/100: Accuracy = 100.0, Loss = 0.0019752306398004293
+Epoch 67/100: Accuracy = 100.0, Loss = 0.0019323433516547084
+Epoch 68/100: Accuracy = 100.0, Loss = 0.0018913733074441552
+Epoch 69/100: Accuracy = 100.0, Loss = 0.001852058689109981
+Early stopping
+
+ ======== Evaluate on valid set ========
+Task 0: Accuracy == 76.19047619047619, Test CE Loss == 0.746121883392334 ;
+Task 1: Accuracy == 90.0, Test CE Loss == 0.46337398886680603 ;
+
+ ======== Evaluate on test set ========
+Task 0: Accuracy == 74.9156355455568, Test CE Loss == 0.7948058247566223 ;
+Task 1: Accuracy == 89.67032967032968, Test CE Loss == 0.2853851616382599 ;
+AL cycle: 1 / 2
+Labelled set size: 8
+Learning a new task
+
+--> Task 2: 6 classes in total
+Epoch 1/100: Accuracy = 66.66666666666666, Loss = 1.1946032047271729
+Epoch 2/100: Accuracy = 66.66666666666666, Loss = 1.1365867853164673
+Epoch 3/100: Accuracy = 75.0, Loss = 0.5869441628456116
+Epoch 4/100: Accuracy = 87.5, Loss = 0.30322957038879395
+Epoch 5/100: Accuracy = 95.83333333333334, Loss = 0.1959552764892578
+Epoch 6/100: Accuracy = 100.0, Loss = 0.13720528781414032
+Epoch 7/100: Accuracy = 100.0, Loss = 0.10120847076177597
+Epoch 8/100: Accuracy = 100.0, Loss = 0.07707565277814865
+Epoch 9/100: Accuracy = 100.0, Loss = 0.05465077981352806
+Epoch 10/100: Accuracy = 100.0, Loss = 0.038793034851551056
+Epoch 11/100: Accuracy = 100.0, Loss = 0.028918681666254997
+Epoch 12/100: Accuracy = 100.0, Loss = 0.028083564713597298
+Epoch 13/100: Accuracy = 100.0, Loss = 0.027130156755447388
+Epoch 14/100: Accuracy = 100.0, Loss = 0.026093803346157074
+Epoch 15/100: Accuracy = 100.0, Loss = 0.02500939927995205
+Epoch 16/100: Accuracy = 100.0, Loss = 0.023912740871310234
+Epoch 17/100: Accuracy = 100.0, Loss = 0.022838423028588295
+Epoch 18/100: Accuracy = 100.0, Loss = 0.021799350157380104
+Epoch 19/100: Accuracy = 100.0, Loss = 0.020806288346648216
+Epoch 20/100: Accuracy = 100.0, Loss = 0.019863544031977654
+Epoch 21/100: Accuracy = 100.0, Loss = 0.018970878794789314
+Epoch 22/100: Accuracy = 100.0, Loss = 0.018130868673324585
+Epoch 23/100: Accuracy = 100.0, Loss = 0.017342133447527885
+Epoch 24/100: Accuracy = 100.0, Loss = 0.016603531315922737
+Epoch 25/100: Accuracy = 100.0, Loss = 0.01590883545577526
+Early stopping
+AL cycle: 2 / 2
+Shape of unlabelled data: (166, 315, 3)
+Labelled set size: 8
+Epoch 1/100: Accuracy = 84.375, Loss = 0.44996145367622375
+Epoch 2/100: Accuracy = 84.375, Loss = 0.444764107465744
+Epoch 3/100: Accuracy = 100.0, Loss = 0.2862338423728943
+Epoch 4/100: Accuracy = 100.0, Loss = 0.17873258888721466
+Epoch 5/100: Accuracy = 100.0, Loss = 0.12276976555585861
+Epoch 6/100: Accuracy = 100.0, Loss = 0.08705414086580276
+Epoch 7/100: Accuracy = 100.0, Loss = 0.06125976890325546
+Epoch 8/100: Accuracy = 100.0, Loss = 0.04565363749861717
+Epoch 9/100: Accuracy = 100.0, Loss = 0.03711290284991264
+Epoch 10/100: Accuracy = 100.0, Loss = 0.031288158148527145
+Epoch 11/100: Accuracy = 100.0, Loss = 0.026841582730412483
+Epoch 12/100: Accuracy = 100.0, Loss = 0.026351219043135643
+Epoch 13/100: Accuracy = 100.0, Loss = 0.025692760944366455
+Epoch 14/100: Accuracy = 100.0, Loss = 0.024892177432775497
+Epoch 15/100: Accuracy = 100.0, Loss = 0.023986825719475746
+Epoch 16/100: Accuracy = 100.0, Loss = 0.02300109900534153
+Epoch 17/100: Accuracy = 100.0, Loss = 0.02197081595659256
+Epoch 18/100: Accuracy = 100.0, Loss = 0.020923305302858353
+Epoch 19/100: Accuracy = 100.0, Loss = 0.019883790984749794
+Epoch 20/100: Accuracy = 100.0, Loss = 0.018872756510972977
+Epoch 21/100: Accuracy = 100.0, Loss = 0.01790391094982624
+Epoch 22/100: Accuracy = 100.0, Loss = 0.016988398507237434
+Epoch 23/100: Accuracy = 100.0, Loss = 0.01612726040184498
+Epoch 24/100: Accuracy = 100.0, Loss = 0.015329597517848015
+Early stopping
+
+ ======== Evaluate on valid set ========
+Task 0: Accuracy == 61.904761904761905, Test CE Loss == 1.1364173889160156 ;
+Task 1: Accuracy == 85.0, Test CE Loss == 0.654388964176178 ;
+Task 2: Accuracy == 80.0, Test CE Loss == 0.8035261034965515 ;
+
+ ======== Evaluate on test set ========
+Task 0: Accuracy == 63.217097862767154, Test CE Loss == 1.0577000379562378 ;
+Task 1: Accuracy == 75.6043956043956, Test CE Loss == 0.5922308564186096 ;
+Task 2: Accuracy == 71.98228128460687, Test CE Loss == 0.9737019538879395 ;
+AL cycle: 1 / 2
+Labelled set size: 8
+Learning a new task
+
+--> Task 3: 8 classes in total
+Epoch 1/100: Accuracy = 75.0, Loss = 0.7638891935348511
+Epoch 2/100: Accuracy = 75.0, Loss = 0.7311031818389893
+Epoch 3/100: Accuracy = 93.75, Loss = 0.46599480509757996
+Epoch 4/100: Accuracy = 100.0, Loss = 0.3173615336418152
+Epoch 5/100: Accuracy = 100.0, Loss = 0.20997390151023865
+Epoch 6/100: Accuracy = 100.0, Loss = 0.1411670744419098
+Epoch 7/100: Accuracy = 100.0, Loss = 0.10004725307226181
+Epoch 8/100: Accuracy = 100.0, Loss = 0.07746699452400208
+Epoch 9/100: Accuracy = 100.0, Loss = 0.06090252846479416
+Epoch 10/100: Accuracy = 100.0, Loss = 0.04783438891172409
+Epoch 11/100: Accuracy = 100.0, Loss = 0.03747447207570076
+Epoch 12/100: Accuracy = 100.0, Loss = 0.036423902958631516
+Epoch 13/100: Accuracy = 100.0, Loss = 0.0351293720304966
+Epoch 14/100: Accuracy = 100.0, Loss = 0.03368373215198517
+Epoch 15/100: Accuracy = 100.0, Loss = 0.03216081112623215
+Epoch 16/100: Accuracy = 100.0, Loss = 0.03062276355922222
+Epoch 17/100: Accuracy = 100.0, Loss = 0.029111692681908607
+Epoch 18/100: Accuracy = 100.0, Loss = 0.027661120519042015
+Epoch 19/100: Accuracy = 100.0, Loss = 0.02628825232386589
+Epoch 20/100: Accuracy = 100.0, Loss = 0.024997251108288765
+Epoch 21/100: Accuracy = 100.0, Loss = 0.023804938420653343
+Epoch 22/100: Accuracy = 100.0, Loss = 0.022702213376760483
+Epoch 23/100: Accuracy = 100.0, Loss = 0.021679198369383812
+Epoch 24/100: Accuracy = 100.0, Loss = 0.02073589712381363
+Epoch 25/100: Accuracy = 100.0, Loss = 0.019856614992022514
+Epoch 26/100: Accuracy = 100.0, Loss = 0.019034814089536667
+Epoch 27/100: Accuracy = 100.0, Loss = 0.0182627085596323
+Epoch 28/100: Accuracy = 100.0, Loss = 0.017538705840706825
+Epoch 29/100: Accuracy = 100.0, Loss = 0.01685502380132675
+Epoch 30/100: Accuracy = 100.0, Loss = 0.01621016301214695
+Early stopping
+AL cycle: 2 / 2
+Shape of unlabelled data: (185, 315, 3)
+Labelled set size: 8
+Epoch 1/100: Accuracy = 82.5, Loss = 0.40242576599121094
+Epoch 2/100: Accuracy = 82.5, Loss = 0.3970412313938141
+Epoch 3/100: Accuracy = 95.0, Loss = 0.22575363516807556
+Epoch 4/100: Accuracy = 100.0, Loss = 0.11428087949752808
+Epoch 5/100: Accuracy = 100.0, Loss = 0.0678839236497879
+Epoch 6/100: Accuracy = 100.0, Loss = 0.047768644988536835
+Epoch 7/100: Accuracy = 100.0, Loss = 0.04406077042222023
+Epoch 8/100: Accuracy = 100.0, Loss = 0.04881095141172409
+Epoch 9/100: Accuracy = 100.0, Loss = 0.04910240322351456
+Epoch 10/100: Accuracy = 100.0, Loss = 0.04029470682144165
+Epoch 11/100: Accuracy = 100.0, Loss = 0.03244345262646675
+Epoch 12/100: Accuracy = 100.0, Loss = 0.03178810328245163
+Epoch 13/100: Accuracy = 100.0, Loss = 0.030943190678954124
+Epoch 14/100: Accuracy = 100.0, Loss = 0.029943164438009262
+Epoch 15/100: Accuracy = 100.0, Loss = 0.028828177601099014
+Epoch 16/100: Accuracy = 100.0, Loss = 0.027627024799585342
+Epoch 17/100: Accuracy = 100.0, Loss = 0.026367416605353355
+Epoch 18/100: Accuracy = 100.0, Loss = 0.025084948167204857
+Epoch 19/100: Accuracy = 100.0, Loss = 0.023805344477295876
+Epoch 20/100: Accuracy = 100.0, Loss = 0.02254606783390045
+Epoch 21/100: Accuracy = 100.0, Loss = 0.02133035846054554
+Epoch 22/100: Accuracy = 100.0, Loss = 0.02016415446996689
+Epoch 23/100: Accuracy = 100.0, Loss = 0.01906180940568447
+Epoch 24/100: Accuracy = 100.0, Loss = 0.018029021099209785
+Epoch 25/100: Accuracy = 100.0, Loss = 0.01706581376492977
+Epoch 26/100: Accuracy = 100.0, Loss = 0.01617702655494213
+Epoch 27/100: Accuracy = 100.0, Loss = 0.015356285497546196
+Epoch 28/100: Accuracy = 100.0, Loss = 0.014600595459342003
+Epoch 29/100: Accuracy = 100.0, Loss = 0.013908769004046917
+Epoch 30/100: Accuracy = 100.0, Loss = 0.013274473138153553
+Epoch 31/100: Accuracy = 100.0, Loss = 0.01269473135471344
+Epoch 32/100: Accuracy = 100.0, Loss = 0.012164679355919361
+Epoch 33/100: Accuracy = 100.0, Loss = 0.011678696610033512
+Epoch 34/100: Accuracy = 100.0, Loss = 0.011231167241930962
+Epoch 35/100: Accuracy = 100.0, Loss = 0.010819542221724987
+Epoch 36/100: Accuracy = 100.0, Loss = 0.010440343990921974
+Epoch 37/100: Accuracy = 100.0, Loss = 0.010089593939483166
+Epoch 38/100: Accuracy = 100.0, Loss = 0.009761793538928032
+Epoch 39/100: Accuracy = 100.0, Loss = 0.009455258026719093
+Epoch 40/100: Accuracy = 100.0, Loss = 0.00916703324764967
+Epoch 41/100: Accuracy = 100.0, Loss = 0.008894722908735275
+Epoch 42/100: Accuracy = 100.0, Loss = 0.008637127466499805
+Epoch 43/100: Accuracy = 100.0, Loss = 0.008393353782594204
+Epoch 44/100: Accuracy = 100.0, Loss = 0.008160872384905815
+Epoch 45/100: Accuracy = 100.0, Loss = 0.007938393391668797
+Early stopping
+
+ ======== Evaluate on valid set ========
+Task 0: Accuracy == 47.61904761904761, Test CE Loss == 1.3724113702774048 ;
+Task 1: Accuracy == 80.0, Test CE Loss == 0.8503268957138062 ;
+Task 2: Accuracy == 45.0, Test CE Loss == 1.6035258769989014 ;
+Task 3: Accuracy == 91.30434782608695, Test CE Loss == 0.33934149146080017 ;
+Accuracy matrix of all tasks:
+[[85.71  0.    0.    0.  ]
+ [76.19 90.    0.    0.  ]
+ [61.9  85.   80.    0.  ]
+ [47.62 80.   45.   91.3 ]]
+
+ ======== Evaluate on test set ========
+Task 0: Accuracy == 65.24184476940383, Test CE Loss == 1.172631859779358 ;
+Task 1: Accuracy == 71.64835164835165, Test CE Loss == 0.7996447086334229 ;
+Task 2: Accuracy == 51.93798449612403, Test CE Loss == 1.5346616506576538 ;
+Task 3: Accuracy == 83.52272727272727, Test CE Loss == 0.5171261429786682 ;
+Accuracy matrix of all tasks:
+[[91.9   0.    0.    0.  ]
+ [74.92 89.67  0.    0.  ]
+ [63.22 75.6  71.98  0.  ]
+ [65.24 71.65 51.94 83.52]]
+Len of Acc_multiple_run_test: 5
+
+ Finish Run 4: total 32.144681453704834 sec
+
+ All runs finish. Total running time: 184.2222294807434 sec
+Valid Set:
+ Avg_End_Acc [72.9   7.74] Avg_End_Fgt [16.39 13.02] Avg_Cur_Acc [82.09  9.97] Avg_Acc [[62.38 69.95 77.85 72.9 ]
+ [21.56 27.13  6.82  7.74]] Avg_Bwtp [0. 0.] 
+
+Test Set:
+Avg_End_Acc [70.14  4.58] Avg_End_Fgt [16.14  9.45] Avg_Cur_Acc [79.22  7.99] Avg_Acc [[64.43 69.22 75.   70.14]
+ [25.23 22.36  6.73  4.58]] Avg_Bwtp [0. 0.]
