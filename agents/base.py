@@ -109,11 +109,11 @@ class BaseLearner(nn.Module, metaclass=abc.ABCMeta):
         y_train = y_train[idxs]
         
         # TODO validation set?
+
         
         if new_task:
             print('Learning a new task')
             self.before_task(y_train)
-            
         train_dataloader = Dataloader_from_numpy(x_train, y_train, self.batch_size, shuffle=True)
         val_dataloader = Dataloader_from_numpy(x_val, y_val, self.batch_size, shuffle=False)
         early_stopping = EarlyStopping(path=self.ckpt_path, patience=self.args.patience, mode='min', verbose=False)
@@ -174,6 +174,17 @@ class BaseLearner(nn.Module, metaclass=abc.ABCMeta):
             if not self.args.teacher_eval:
                 self.teacher.train()
       
+                
+    @torch.no_grad()
+    def evaluate_on_dataloader(self, eval_dataloader_i: Dataloader_from_numpy, i, mode='test'):
+        
+        eval_loss_i, eval_acc_i = self.cross_entropy_epoch_run(eval_dataloader_i, mode='test')
+
+        print('#################### Task {}: Accuracy == {}, Test CE Loss == {} ;'.format(i, eval_acc_i, eval_loss_i))
+            
+                
+
+
     @torch.no_grad()
     def evaluate(self, task_stream, path=None):
         """
