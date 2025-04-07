@@ -20,8 +20,6 @@ from torch.optim import lr_scheduler
 import copy
 from agents.utils.functions import compute_cls_feature_mean_buffer
 
-# from selectors.base import BaseSelector
-
 
 class BaseLearner(nn.Module, metaclass=abc.ABCMeta):
     def __init__(self, model: nn.Module, args: argparse.Namespace):
