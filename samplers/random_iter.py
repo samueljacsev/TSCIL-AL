@@ -22,12 +22,13 @@ class RandomIterSampler(BaseSampler):
         active_learn_task: Selects the next few samples to be labelled randomly in multiple iter.
         """
 
-        n_train_samples_per_task = self.get_n_train_samples_per_task()
-        n_samples_per_al_cycle = int(n_train_samples_per_task / self.al_total)
-        
         task = task_stream.tasks[i]
-        (x_train, y_train), (x_val, y_val), (x_test, y_test) = task
-        idx_unlabelled = np.arange(x_train.shape[0])
+        x_train = task[0][0]
+        n_samples_this_task = x_train.shape[0]
+        
+        n_samples_per_al_cycle = self.get_n_samples_per_al_cycle(n_samples_this_task)
+    
+        idx_unlabelled = np.arange(n_samples_this_task)
         
         
         for alc in range(self.al_budget):

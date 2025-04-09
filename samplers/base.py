@@ -25,20 +25,28 @@ class BaseSampler(nn.Module, metaclass=abc.ABCMeta):
         self.batch_size = agent.batch_size
         self.al_budget = exp_args.al_budget
         self.al_total = exp_args.al_total
-        self.buffer_size = get_buffer_size(args)
         
         print('AL strategy:', self.name)
-
-    def get_n_train_samples_per_task(self):
-        train_ratio = 0.8
-        n_samples_per_class = n_smp_per_cls[self.args.data]
-        n_classes_per_task = n_classes[self.args.data] / n_tasks[self.args.data] # 2 by default
+        print('Batch size:', self.batch_size)
         
-        return int(train_ratio * n_samples_per_class * n_classes_per_task)
-    
+
+    def get_n_samples_per_al_cycle(self, n_samples_current_task):
+        """
+        get_n_of_al_cycles: Calculate the number of active learning cycles.
+        
+        Returns:
+            Number of active learning cycles.
+        """
+
+        # Number of samples to label per AL cycle 
+        n_samples_per_al_cycle = n_samples_current_task // self.al_total
+        print('Number of samples per AL cycle:', n_samples_per_al_cycle)
+        return n_samples_per_al_cycle
+        
+
 
     @abstractmethod
-    def active_learn_task(self):
+    def active_learn_task(self, task_stream, i):
         """
         active_learn_task: Abstract method to be implemented by subclasses.
         

@@ -99,15 +99,17 @@ class BaseLearner(nn.Module, metaclass=abc.ABCMeta):
             print('\n--> Task {}: {} classes in total'.format(self.task_now, len(self.learned_classes + self.classes_in_task)))
         
 
-    def learn_task(self, task, idxs: list, new_task:bool, args):
+    def learn_task(self, task, idxs:list=None, new_task:bool=True):
         """
         Basic workflow for learning a task. For particular methods, this function will be overwritten.
         """
 
         (x_train, y_train), (x_val, y_val), _ = task
-        x_train = x_train[idxs]
-        y_train = y_train[idxs]
-        # validation set?
+        
+        if idxs is not None:
+            x_train = x_train[idxs]
+            y_train = y_train[idxs]
+            # validation set?
         
         if new_task:
             print('Learning a new task')

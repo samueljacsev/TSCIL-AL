@@ -21,12 +21,10 @@ class RandomSampler(BaseSampler):
         """
         active_learn_task: Selects the next few samples to be labelled randomly.
         """
-  
-        n_train_samples_per_task = self.get_n_train_samples_per_task()
-        n_samples_per_al_cycle = int(n_train_samples_per_task / self.al_total)
         
         task = task_stream.tasks[i]
         x_train = task[0][0]
+        n_samples_per_al_cycle = self.get_n_samples_per_al_cycle(x_train.shape[0])
         
         idx_unlabelled = np.arange(x_train.shape[0])
         np.random.shuffle(idx_unlabelled)

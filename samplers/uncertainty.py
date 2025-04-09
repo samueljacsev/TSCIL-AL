@@ -60,12 +60,13 @@ class UncertaintySampler(BaseSampler):
         task = task_stream.tasks[i]
         (x_train, y_train) = task[0]  # y_train is not used for unlabelled data
 
-        # Initialize unlabelled indices
-        idx_unlabelled = np.arange(x_train.shape[0])
+        n_samples_current_task = x_train.shape[0]
+        print('Number of samples in current task:', n_samples_current_task)
+        
+        n_samples_per_al_cycle = self.get_n_samples_per_al_cycle(n_samples_current_task)
 
-        # Number of samples to label per AL cycle
-        n_train_samples_per_task = self.get_n_train_samples_per_task()
-        n_samples_per_al_cycle = int(n_train_samples_per_task / self.al_total)
+        # Initialize unlabelled indices
+        idx_unlabelled = np.arange(n_samples_current_task)
 
         for alc in range(self.al_budget):
             print(f'AL cycle: {alc + 1} / {self.al_budget}')
@@ -103,7 +104,6 @@ class UncertaintySampler(BaseSampler):
             # Update unlabelled indices
             idx_unlabelled = np.setdiff1d(idx_unlabelled, selected_idxs)
 
-            # Train the agent on the newly labelled data
-            print('Labelled set size:', len(selected_idxs))
             new_task = (alc == 0)  # First cycle is a new task
-            self.agent.learn_task(task, selected_idxs, new_task, self.args)
+            # Train the agent on the newly labelled data
+            self.agent.learn_task(task, selected_idxs, new_task)
