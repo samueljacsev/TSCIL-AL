@@ -13,6 +13,8 @@ from experiment.tune_config import config_generic, config_model, config_cl, set_
 from functools import partial
 from ray import tune, air
 import torch
+from utils.setup_elements import get_buffer_size
+
 
 def adjust_config_for_ablation(args, config_cl):
     if not args.inc:
@@ -103,14 +105,29 @@ def tune_hyperparams_on_val_tasks(args, cls_order, config_generic={}, config_mod
     # Modify the config according to dataset and agent
     args, config_generic, config_model, config_cl = modify_config_accordingly(args, config_generic, config_model, config_cl)
     
-    # TEST SETUP
-    if args.data == 'uwave' and args.encoder == 'CNN' and args.agent == 'ASER' and args.norm == 'BN':
-        best_params = {'generic': {'lr': 0.001, 'lradj': 'step10', 'batch_size': 48, 'weight_decay': 0}, 
-                       'model': {'feature_dim': 128, 'n_layers': 4, 'dropout': 0}, 
-                       'agent': {'aser_k': 3, 'aser_type': 'asvm', 'aser_n_smp_cls': 4}
-                       }
-        return dict(best_params['model'], **best_params['agent'], **best_params['generic'])
+    # Set the batch size to the buffer size
+    if args.agent in agents_replay:
+        buffer_size = get_buffer_size(args)
+        batch_size = buffer_size # == 0.05 * n_samples_per_class * n_classes_per_task * n_tasks
+    
+    # Optimized params for uvawe and har when batch_size = buffer_size
+    if args.data == 'uwave' and args.encoder == 'CNN' and args.agent == 'ASER' and args.norm == 'BN': # or args.data == 'har'
+        best_params = {'generic': {'lr': 0.001, 'lradj': 'step15', 'batch_size': batch_size, 'weight_decay': 0}, 
+                   'model': {'feature_dim': 128, 'n_layers': 4, 'dropout': 0}, 
+                   'agent': {'aser_k': 3, 'aser_type': 'asvm', 'aser_n_smp_cls': 2}}
+        return dict(**best_params['model'], **best_params['agent'], **best_params['generic'])
+#     best_params = {'generic': {'lr': 0.001, 'lradj': 'step10', 'batch_size': 32, 'weight_decay': 0}, 
+#                    'model': {'feature_dim': 128, 'n_layers': 4, 'dropout': 0}, 
+#                    'agent': {'aser_k': 3, 'aser_type': 'asvm', 'aser_n_smp_cls': 4}}
+#     return dict(**best_params['model'], **best_params['agent'], **best_params['generic'])
+    
+    elif args.data == 'har':
+        best_params = {'generic': {'lr': 0.001, 'lradj': 'TST', 'batch_size': batch_size, 'weight_decay': 0}, 
+                        'model': {'feature_dim': 128, 'n_layers': 4, 'dropout': 0}, 
+                        'agent': {'aser_k': 3, 'aser_type': 'asvm', 'aser_n_smp_cls': 4}}
+        return dict(**best_params['model'], **best_params['agent'], **best_params['generic'])
 
+    
     if args.ablation:
         adjust_config_for_ablation(args, config_cl[args.agent])
 
@@ -159,7 +176,7 @@ def tune_hyperparams_on_val_tasks(args, cls_order, config_generic={}, config_mod
     print(f'Best trial metrics: {best_trial.metrics}')
 
     best_params = best_trial.config
-    best_params = dict(best_params['model'], **best_params['agent'], **best_params['generic'])
+    best_params = dict(**best_params['model'], **best_params['agent'], **best_params['generic'])
     return best_params
 
 def val_mean_anc_cil_over_runs(args, Acc_multiple_run_valid):
@@ -177,7 +194,6 @@ def val_mean_anc_cil_over_runs(args, Acc_multiple_run_valid):
                       np.around(avg_bwtp, decimals=2)))
         
     return Acc_multiple_run_valid
-        
         
 
 def test_mean_anc_cil_over_runs(args, Acc_multiple_run_test):
@@ -219,7 +235,7 @@ def tune_and_experiment_multiple_runs(args):
 
     if args.agent in ['Inversion']:
         args.reuse_best = True
-
+        
     # ############### Runs Loop ################
     for run in range(args.runs):
         run_start = time.time()
@@ -246,7 +262,6 @@ def tune_and_experiment_multiple_runs(args):
         exp_args.tune = False
         exp_args.verbose = True  # Print the loss during training
         exp_args.stream_split = 'exp'
-        print(exp_args)
 
         task_stream = IncrementalTaskStream(data=args.data, scenario=args.scenario, cls_order=cls_order, split='exp')
 
@@ -262,22 +277,19 @@ def tune_and_experiment_multiple_runs(args):
             task_stream.setup(load_subject=load_subject)
             model = setup_model(exp_args)
             agent = agents[args.agent](model=model, args=exp_args)
-            
-
-            sampler = samplers[args.sampler](
-                agent=agent, 
+            sampler = samplers[args.sampler]( # create the sampler, 
+                agent=agent, # passing the agent
                 exp_args=exp_args, 
-                args=exp_args) # create the sampler, by passing the agent
+                args=exp_args) 
+            
+            for i in range(n_tasks_exp):
+                x_train = task_stream.tasks[i][0][0]
+                print(x_train.shape)          
 
             for i in range(n_tasks_exp):
-
-                ## with AL
+                # Active Learning
                 sampler.active_learn_task(task_stream, i) 
-                ## without AL. Same as using --sampler full
-                #task = task_stream.tasks[i]
-                #range(task[0][0].shape[0])
-                #agent.learn_task(task, idxs, True, args)
-                               
+                # model.learn_task(...)
                 agent.evaluate(task_stream, path=tsne_path)  # TSNE path                
 
                 # Plot CF matrix after finishing the final task.
