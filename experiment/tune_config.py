@@ -33,7 +33,7 @@ config_default = {'scenario': 'class',
                   'ncm_classifier': False,  # Default: False
                   'er_sub_type': 'balanced',    # 'part' / 'balanced'
                   'al_total': 20,  # Total number of active learning steps
-                  'al_budget': 5,  # Number of active learning steps to be executed
+                  'al_budget': 10,  # Number of active learning steps to be executed
                   }
                   # 1. Linear, BCE, False; 2. Linear, CE, True; 3. SplitCosineLinear, CE, False
 
