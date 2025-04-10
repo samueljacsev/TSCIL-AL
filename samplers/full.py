@@ -25,7 +25,8 @@ class FullSampler(BaseSampler):
         """
 
         task = task_stream.tasks[i]
+        n_samples_this_task = task[0][0].shape[0]
 
         self.agent.learn_task(task=task, 
-                              labelled_idxs=np.arange(task[0][0].shape[0]), 
-                              new_task=True, args=self.args)
+                              labelled_idxs=np.arange(n_samples_this_task), 
+                              new_task=True)

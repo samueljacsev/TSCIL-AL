@@ -177,7 +177,7 @@ class BaseLearner(nn.Module, metaclass=abc.ABCMeta):
 
 
     @torch.no_grad()
-    def evaluate(self, task_stream, path=None):
+    def evaluate(self, run, task_stream, task_i, alc, al_budget, path=None):
         """
         Evaluate on the test sets of all the learned tasks (<= task_now).
         Save the test accuracies of the learned tasks in the Acc matrix.
@@ -189,15 +189,15 @@ class BaseLearner(nn.Module, metaclass=abc.ABCMeta):
 
         """
         # Get num_tasks and create Accuracy Matrix for 'val set and 'test set'
-        if self.task_now == 0:
+        if self.task_now == 0 and alc == 0:
             self.num_tasks = task_stream.n_tasks
-            self.Acc_tasks = {'valid': np.zeros((self.num_tasks, self.num_tasks)),
-                              'test': np.zeros((self.num_tasks, self.num_tasks))}
-
+            self.Acc_tasks = {'valid': np.zeros((self.num_tasks * al_budget, self.num_tasks)),
+                              'test': np.zeros((self.num_tasks * al_budget, self.num_tasks))}
+            
         # Reload the original optimal model to prevent the changes of statistics in BN layers.
         self.model.load_state_dict(torch.load(self.ckpt_path))
-
         eval_modes = ['valid', 'test']  # 'valid' is for checking generalization.
+        row = 0
         for mode in eval_modes:
             if self.verbose:
                 print('\n ======== Evaluate on {} set ========'.format(mode))
@@ -209,10 +209,17 @@ class BaseLearner(nn.Module, metaclass=abc.ABCMeta):
                     eval_loss_i, eval_acc_i = self.test_for_cf_matrix(eval_dataloader_i)
                 else:
                     eval_loss_i, eval_acc_i = self.cross_entropy_epoch_run(eval_dataloader_i, mode='test')
-
+                    # if mode == 'test':
+                    #     print('Acc in base.py:', eval_acc_i)
+                    #     accs.append(f'Task {i}: {eval_acc_i}')
+                #print('row, eval_acc_i:', row, eval_acc_i)
                 if self.verbose:
                     print('Task {}: Accuracy == {}, Test CE Loss == {} ;'.format(i, eval_acc_i, eval_loss_i))
-                self.Acc_tasks[mode][self.task_now][i] = np.around(eval_acc_i, decimals=2)
+                
+                #self.Acc_tasks[mode][self.task_now][i] = np.around(eval_acc_i, decimals=2)
+                
+                row = al_budget * task_i + alc
+                self.Acc_tasks[mode][row][i] = np.around(eval_acc_i, decimals=2)
 
                 # Use test data to evaluate generator
                 if self.args.agent == 'GR' and self.verbose:
@@ -224,6 +231,7 @@ class BaseLearner(nn.Module, metaclass=abc.ABCMeta):
                 with np.printoptions(suppress=True):  # Avoid Scientific Notation
                     print('Accuracy matrix of all tasks:')
                     print(self.Acc_tasks[mode])
+        
 
         # TODO: ZZ: TSNE visualization for all learned classes.
         if self.tsne and not self.args.tune:
@@ -233,6 +241,9 @@ class BaseLearner(nn.Module, metaclass=abc.ABCMeta):
         if self.args.tsne_g and self.args.agent == 'GR' and not self.args.tune:
             tsne_path = path + 't{}_g'.format(self.task_now)
             self.feature_space_tsne_visualization(task_stream, path=tsne_path, view_generator=True)
+            
+        #print('last_row:', last_row)
+        return self.Acc_tasks['test'][row]
 
     def cross_entropy_epoch_run(self, dataloader, epoch=None, mode='train'):
         """

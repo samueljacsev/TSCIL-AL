@@ -37,11 +37,11 @@ def compute_performance(end_task_acc_arr):
     avg_acc = (np.mean(acc_per_run, axis=0), t_coef * sem(acc_per_run, axis=0)) if n_run > 1 else (np.mean(acc_per_run, axis=0),)
 
     # compute BWT+
-    bwt_per_run = (np.sum(np.tril(end_task_acc_arr, -1), axis=(1,2)) -
-                  np.sum(np.diagonal(end_task_acc_arr, axis1=1, axis2=2) *
-                         (np.arange(n_tasks, 0, -1) - 1), axis=1)) / (n_tasks * (n_tasks - 1) / 2)
-    bwtp_per_run = np.maximum(bwt_per_run, 0)
-    avg_bwtp = (np.mean(bwtp_per_run), t_coef * sem(bwtp_per_run)) if n_run > 1 else (np.mean(bwtp_per_run),)
+    # bwt_per_run = (np.sum(np.tril(end_task_acc_arr, -1), axis=(1,2)) -
+    #               np.sum(np.diagonal(end_task_acc_arr, axis1=1, axis2=2) *
+    #                      (np.arange(n_tasks, 0, -1) - 1), axis=1)) / (n_tasks * (n_tasks - 1) / 2)
+    # bwtp_per_run = np.maximum(bwt_per_run, 0)
+    # avg_bwtp = (np.mean(bwtp_per_run), t_coef * sem(bwtp_per_run)) if n_run > 1 else (np.mean(bwtp_per_run),)
 
     # compute Avg Acc_cur (diagonal elements)
     diagonals = []
@@ -52,7 +52,7 @@ def compute_performance(end_task_acc_arr):
     diagonal_means = [np.mean(diag) for diag in diagonals]
     avg_cur_acc = (np.mean(diagonal_means), t_coef * sem(diagonal_means)) if n_run > 1 else (np.mean(diagonal_means), )
 
-    return avg_end_acc, avg_end_fgt, avg_cur_acc, avg_acc, avg_bwtp
+    return avg_end_acc, avg_end_fgt, avg_cur_acc, avg_acc, #avg_bwtp
 
 
 def compute_performance_offline(acc_multiple_run):

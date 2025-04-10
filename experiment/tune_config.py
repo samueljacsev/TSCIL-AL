@@ -8,7 +8,7 @@ from utils.setup_elements import get_buffer_size
 
 content_root = os.path.abspath('.')
 config_default = {'scenario': 'class',
-                  'runs': 3,
+                  'runs': 5,
                   'runs_val': 2,  # To increase the confidence of best_config
                   'seed': 1234,
                   'verbose': False,
@@ -33,7 +33,7 @@ config_default = {'scenario': 'class',
                   'ncm_classifier': False,  # Default: False
                   'er_sub_type': 'balanced',    # 'part' / 'balanced'
                   'al_total': 20,  # Total number of active learning steps
-                  'al_budget': 2,  # Number of active learning steps to be executed
+                  'al_budget': 5,  # Number of active learning steps to be executed
                   }
                   # 1. Linear, BCE, False; 2. Linear, CE, True; 3. SplitCosineLinear, CE, False
 
