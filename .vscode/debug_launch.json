@@ -1,0 +1,28 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python Debugger: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "python": "/home/sam/anaconda3/envs/tscl/bin/python" 
+        },
+        {
+            "name": "Debug TSCIL-AL",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "python": "/home/sam/anaconda3/envs/tscl/bin/python",
+            "args": [
+                "--data", "uwave",
+                "--encoder", "CNN",
+                "--agent", "ASER",
+                "--norm", "BN",
+                "--sampler", "random_iter"
+            ]
+        }
+    ]
+}

@@ -260,7 +260,7 @@ def tune_and_experiment_multiple_runs(args):
         # Update exp args with the best params
         exp_args = SimpleNamespace(**vars(args), **best_params)
         exp_args.tune = False
-        exp_args.verbose = True  # Print the loss during training
+        exp_args.verbose = False  # Print the loss during training
         exp_args.stream_split = 'exp'
 
         task_stream = IncrementalTaskStream(data=args.data, scenario=args.scenario, cls_order=cls_order, split='exp')
@@ -280,26 +280,23 @@ def tune_and_experiment_multiple_runs(args):
             sampler = samplers[args.sampler]( # create the sampler, 
                 agent=agent, # passing the agent
                 exp_args=exp_args, 
-                args=exp_args) 
-            
-            for i in range(n_tasks_exp):
-                x_train = task_stream.tasks[i][0][0]
-                print(x_train.shape)          
+                args=exp_args)      
 
-            for i in range(n_tasks_exp):
+            for task_i in range(n_tasks_exp):
                 # Active Learning
-                sampler.active_learn_task(task_stream, i) 
+                sampler.active_learn_task(run, task_stream, task_i)
                 # model.learn_task(...)
-                agent.evaluate(task_stream, path=tsne_path)  # TSNE path                
+                #agent.evaluate(task_stream, i, path=tsne_path)  # TSNE path                
 
                 # Plot CF matrix after finishing the final task.
-                if i+1 == n_tasks_exp and args.cf_matrix:
+                if task_i+1 == n_tasks_exp and args.cf_matrix:
                     cf_matrix_path = args.exp_path + '/cf{}'.format(run)
                     agent.plot_cf_matrix(path=cf_matrix_path, classes=np.arange(task_stream.n_classes))
 
-            # Save Acc of this run
-            Acc_multiple_run_valid.append(agent.Acc_tasks['valid'])
-            Acc_multiple_run_test.append(agent.Acc_tasks['test'])
+            # # Save Acc of this run
+            #Acc_multiple_run_valid.append(agent.Acc_tasks['valid'])
+            #Acc_multiple_run_test.append(agent.Acc_tasks['test'])
+            
 
         run_over = time.time()
         print('\n Finish Run {}: total {} sec'.format(run, run_over - run_start))
@@ -312,9 +309,9 @@ def tune_and_experiment_multiple_runs(args):
     print('\n All runs finish. Total running time: {} sec'.format(end - start))
 
     # ################## Val: mean and CI over runs ##################
-    Acc_multiple_run_valid = val_mean_anc_cil_over_runs(args, Acc_multiple_run_valid)
+    #Acc_multiple_run_valid = val_mean_anc_cil_over_runs(args, Acc_multiple_run_valid)
     # ################## Test: mean and CI over runs ##################
-    Acc_multiple_run_test = test_mean_anc_cil_over_runs(args, Acc_multiple_run_test)  
-    # Save the results
-    save_results(args, Acc_multiple_run_valid, Acc_multiple_run_test, Best_params, start, end)
+    #Acc_multiple_run_test = test_mean_anc_cil_over_runs(args, Acc_multiple_run_test)  
+    #Save the results
+    #save_results(args, Acc_multiple_run_valid, Acc_multiple_run_test, Best_params, start, end)
 

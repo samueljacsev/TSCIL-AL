@@ -48,7 +48,7 @@ class UncertaintySampler(BaseSampler):
         return uncertainties
 
     
-    def active_learn_task(self, task_stream, i, metric='margin'):
+    def active_learn_task(self, run, task_stream, task_i, metric='least_confidence'):
         """
         Selects the next few samples to be labelled based on uncertainty sampling.
 
@@ -57,7 +57,7 @@ class UncertaintySampler(BaseSampler):
             i: Index of the current task.
             metric: Uncertainty metric ('entropy', 'margin', 'least_confidence').
         """
-        task = task_stream.tasks[i]
+        task = task_stream.tasks[task_i]
         (x_train, y_train) = task[0]  # y_train is not used for unlabelled data
 
         n_samples_current_task = x_train.shape[0]
@@ -107,3 +107,6 @@ class UncertaintySampler(BaseSampler):
             new_task = (alc == 0)  # First cycle is a new task
             # Train the agent on the newly labelled data
             self.agent.learn_task(task, selected_idxs, new_task)
+            accuracies = self.agent.evaluate(run, task_stream, task_i, alc, self.al_budget)
+            self.save_acc_to_csv(accuracies, run, task_i, alc, f'_{metric}')
+            

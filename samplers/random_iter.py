@@ -17,12 +17,12 @@ class RandomIterSampler(BaseSampler):
         super().__init__(agent, exp_args, args, name='RandomIter')
 
 
-    def active_learn_task(self, task_stream, i):
+    def active_learn_task(self, run, task_stream, task_i):
         """
         active_learn_task: Selects the next few samples to be labelled randomly in multiple iter.
         """
 
-        task = task_stream.tasks[i]
+        task = task_stream.tasks[task_i]
         x_train = task[0][0]
         n_samples_this_task = x_train.shape[0]
         
@@ -41,4 +41,7 @@ class RandomIterSampler(BaseSampler):
             idx_unlabelled = idx_unlabelled[n_samples_per_al_cycle:]
 
             new_task = (alc == 0)
-            self.agent.learn_task(task, labelled_idxs, new_task, self.args)
+            self.agent.learn_task(task, labelled_idxs, new_task)
+            accuracies = self.agent.evaluate(run, task_stream, task_i, alc, self.al_budget)
+            self.save_acc_to_csv(accuracies, run, task_i, alc)
+            
