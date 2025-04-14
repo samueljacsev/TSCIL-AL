@@ -18,15 +18,19 @@ class FullSampler(BaseSampler):
         super().__init__(agent, exp_args, args, name='Full')
 
 
-    def active_learn_task(self, task_stream, i):
+    def active_learn_task(self, run, task_stream, task_i):
         """
         active_learn_task: Selects the full set of samples to be labelled.
         Does not perform any active learning.
         """
 
-        task = task_stream.tasks[i]
+        task = task_stream.tasks[task_i]
         n_samples_this_task = task[0][0].shape[0]
 
         self.agent.learn_task(task=task, 
-                              labelled_idxs=np.arange(n_samples_this_task), 
+                              idxs=np.arange(n_samples_this_task), 
                               new_task=True)
+        
+        self.agent.learn_task(task, idxs=None, new_task=True)
+        accuracies = self.agent.evaluate(task_stream, 0, self.al_budget)
+        self.save_acc_to_csv(accuracies, run, task_i, 0)

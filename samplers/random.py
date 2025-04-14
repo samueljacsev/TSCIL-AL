@@ -30,9 +30,13 @@ class RandomSampler(BaseSampler):
         np.random.shuffle(idx_unlabelled)
         
         n_select = self.al_budget * n_samples_per_al_cycle
+        labelled_idxs = idx_unlabelled[:n_select]
 
-        alc = 0 # only active learning cycle
-        self.agent.learn_task( task, idx_unlabelled[:n_select], new_task=True)
-        accuracies = self.agent.evaluate(run, task_stream, task_i, alc, self.al_budget)
+        
+        self.agent.learn_task(task, labelled_idxs)
+        print('ln 36')
+        alc = 0 # the only active learning cycle
+        accuracies = self.agent.evaluate(task_stream, alc, self.al_budget)
         self.save_acc_to_csv(accuracies, run, task_i, alc)
+        
             

@@ -43,11 +43,13 @@ class BaseSampler(nn.Module, metaclass=abc.ABCMeta):
 
         # Number of samples to label per AL cycle 
         n_samples_per_al_cycle = n_samples_current_task // self.al_total
-        print('Number of samples per AL cycle:', n_samples_per_al_cycle)
-        return n_samples_per_al_cycle + 1 # buffer was truncated
+        print('# Number of samples in the AL cycle:', n_samples_per_al_cycle)
+        return n_samples_per_al_cycle #+ 1 # buffer was truncated
     
     def save_acc_to_csv(self, accs_data, run, task, cycle, ext=''):
-        fn = f'{self.name}{ext}_cycle_{self.al_budget}_{self.args.data}.csv'
+        mean_excd_0 = np.mean(accs_data[accs_data != 0], axis=0)
+        print(f'Acc_vector: {accs_data}, Mean: {mean_excd_0} ')
+        fn = f'{self.name}{ext}_cycle_{self.al_budget}_per_{self.al_total}_{self.args.data}.csv'
         fn = os.path.join('result',self.args.data , fn)
         save_acc_to_csv(accs_data, run, task, cycle, filename=fn)
     
@@ -63,7 +65,6 @@ class BaseSampler(nn.Module, metaclass=abc.ABCMeta):
         print('Average accuracy:', avg_acc)
         #print('Average BWT+:', avg_bwtp)
         
-
 
     @abstractmethod
     def active_learn_task(self, run, task_stream, task_i):
