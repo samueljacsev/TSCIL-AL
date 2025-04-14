@@ -57,36 +57,37 @@ class UncertaintySampler(BaseSampler):
             i: Index of the current task.
             metric: Uncertainty metric ('entropy', 'margin', 'least_confidence').
         """
+        if self.args.uncertainty_type is not None:
+            metric = self.args.uncertainty_type
+        
         task = task_stream.tasks[task_i]
-        (x_train, y_train) = task[0]  # y_train is not used for unlabelled data
+        (x_train, y_train) = task[0]  # y_train is not used for unlabeled data
 
         n_samples_current_task = x_train.shape[0]
         print('Number of samples in current task:', n_samples_current_task)
         
         n_samples_per_al_cycle = self.get_n_samples_per_al_cycle(n_samples_current_task)
 
-        # Initialize unlabelled indices
-        idx_unlabelled = np.arange(n_samples_current_task)
+        # Initialize unlabeled indices
+        idx_unlabeled = np.arange(n_samples_current_task)
 
         for alc in range(self.al_budget):
-            print(f'AL cycle: {alc + 1} / {self.al_budget}')
+            print(f'Run: {run}, Task: {task_i}, AL cycle: {alc + 1} / {self.al_budget}')
 
             if alc == 0:
                 # Randomly select the first batch of samples
-                np.random.shuffle(idx_unlabelled)
-                selected_idxs = idx_unlabelled[:n_samples_per_al_cycle]
+                np.random.shuffle(idx_unlabeled)
+                selected_idxs = idx_unlabeled[:n_samples_per_al_cycle]
             else:
-                print('Shape of unlabelled data:', x_train[idx_unlabelled].shape)
-
-                # Evaluate the model on the unlabelled data
+                # Evaluate the model on the unlabeled data
                 eval_dataloader = Dataloader_from_numpy(
-                    x_train[idx_unlabelled], 
-                    np.zeros(len(idx_unlabelled)),  # Dummy labels
+                    x_train[idx_unlabeled], 
+                    np.zeros(len(idx_unlabeled)),  # Dummy labels
                     self.batch_size,
                     shuffle=False
                 )
 
-                # Collect outputs for all unlabelled samples
+                # Collect outputs for all unlabeled samples
                 all_outputs = []
                 for batch_id, (batch_x, _) in enumerate(eval_dataloader):
                     batch_x = batch_x.to(self.agent.device)
@@ -99,14 +100,15 @@ class UncertaintySampler(BaseSampler):
                 uncertainties = self.compute_uncertainty(all_outputs, metric=metric)
 
                 # Select the top uncertain samples
-                selected_idxs = idx_unlabelled[np.argsort(-uncertainties)[:n_samples_per_al_cycle]]
+                selected_idxs = idx_unlabeled[np.argsort(-uncertainties)[:n_samples_per_al_cycle]]
 
-            # Update unlabelled indices
-            idx_unlabelled = np.setdiff1d(idx_unlabelled, selected_idxs)
+            # Update unlabeled indices
+            idx_unlabeled = np.setdiff1d(idx_unlabeled, selected_idxs)
 
             new_task = (alc == 0)  # First cycle is a new task
             # Train the agent on the newly labelled data
             self.agent.learn_task(task, selected_idxs, new_task)
-            accuracies = self.agent.evaluate(run, task_stream, task_i, alc, self.al_budget)
+            accuracies = self.agent.evaluate(task_stream, alc, self.al_budget)
             self.save_acc_to_csv(accuracies, run, task_i, alc, f'_{metric}')
+
             

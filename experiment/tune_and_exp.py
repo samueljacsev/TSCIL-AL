@@ -105,27 +105,41 @@ def tune_hyperparams_on_val_tasks(args, cls_order, config_generic={}, config_mod
     # Modify the config according to dataset and agent
     args, config_generic, config_model, config_cl = modify_config_accordingly(args, config_generic, config_model, config_cl)
     
-    # Set the batch size to the buffer size
-    if args.agent in agents_replay:
-        buffer_size = get_buffer_size(args)
-        batch_size = buffer_size # == 0.05 * n_samples_per_class * n_classes_per_task * n_tasks
+    # if args.agent in agents_replay:
+    #     buffer_size = get_buffer_size(args)
+    #     batch_size = buffer_size # == 0.05 * n_samples_per_class * n_classes_per_task * n_tasks
+    #     print('Batch size is set to buffer size: {}'.format(buffer_size))
+
     
-    # Optimized params for uvawe and har when batch_size = buffer_size
-    if args.data == 'uwave' and args.encoder == 'CNN' and args.agent == 'ASER' and args.norm == 'BN': # or args.data == 'har'
-        best_params = {'generic': {'lr': 0.001, 'lradj': 'step15', 'batch_size': batch_size, 'weight_decay': 0}, 
+    # Optimized params for uvawe and har when batch_size = buffer_size on the TRAIN 
+    if args.data == 'uwave' and args.encoder == 'CNN' and args.agent == 'ASER' and args.norm == 'BN':
+        best_params = {'generic': {'lr': 0.001, 'lradj': 'step15', 'batch_size': 40, 'weight_decay': 0}, 
                    'model': {'feature_dim': 128, 'n_layers': 4, 'dropout': 0}, 
                    'agent': {'aser_k': 3, 'aser_type': 'asvm', 'aser_n_smp_cls': 2}}
-        return dict(**best_params['model'], **best_params['agent'], **best_params['generic'])
-#     best_params = {'generic': {'lr': 0.001, 'lradj': 'step10', 'batch_size': 32, 'weight_decay': 0}, 
-#                    'model': {'feature_dim': 128, 'n_layers': 4, 'dropout': 0}, 
-#                    'agent': {'aser_k': 3, 'aser_type': 'asvm', 'aser_n_smp_cls': 4}}
-#     return dict(**best_params['model'], **best_params['agent'], **best_params['generic'])
     
-    elif args.data == 'har':
-        best_params = {'generic': {'lr': 0.001, 'lradj': 'TST', 'batch_size': batch_size, 'weight_decay': 0}, 
+    elif args.data == 'har': # 0.05 366, 0.01 72, 0.005 36
+        best_params = {'generic': {'lr': 0.001, 'lradj': 'TST', 'batch_size': 36, 'weight_decay': 0}, 
                         'model': {'feature_dim': 128, 'n_layers': 4, 'dropout': 0}, 
                         'agent': {'aser_k': 3, 'aser_type': 'asvm', 'aser_n_smp_cls': 4}}
-        return dict(**best_params['model'], **best_params['agent'], **best_params['generic'])
+    
+    elif args.data == 'dailysports':
+        best_params = {"generic": {"lr": 0.001, "lradj": "TST", "batch_size": 84, "weight_decay": 0}, 
+                       "model": {"feature_dim": 128, "n_layers": 4, "dropout": 0.3}, 
+                       "agent": {"aser_k": 3, "aser_type": "asvm", "aser_n_smp_cls": 2}}
+        
+    elif args.data == 'wisdm':
+        best_params = {"generic": {"lr": 0.001, "lradj": "TST", "batch_size": 600, "weight_decay": 0}, 
+                       "model": {"feature_dim": 128, "n_layers": 4, "dropout": 0.3}, 
+                       "agent": {"aser_k": 3, "aser_type": "asvm", "aser_n_smp_cls": 8}}
+        
+    elif args.data == 'grabmyo':
+        best_params = {"generic": {"lr": 0.001, "lradj": "TST", "batch_size": 1020, "weight_decay": 0}, 
+                        "model": {"feature_dim": 128, "n_layers": 4, "dropout": 0.3}, 
+                        "agent": {"aser_k": 3, "aser_type": "asvm", "aser_n_smp_cls": 8}}
+        
+    return dict(best_params['model'], **best_params['agent'], **best_params['generic'])
+    
+    
 
     
     if args.ablation:
@@ -280,7 +294,13 @@ def tune_and_experiment_multiple_runs(args):
             sampler = samplers[args.sampler]( # create the sampler, 
                 agent=agent, # passing the agent
                 exp_args=exp_args, 
-                args=exp_args)      
+                args=exp_args)
+            
+            for k in range(n_tasks_exp):
+                (x_train, y_train), (x_val, y_val), (x_test, y_test) = task_stream.tasks[k]
+                print('Task {}: contains {} train samples'.format(k, x_train.shape[0]))
+                print('Task {}: contains {} val samples'.format(k, x_val.shape[0]))
+                print('Task {}: contains {} test samples'.format(k, x_test.shape[0]))
 
             for task_i in range(n_tasks_exp):
                 # Active Learning
@@ -294,8 +314,8 @@ def tune_and_experiment_multiple_runs(args):
                     agent.plot_cf_matrix(path=cf_matrix_path, classes=np.arange(task_stream.n_classes))
 
             # # Save Acc of this run
-            #Acc_multiple_run_valid.append(agent.Acc_tasks['valid'])
-            #Acc_multiple_run_test.append(agent.Acc_tasks['test'])
+            # Acc_multiple_run_valid.append(agent.Acc_tasks['valid'])
+            # Acc_multiple_run_test.append(agent.Acc_tasks['test'])
             
 
         run_over = time.time()
@@ -308,10 +328,10 @@ def tune_and_experiment_multiple_runs(args):
     end = time.time()
     print('\n All runs finish. Total running time: {} sec'.format(end - start))
 
-    # ################## Val: mean and CI over runs ##################
-    #Acc_multiple_run_valid = val_mean_anc_cil_over_runs(args, Acc_multiple_run_valid)
+    # # ################## Val: mean and CI over runs ##################
+    # Acc_multiple_run_valid = val_mean_anc_cil_over_runs(args, Acc_multiple_run_valid)
     # ################## Test: mean and CI over runs ##################
-    #Acc_multiple_run_test = test_mean_anc_cil_over_runs(args, Acc_multiple_run_test)  
-    #Save the results
-    #save_results(args, Acc_multiple_run_valid, Acc_multiple_run_test, Best_params, start, end)
+    # Acc_multiple_run_test = test_mean_anc_cil_over_runs(args, Acc_multiple_run_test)  
+    # # Save the results
+    # save_results(args, Acc_multiple_run_valid, Acc_multiple_run_test, Best_params, start, end)
 

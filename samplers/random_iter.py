@@ -28,20 +28,20 @@ class RandomIterSampler(BaseSampler):
         
         n_samples_per_al_cycle = self.get_n_samples_per_al_cycle(n_samples_this_task)
     
-        idx_unlabelled = np.arange(n_samples_this_task)
+        idx_unlabeled = np.arange(n_samples_this_task)
         
         
         for alc in range(self.al_budget):
-            print('Iteration:', alc)            
+            print(f'Run: {run}, Task: {task_i}, AL cycle: {alc + 1} / {self.al_budget}')
 
-            np.random.shuffle(idx_unlabelled)
+            np.random.shuffle(idx_unlabeled)
             # label data by random sampling n_samples_per_al_cycle number of samples
-            labelled_idxs = idx_unlabelled[:n_samples_per_al_cycle]
+            labelled_idxs = idx_unlabeled[:n_samples_per_al_cycle]
             # update the unlabelled data
-            idx_unlabelled = idx_unlabelled[n_samples_per_al_cycle:]
+            idx_unlabeled = idx_unlabeled[n_samples_per_al_cycle:]
 
             new_task = (alc == 0)
             self.agent.learn_task(task, labelled_idxs, new_task)
-            accuracies = self.agent.evaluate(run, task_stream, task_i, alc, self.al_budget)
+            accuracies = self.agent.evaluate(task_stream, alc, self.al_budget)
             self.save_acc_to_csv(accuracies, run, task_i, alc)
             

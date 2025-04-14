@@ -29,6 +29,5 @@ def save_acc_to_csv(accs_data, run, task, cycle, filename="output.csv"):
             writer.writerow(header)
 
         # Write the data row
-        print('accs_data:', accs_data)
         row = [run, task, cycle] + accs_data.tolist()
         writer.writerow(row)

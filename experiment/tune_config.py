@@ -4,7 +4,6 @@ Hyperparameter search-space configuration.
 from ray import tune
 import os
 from agents.utils.name_match import agents_replay
-from utils.setup_elements import get_buffer_size
 
 content_root = os.path.abspath('.')
 config_default = {'scenario': 'class',
@@ -32,8 +31,8 @@ config_default = {'scenario': 'class',
                   'criterion': 'CE',  # Default: CE (Default),  BCE
                   'ncm_classifier': False,  # Default: False
                   'er_sub_type': 'balanced',    # 'part' / 'balanced'
+                  'al_budget': 7,  # Number of active learning steps to be executed
                   'al_total': 20,  # Total number of active learning steps
-                  'al_budget': 10,  # Number of active learning steps to be executed
                   }
                   # 1. Linear, BCE, False; 2. Linear, CE, True; 3. SplitCosineLinear, CE, False
 
@@ -41,7 +40,7 @@ config_default = {'scenario': 'class',
 # Hyperparameter search-space
 config_generic = {'lr': 1e-3,  # Tried with 1e-2 & 1e-4, never be the best. So we focus on lradj.
                   'lradj': tune.grid_search(['TST', 'step10', 'step15']),  # 'step25' seldom be the best, removed.
-                  'batch_size': 40,  # 64 is mostly better than 32. So we decide directly set it as 64.
+                  'batch_size': 64,  # 64 is mostly better than 32. So we decide directly set it as 64.
                   'weight_decay': 0,  # Trivial, also found harmful for CL in recent study
                   }
 
@@ -84,7 +83,7 @@ config_cl = {'LwF': {'lambda_kd_lwf': tune.grid_search([1, 1e1, 1e2, 1e3, 1e4]),
 
              'ASER': {'aser_k': tune.grid_search([3]),
                       'aser_type': 'asvm',
-                      'aser_n_smp_cls': tune.grid_search([2, 4]),
+                      'aser_n_smp_cls': tune.grid_search([2, 4])
                       },
 
              'GR': {'lr_g': tune.grid_search([1e-3, 1e-4]),
@@ -136,11 +135,11 @@ def modify_config_accordingly(args, config_generic, config_model, config_cl):
     # Half the batch_size for relay-based methods
     # Reasons: 1. reduce GPU usage; 2. buffer size for some datasets is smaller than 64.
     if args.agent in agents_replay:
-        config_generic['batch_size'] = get_buffer_size(args)
+        config_generic['batch_size'] = 32
 
     if args.agent in agents_replay or args.agent == 'Offline':  # Set a larger patience for methods using replay
         args.patience = 20
-    
+
     # Set dropout based on the dataset
     config_model[args.encoder]['dropout'] = set_dropout(args.data)
 
@@ -183,7 +182,7 @@ def modify_config_accordingly(args, config_generic, config_model, config_cl):
         args.input_norm = 'none'
         if args.agent == 'ASER':
             config_cl[args.agent]['aser_k'] = tune.grid_search([3, 5])
-            config_cl[args.agent]['aser_n_smp_cls'] = tune.grid_search([2, 4]) # , 8, 12  # Tried with 2, never be the best
+            config_cl[args.agent]['aser_n_smp_cls'] = tune.grid_search([2, 4, 8, 12])  # Tried with 2, never be the best
 
     if args.agent == 'GR':
         args.runs_val = 1  # Hyper params is trivial for GR's performance. Set to 1 to speed up.

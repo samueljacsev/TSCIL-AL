@@ -109,10 +109,9 @@ class BaseLearner(nn.Module, metaclass=abc.ABCMeta):
         if idxs is not None:
             x_train = x_train[idxs]
             y_train = y_train[idxs]
-            # validation set?
         
         if new_task:
-            print('Learning a new task')
+            # print('Learning a new task')
             self.before_task(y_train)
             
         train_dataloader = Dataloader_from_numpy(x_train, y_train, self.batch_size, shuffle=True)
@@ -177,7 +176,7 @@ class BaseLearner(nn.Module, metaclass=abc.ABCMeta):
 
 
     @torch.no_grad()
-    def evaluate(self, run, task_stream, task_i, alc, al_budget, path=None):
+    def evaluate(self, task_stream, alc=0, al_budget=1, path=None):
         """
         Evaluate on the test sets of all the learned tasks (<= task_now).
         Save the test accuracies of the learned tasks in the Acc matrix.
@@ -218,7 +217,7 @@ class BaseLearner(nn.Module, metaclass=abc.ABCMeta):
                 
                 #self.Acc_tasks[mode][self.task_now][i] = np.around(eval_acc_i, decimals=2)
                 
-                row = al_budget * task_i + alc
+                row = al_budget * self.task_now + alc
                 self.Acc_tasks[mode][row][i] = np.around(eval_acc_i, decimals=2)
 
                 # Use test data to evaluate generator
