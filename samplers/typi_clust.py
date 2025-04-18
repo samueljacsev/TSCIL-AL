@@ -30,7 +30,6 @@ class TypiClustSampler(BaseSampler):
         Returns:
             typicalities: Array of typicality scores.
         """
-        
         from sklearn.metrics.pairwise import euclidean_distances
 
         # Compute pairwise distances
@@ -50,6 +49,11 @@ class TypiClustSampler(BaseSampler):
             task_stream: Task stream containing tasks.
             task_i: Index of the current task.
         """
+        # Set random seeds for reproducibility
+        np.random.seed(run)  # For NumPy operations
+        torch.manual_seed(run)  # For PyTorch operations
+        torch.cuda.manual_seed_all(run)  # For PyTorch CUDA operations (if using GPU)
+
         task = task_stream.tasks[task_i]
         (x_train, y_train) = task[0]  # y_train is not used for 'unlabeled' data
 
@@ -72,7 +76,7 @@ class TypiClustSampler(BaseSampler):
             shuffle=False
         )
 
-        all_features = [] 
+        all_features = []
         for batch_id, (batch_x, _) in enumerate(eval_dataloader):
             batch_x = batch_x.to(self.agent.device)
             with torch.no_grad():
@@ -85,14 +89,14 @@ class TypiClustSampler(BaseSampler):
 
             if alc == 0:
                 # Randomly select the first batch of samples
-                np.random.seed(run) 
+                np.random.seed(run)  # Set random seed for shuffling
                 np.random.shuffle(idx_unlabeled)
                 selected_idxs = idx_unlabeled[:n_samples_per_al_cycle]
             else:
                 # Step 2: Clustering for Diversity
                 print("Step 2: Clustering for Diversity")
-                n_clusters = min(n_clusters, len(idx_unlabeled)) 
-                kmeans = KMeans(n_clusters=n_clusters, random_state=run)
+                n_clusters = min(n_clusters, len(idx_unlabeled))
+                kmeans = KMeans(n_clusters=n_clusters, random_state=run)  # Set random state for KMeans
                 cluster_labels = kmeans.fit_predict(all_features[idx_unlabeled])
 
                 # Step 3: Querying Typical Examples
@@ -106,7 +110,6 @@ class TypiClustSampler(BaseSampler):
                     cluster_typicalities = typicalities[cluster_indices]
                     most_typical_idx = cluster_indices[np.argmax(cluster_typicalities)]
                     selected_idxs.append(idx_unlabeled[most_typical_idx])
-                
 
                 # Limit the number of selected samples to the budget per cycle
                 selected_idxs = np.array(selected_idxs[:n_samples_per_al_cycle])

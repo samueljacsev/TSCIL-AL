@@ -52,6 +52,12 @@ class UncertaintyDiversitySampler(BaseSampler):
             task_i: Index of the current task.
             metric: Uncertainty metric ('entropy', 'margin', 'least_confidence').
         """
+        
+        # Set random seeds for reproducibility
+        np.random.seed(run)
+        torch.manual_seed(run)
+        torch.cuda.manual_seed_all(run)
+        
         if self.args.uncertainty_type is not None:
             metric = self.args.uncertainty_type
 
@@ -72,6 +78,7 @@ class UncertaintyDiversitySampler(BaseSampler):
 
             if alc == 0:
                 # Randomly select the first batch of samples
+                np.random.seed(run)
                 np.random.shuffle(idx_unlabeled)
                 selected_idxs = idx_unlabeled[:n_samples_per_al_cycle]
             else:

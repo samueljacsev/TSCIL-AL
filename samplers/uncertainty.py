@@ -12,9 +12,9 @@ class UncertaintySampler(BaseSampler):
     UncertaintySampler: A sampler with uncertainty sampling strategy.
     """
 
-    def __init__(self, 
-                 agent: BaseLearner, 
-                 exp_args: SimpleNamespace, 
+    def __init__(self,
+                 agent: BaseLearner,
+                 exp_args: SimpleNamespace,
                  args: SimpleNamespace):
         super().__init__(agent, exp_args, args, name='Uncertainty')
 
@@ -47,7 +47,7 @@ class UncertaintySampler(BaseSampler):
 
         return uncertainties
 
-    
+
     def active_learn_task(self, run, task_stream, task_i, metric='least_confidence'):
         """
         Selects the next few samples to be labelled based on uncertainty sampling.
@@ -57,15 +57,20 @@ class UncertaintySampler(BaseSampler):
             i: Index of the current task.
             metric: Uncertainty metric ('entropy', 'margin', 'least_confidence').
         """
+        # Set random seeds for reproducibility
+        np.random.seed(run)  # For NumPy operations
+        torch.manual_seed(run)  # For PyTorch operations
+        torch.cuda.manual_seed_all(run)  # For PyTorch CUDA operations (if using GPU)
+
         if self.args.uncertainty_type is not None:
             metric = self.args.uncertainty_type
-        
+
         task = task_stream.tasks[task_i]
         (x_train, y_train) = task[0]  # y_train is not used for unlabeled data
 
         n_samples_current_task = x_train.shape[0]
         print('Number of samples in current task:', n_samples_current_task)
-        
+
         n_samples_per_al_cycle = self.get_n_samples_per_al_cycle(n_samples_current_task)
 
         # Initialize unlabeled indices
@@ -76,12 +81,13 @@ class UncertaintySampler(BaseSampler):
 
             if alc == 0:
                 # Randomly select the first batch of samples
+                np.random.seed(run)  # Set random seed for shuffling
                 np.random.shuffle(idx_unlabeled)
                 selected_idxs = idx_unlabeled[:n_samples_per_al_cycle]
             else:
                 # Evaluate the model on the unlabeled data
                 eval_dataloader = Dataloader_from_numpy(
-                    x_train[idx_unlabeled], 
+                    x_train[idx_unlabeled],
                     np.zeros(len(idx_unlabeled)),  # Dummy labels
                     self.batch_size,
                     shuffle=False
@@ -95,6 +101,8 @@ class UncertaintySampler(BaseSampler):
                         outputs = self.agent.model(batch_x)  # Forward pass
                     all_outputs.append(outputs)
                 all_outputs = torch.cat(all_outputs, dim=0)  # Combine all batches
+
+                # OOD detection
 
                 # Compute uncertainty scores
                 uncertainties = self.compute_uncertainty(all_outputs, metric=metric)
@@ -110,5 +118,3 @@ class UncertaintySampler(BaseSampler):
             self.agent.learn_task(task, selected_idxs, new_task)
             accuracies = self.agent.evaluate(task_stream, alc, self.al_budget)
             self.save_acc_to_csv(accuracies, run, task_i, alc, f'_{metric}')
-
-            
