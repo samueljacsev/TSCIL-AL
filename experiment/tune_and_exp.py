@@ -118,7 +118,7 @@ def tune_hyperparams_on_val_tasks(args, cls_order, config_generic={}, config_mod
                    'agent': {'aser_k': 3, 'aser_type': 'asvm', 'aser_n_smp_cls': 2}}
     
     elif args.data == 'har': # 0.05 366, 0.01 72, 0.005 36
-        best_params = {'generic': {'lr': 0.001, 'lradj': 'TST', 'batch_size': 36, 'weight_decay': 0}, 
+        best_params = {'generic': {'lr': 0.001, 'lradj': 'TST', 'batch_size': 72, 'weight_decay': 0}, 
                         'model': {'feature_dim': 128, 'n_layers': 4, 'dropout': 0}, 
                         'agent': {'aser_k': 3, 'aser_type': 'asvm', 'aser_n_smp_cls': 4}}
     
@@ -136,6 +136,7 @@ def tune_hyperparams_on_val_tasks(args, cls_order, config_generic={}, config_mod
         best_params = {"generic": {"lr": 0.001, "lradj": "TST", "batch_size": 1020, "weight_decay": 0}, 
                         "model": {"feature_dim": 128, "n_layers": 4, "dropout": 0.3}, 
                         "agent": {"aser_k": 3, "aser_type": "asvm", "aser_n_smp_cls": 8}}
+    print('patience: {}, buffer size: {}, batch size: {}'.format(args.patience, get_buffer_size(args), best_params['generic']['batch_size']))
         
     return dict(best_params['model'], **best_params['agent'], **best_params['generic'])
     
@@ -303,6 +304,8 @@ def tune_and_experiment_multiple_runs(args):
                 print('Task {}: contains {} test samples'.format(k, x_test.shape[0]))
 
             for task_i in range(n_tasks_exp):
+                y_tain = task_stream[0][1]
+                print(set(y_train))
                 # Active Learning
                 sampler.active_learn_task(run, task_stream, task_i)
                 # model.learn_task(...)
