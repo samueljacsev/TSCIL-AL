@@ -5488,3 +5488,423 @@ Step 2: Clustering for Diversity
 Step 3: Querying Typical Examples
 Acc_vector: [59.2  50.53  9.89 33.44  0.  ], Mean: 38.265 
 Run: 4, Task: 3, AL cycle: 6 / 7
+Traceback (most recent call last):
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\main_tune.py", line 6, in <module>
+    from experiment.tune_and_exp import tune_and_experiment_multiple_runs
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\experiment\tune_and_exp.py", line 3, in <module>
+    from models.base import setup_model
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\models\base.py", line 4, in <module>
+    from utils.setup_elements import input_size_match, n_classes_per_task, get_num_classes
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\utils\setup_elements.py", line 2, in <module>
+    from data.grabmyo import window_len_grabmyo, input_channels_grabmyo
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\data\grabmyo.py", line 5, in <module>
+    from tsai.data.preparation import SlidingWindow
+ModuleNotFoundError: No module named 'tsai'
+Traceback (most recent call last):
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\main_tune.py", line 6, in <module>
+    from experiment.tune_and_exp import tune_and_experiment_multiple_runs
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\experiment\tune_and_exp.py", line 3, in <module>
+    from models.base import setup_model
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\models\base.py", line 4, in <module>
+    from utils.setup_elements import input_size_match, n_classes_per_task, get_num_classes
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\utils\setup_elements.py", line 2, in <module>
+    from data.grabmyo import window_len_grabmyo, input_channels_grabmyo
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\data\grabmyo.py", line 5, in <module>
+    from tsai.data.preparation import SlidingWindow
+ModuleNotFoundError: No module named 'tsai'
+Traceback (most recent call last):
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\main_tune.py", line 6, in <module>
+    from experiment.tune_and_exp import tune_and_experiment_multiple_runs
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\experiment\tune_and_exp.py", line 3, in <module>
+    from models.base import setup_model
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\models\base.py", line 4, in <module>
+    from utils.setup_elements import input_size_match, n_classes_per_task, get_num_classes
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\utils\setup_elements.py", line 2, in <module>
+    from data.grabmyo import window_len_grabmyo, input_channels_grabmyo
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\data\grabmyo.py", line 5, in <module>
+    from tsai.data.preparation import SlidingWindow
+ModuleNotFoundError: No module named 'tsai'
+Traceback (most recent call last):
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\main_tune.py", line 6, in <module>
+    from experiment.tune_and_exp import tune_and_experiment_multiple_runs
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\experiment\tune_and_exp.py", line 3, in <module>
+    from models.base import setup_model
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\models\base.py", line 4, in <module>
+    from utils.setup_elements import input_size_match, n_classes_per_task, get_num_classes
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\utils\setup_elements.py", line 2, in <module>
+    from data.grabmyo import window_len_grabmyo, input_channels_grabmyo
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\data\grabmyo.py", line 5, in <module>
+    from tsai.data.preparation import SlidingWindow
+ModuleNotFoundError: No module named 'tsai'
+Traceback (most recent call last):
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\main_tune.py", line 6, in <module>
+    from experiment.tune_and_exp import tune_and_experiment_multiple_runs
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\experiment\tune_and_exp.py", line 3, in <module>
+    from models.base import setup_model
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\models\base.py", line 4, in <module>
+    from utils.setup_elements import input_size_match, n_classes_per_task, get_num_classes
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\utils\setup_elements.py", line 2, in <module>
+    from data.grabmyo import window_len_grabmyo, input_channels_grabmyo
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\data\grabmyo.py", line 5, in <module>
+    from tsai.data.preparation import SlidingWindow
+ModuleNotFoundError: No module named 'tsai'
+Traceback (most recent call last):
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\main_tune.py", line 6, in <module>
+    from experiment.tune_and_exp import tune_and_experiment_multiple_runs
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\experiment\tune_and_exp.py", line 3, in <module>
+    from models.base import setup_model
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\models\base.py", line 4, in <module>
+    from utils.setup_elements import input_size_match, n_classes_per_task, get_num_classes
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\utils\setup_elements.py", line 2, in <module>
+    from data.grabmyo import window_len_grabmyo, input_channels_grabmyo
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\data\grabmyo.py", line 5, in <module>
+    from tsai.data.preparation import SlidingWindow
+ModuleNotFoundError: No module named 'tsai'
+Traceback (most recent call last):
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\main_tune.py", line 6, in <module>
+    from experiment.tune_and_exp import tune_and_experiment_multiple_runs
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\experiment\tune_and_exp.py", line 3, in <module>
+    from models.base import setup_model
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\models\base.py", line 4, in <module>
+    from utils.setup_elements import input_size_match, n_classes_per_task, get_num_classes
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\utils\setup_elements.py", line 2, in <module>
+    from data.grabmyo import window_len_grabmyo, input_channels_grabmyo
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\data\grabmyo.py", line 5, in <module>
+    from tsai.data.preparation import SlidingWindow
+ModuleNotFoundError: No module named 'tsai'
+Traceback (most recent call last):
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\main_tune.py", line 6, in <module>
+    from experiment.tune_and_exp import tune_and_experiment_multiple_runs
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\experiment\tune_and_exp.py", line 3, in <module>
+    from models.base import setup_model
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\models\base.py", line 4, in <module>
+    from utils.setup_elements import input_size_match, n_classes_per_task, get_num_classes
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\utils\setup_elements.py", line 2, in <module>
+    from data.grabmyo import window_len_grabmyo, input_channels_grabmyo
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\data\grabmyo.py", line 5, in <module>
+    from tsai.data.preparation import SlidingWindow
+ModuleNotFoundError: No module named 'tsai'
+Traceback (most recent call last):
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\main_tune.py", line 6, in <module>
+    from experiment.tune_and_exp import tune_and_experiment_multiple_runs
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\experiment\tune_and_exp.py", line 3, in <module>
+    from models.base import setup_model
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\models\base.py", line 4, in <module>
+    from utils.setup_elements import input_size_match, n_classes_per_task, get_num_classes
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\utils\setup_elements.py", line 2, in <module>
+    from data.grabmyo import window_len_grabmyo, input_channels_grabmyo
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\data\grabmyo.py", line 5, in <module>
+    from tsai.data.preparation import SlidingWindow
+ModuleNotFoundError: No module named 'tsai'
+Traceback (most recent call last):
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\main_tune.py", line 6, in <module>
+    from experiment.tune_and_exp import tune_and_experiment_multiple_runs
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\experiment\tune_and_exp.py", line 3, in <module>
+    from models.base import setup_model
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\models\base.py", line 4, in <module>
+    from utils.setup_elements import input_size_match, n_classes_per_task, get_num_classes
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\utils\setup_elements.py", line 2, in <module>
+    from data.grabmyo import window_len_grabmyo, input_channels_grabmyo
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\data\grabmyo.py", line 5, in <module>
+    from tsai.data.preparation import SlidingWindow
+ModuleNotFoundError: No module named 'tsai'
+Traceback (most recent call last):
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\main_tune.py", line 6, in <module>
+    from experiment.tune_and_exp import tune_and_experiment_multiple_runs
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\experiment\tune_and_exp.py", line 3, in <module>
+    from models.base import setup_model
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\models\base.py", line 4, in <module>
+    from utils.setup_elements import input_size_match, n_classes_per_task, get_num_classes
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\utils\setup_elements.py", line 2, in <module>
+    from data.grabmyo import window_len_grabmyo, input_channels_grabmyo
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\data\grabmyo.py", line 5, in <module>
+    from tsai.data.preparation import SlidingWindow
+ModuleNotFoundError: No module named 'tsai'
+Traceback (most recent call last):
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\main_tune.py", line 6, in <module>
+    from experiment.tune_and_exp import tune_and_experiment_multiple_runs
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\experiment\tune_and_exp.py", line 3, in <module>
+    from models.base import setup_model
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\models\base.py", line 4, in <module>
+    from utils.setup_elements import input_size_match, n_classes_per_task, get_num_classes
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\utils\setup_elements.py", line 2, in <module>
+    from data.grabmyo import window_len_grabmyo, input_channels_grabmyo
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\data\grabmyo.py", line 5, in <module>
+    from tsai.data.preparation import SlidingWindow
+ModuleNotFoundError: No module named 'tsai'
+Traceback (most recent call last):
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\main_tune.py", line 6, in <module>
+    from experiment.tune_and_exp import tune_and_experiment_multiple_runs
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\experiment\tune_and_exp.py", line 3, in <module>
+    from models.base import setup_model
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\models\base.py", line 4, in <module>
+    from utils.setup_elements import input_size_match, n_classes_per_task, get_num_classes
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\utils\setup_elements.py", line 2, in <module>
+    from data.grabmyo import window_len_grabmyo, input_channels_grabmyo
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\data\grabmyo.py", line 5, in <module>
+    from tsai.data.preparation import SlidingWindow
+ModuleNotFoundError: No module named 'tsai'
+Traceback (most recent call last):
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\main_tune.py", line 6, in <module>
+    from experiment.tune_and_exp import tune_and_experiment_multiple_runs
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\experiment\tune_and_exp.py", line 3, in <module>
+    from models.base import setup_model
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\models\base.py", line 4, in <module>
+    from utils.setup_elements import input_size_match, n_classes_per_task, get_num_classes
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\utils\setup_elements.py", line 2, in <module>
+    from data.grabmyo import window_len_grabmyo, input_channels_grabmyo
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\data\grabmyo.py", line 5, in <module>
+    from tsai.data.preparation import SlidingWindow
+ModuleNotFoundError: No module named 'tsai'
+Traceback (most recent call last):
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\main_tune.py", line 6, in <module>
+    from experiment.tune_and_exp import tune_and_experiment_multiple_runs
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\experiment\tune_and_exp.py", line 3, in <module>
+    from models.base import setup_model
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\models\base.py", line 4, in <module>
+    from utils.setup_elements import input_size_match, n_classes_per_task, get_num_classes
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\utils\setup_elements.py", line 2, in <module>
+    from data.grabmyo import window_len_grabmyo, input_channels_grabmyo
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\data\grabmyo.py", line 5, in <module>
+    from tsai.data.preparation import SlidingWindow
+ModuleNotFoundError: No module named 'tsai'
+Traceback (most recent call last):
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\main_tune.py", line 6, in <module>
+    from experiment.tune_and_exp import tune_and_experiment_multiple_runs
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\experiment\tune_and_exp.py", line 3, in <module>
+    from models.base import setup_model
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\models\base.py", line 4, in <module>
+    from utils.setup_elements import input_size_match, n_classes_per_task, get_num_classes
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\utils\setup_elements.py", line 2, in <module>
+    from data.grabmyo import window_len_grabmyo, input_channels_grabmyo
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\data\grabmyo.py", line 5, in <module>
+    from tsai.data.preparation import SlidingWindow
+ModuleNotFoundError: No module named 'tsai'
+Traceback (most recent call last):
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\main_tune.py", line 6, in <module>
+    from experiment.tune_and_exp import tune_and_experiment_multiple_runs
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\experiment\tune_and_exp.py", line 3, in <module>
+    from models.base import setup_model
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\models\base.py", line 4, in <module>
+    from utils.setup_elements import input_size_match, n_classes_per_task, get_num_classes
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\utils\setup_elements.py", line 2, in <module>
+    from data.grabmyo import window_len_grabmyo, input_channels_grabmyo
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\data\grabmyo.py", line 5, in <module>
+    from tsai.data.preparation import SlidingWindow
+ModuleNotFoundError: No module named 'tsai'
+Traceback (most recent call last):
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\main_tune.py", line 6, in <module>
+    from experiment.tune_and_exp import tune_and_experiment_multiple_runs
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\experiment\tune_and_exp.py", line 3, in <module>
+    from models.base import setup_model
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\models\base.py", line 4, in <module>
+    from utils.setup_elements import input_size_match, n_classes_per_task, get_num_classes
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\utils\setup_elements.py", line 2, in <module>
+    from data.grabmyo import window_len_grabmyo, input_channels_grabmyo
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\data\grabmyo.py", line 5, in <module>
+    from tsai.data.preparation import SlidingWindow
+ModuleNotFoundError: No module named 'tsai'
+Traceback (most recent call last):
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\main_tune.py", line 6, in <module>
+    from experiment.tune_and_exp import tune_and_experiment_multiple_runs
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\experiment\tune_and_exp.py", line 3, in <module>
+    from models.base import setup_model
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\models\base.py", line 4, in <module>
+    from utils.setup_elements import input_size_match, n_classes_per_task, get_num_classes
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\utils\setup_elements.py", line 2, in <module>
+    from data.grabmyo import window_len_grabmyo, input_channels_grabmyo
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\data\grabmyo.py", line 5, in <module>
+    from tsai.data.preparation import SlidingWindow
+ModuleNotFoundError: No module named 'tsai'
+Traceback (most recent call last):
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\main_tune.py", line 6, in <module>
+    from experiment.tune_and_exp import tune_and_experiment_multiple_runs
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\experiment\tune_and_exp.py", line 3, in <module>
+    from models.base import setup_model
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\models\base.py", line 4, in <module>
+    from utils.setup_elements import input_size_match, n_classes_per_task, get_num_classes
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\utils\setup_elements.py", line 2, in <module>
+    from data.grabmyo import window_len_grabmyo, input_channels_grabmyo
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\data\grabmyo.py", line 5, in <module>
+    from tsai.data.preparation import SlidingWindow
+ModuleNotFoundError: No module named 'tsai'
+Traceback (most recent call last):
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\main_tune.py", line 6, in <module>
+    from experiment.tune_and_exp import tune_and_experiment_multiple_runs
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\experiment\tune_and_exp.py", line 3, in <module>
+    from models.base import setup_model
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\models\base.py", line 4, in <module>
+    from utils.setup_elements import input_size_match, n_classes_per_task, get_num_classes
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\utils\setup_elements.py", line 2, in <module>
+    from data.grabmyo import window_len_grabmyo, input_channels_grabmyo
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\data\grabmyo.py", line 5, in <module>
+    from tsai.data.preparation import SlidingWindow
+ModuleNotFoundError: No module named 'tsai'
+Traceback (most recent call last):
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\main_tune.py", line 6, in <module>
+    from experiment.tune_and_exp import tune_and_experiment_multiple_runs
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\experiment\tune_and_exp.py", line 3, in <module>
+    from models.base import setup_model
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\models\base.py", line 4, in <module>
+    from utils.setup_elements import input_size_match, n_classes_per_task, get_num_classes
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\utils\setup_elements.py", line 2, in <module>
+    from data.grabmyo import window_len_grabmyo, input_channels_grabmyo
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\data\grabmyo.py", line 5, in <module>
+    from tsai.data.preparation import SlidingWindow
+ModuleNotFoundError: No module named 'tsai'
+Traceback (most recent call last):
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\main_tune.py", line 6, in <module>
+    from experiment.tune_and_exp import tune_and_experiment_multiple_runs
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\experiment\tune_and_exp.py", line 3, in <module>
+    from models.base import setup_model
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\models\base.py", line 4, in <module>
+    from utils.setup_elements import input_size_match, n_classes_per_task, get_num_classes
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\utils\setup_elements.py", line 2, in <module>
+    from data.grabmyo import window_len_grabmyo, input_channels_grabmyo
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\data\grabmyo.py", line 5, in <module>
+    from tsai.data.preparation import SlidingWindow
+ModuleNotFoundError: No module named 'tsai'
+Traceback (most recent call last):
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\main_tune.py", line 6, in <module>
+    from experiment.tune_and_exp import tune_and_experiment_multiple_runs
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\experiment\tune_and_exp.py", line 3, in <module>
+    from models.base import setup_model
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\models\base.py", line 4, in <module>
+    from utils.setup_elements import input_size_match, n_classes_per_task, get_num_classes
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\utils\setup_elements.py", line 2, in <module>
+    from data.grabmyo import window_len_grabmyo, input_channels_grabmyo
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\data\grabmyo.py", line 5, in <module>
+    from tsai.data.preparation import SlidingWindow
+ModuleNotFoundError: No module named 'tsai'
+Traceback (most recent call last):
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\main_tune.py", line 6, in <module>
+    from experiment.tune_and_exp import tune_and_experiment_multiple_runs
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\experiment\tune_and_exp.py", line 3, in <module>
+    from models.base import setup_model
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\models\base.py", line 4, in <module>
+    from utils.setup_elements import input_size_match, n_classes_per_task, get_num_classes
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\utils\setup_elements.py", line 2, in <module>
+    from data.grabmyo import window_len_grabmyo, input_channels_grabmyo
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\data\grabmyo.py", line 5, in <module>
+    from tsai.data.preparation import SlidingWindow
+ModuleNotFoundError: No module named 'tsai'
+Traceback (most recent call last):
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\main_tune.py", line 6, in <module>
+    from experiment.tune_and_exp import tune_and_experiment_multiple_runs
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\experiment\tune_and_exp.py", line 3, in <module>
+    from models.base import setup_model
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\models\base.py", line 4, in <module>
+    from utils.setup_elements import input_size_match, n_classes_per_task, get_num_classes
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\utils\setup_elements.py", line 2, in <module>
+    from data.grabmyo import window_len_grabmyo, input_channels_grabmyo
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\data\grabmyo.py", line 5, in <module>
+    from tsai.data.preparation import SlidingWindow
+ModuleNotFoundError: No module named 'tsai'
+Traceback (most recent call last):
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\main_tune.py", line 6, in <module>
+    from experiment.tune_and_exp import tune_and_experiment_multiple_runs
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\experiment\tune_and_exp.py", line 3, in <module>
+    from models.base import setup_model
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\models\base.py", line 4, in <module>
+    from utils.setup_elements import input_size_match, n_classes_per_task, get_num_classes
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\utils\setup_elements.py", line 2, in <module>
+    from data.grabmyo import window_len_grabmyo, input_channels_grabmyo
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\data\grabmyo.py", line 5, in <module>
+    from tsai.data.preparation import SlidingWindow
+ModuleNotFoundError: No module named 'tsai'
+Traceback (most recent call last):
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\main_tune.py", line 6, in <module>
+    from experiment.tune_and_exp import tune_and_experiment_multiple_runs
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\experiment\tune_and_exp.py", line 3, in <module>
+    from models.base import setup_model
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\models\base.py", line 4, in <module>
+    from utils.setup_elements import input_size_match, n_classes_per_task, get_num_classes
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\utils\setup_elements.py", line 2, in <module>
+    from data.grabmyo import window_len_grabmyo, input_channels_grabmyo
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\data\grabmyo.py", line 5, in <module>
+    from tsai.data.preparation import SlidingWindow
+ModuleNotFoundError: No module named 'tsai'
+Traceback (most recent call last):
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\main_tune.py", line 6, in <module>
+    from experiment.tune_and_exp import tune_and_experiment_multiple_runs
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\experiment\tune_and_exp.py", line 3, in <module>
+    from models.base import setup_model
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\models\base.py", line 4, in <module>
+    from utils.setup_elements import input_size_match, n_classes_per_task, get_num_classes
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\utils\setup_elements.py", line 2, in <module>
+    from data.grabmyo import window_len_grabmyo, input_channels_grabmyo
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\data\grabmyo.py", line 5, in <module>
+    from tsai.data.preparation import SlidingWindow
+ModuleNotFoundError: No module named 'tsai'
+Traceback (most recent call last):
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\main_tune.py", line 6, in <module>
+    from experiment.tune_and_exp import tune_and_experiment_multiple_runs
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\experiment\tune_and_exp.py", line 3, in <module>
+    from models.base import setup_model
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\models\base.py", line 4, in <module>
+    from utils.setup_elements import input_size_match, n_classes_per_task, get_num_classes
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\utils\setup_elements.py", line 2, in <module>
+    from data.grabmyo import window_len_grabmyo, input_channels_grabmyo
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\data\grabmyo.py", line 5, in <module>
+    from tsai.data.preparation import SlidingWindow
+ModuleNotFoundError: No module named 'tsai'
+Traceback (most recent call last):
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\main_tune.py", line 6, in <module>
+    from experiment.tune_and_exp import tune_and_experiment_multiple_runs
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\experiment\tune_and_exp.py", line 3, in <module>
+    from models.base import setup_model
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\models\base.py", line 4, in <module>
+    from utils.setup_elements import input_size_match, n_classes_per_task, get_num_classes
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\utils\setup_elements.py", line 2, in <module>
+    from data.grabmyo import window_len_grabmyo, input_channels_grabmyo
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\data\grabmyo.py", line 5, in <module>
+    from tsai.data.preparation import SlidingWindow
+ModuleNotFoundError: No module named 'tsai'
+Traceback (most recent call last):
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\main_tune.py", line 6, in <module>
+    from experiment.tune_and_exp import tune_and_experiment_multiple_runs
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\experiment\tune_and_exp.py", line 3, in <module>
+    from models.base import setup_model
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\models\base.py", line 4, in <module>
+    from utils.setup_elements import input_size_match, n_classes_per_task, get_num_classes
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\utils\setup_elements.py", line 2, in <module>
+    from data.grabmyo import window_len_grabmyo, input_channels_grabmyo
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\data\grabmyo.py", line 5, in <module>
+    from tsai.data.preparation import SlidingWindow
+ModuleNotFoundError: No module named 'tsai'
+Traceback (most recent call last):
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\main_tune.py", line 6, in <module>
+    from experiment.tune_and_exp import tune_and_experiment_multiple_runs
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\experiment\tune_and_exp.py", line 3, in <module>
+    from models.base import setup_model
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\models\base.py", line 4, in <module>
+    from utils.setup_elements import input_size_match, n_classes_per_task, get_num_classes
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\utils\setup_elements.py", line 2, in <module>
+    from data.grabmyo import window_len_grabmyo, input_channels_grabmyo
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\data\grabmyo.py", line 5, in <module>
+    from tsai.data.preparation import SlidingWindow
+ModuleNotFoundError: No module named 'tsai'
+Traceback (most recent call last):
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\main_tune.py", line 6, in <module>
+    from experiment.tune_and_exp import tune_and_experiment_multiple_runs
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\experiment\tune_and_exp.py", line 3, in <module>
+    from models.base import setup_model
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\models\base.py", line 4, in <module>
+    from utils.setup_elements import input_size_match, n_classes_per_task, get_num_classes
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\utils\setup_elements.py", line 2, in <module>
+    from data.grabmyo import window_len_grabmyo, input_channels_grabmyo
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\data\grabmyo.py", line 5, in <module>
+    from tsai.data.preparation import SlidingWindow
+ModuleNotFoundError: No module named 'tsai'
+Traceback (most recent call last):
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\main_tune.py", line 6, in <module>
+    from experiment.tune_and_exp import tune_and_experiment_multiple_runs
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\experiment\tune_and_exp.py", line 3, in <module>
+    from models.base import setup_model
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\models\base.py", line 4, in <module>
+    from utils.setup_elements import input_size_match, n_classes_per_task, get_num_classes
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\utils\setup_elements.py", line 2, in <module>
+    from data.grabmyo import window_len_grabmyo, input_channels_grabmyo
+  File "E:\Prog\6.felev\Onlab\TSCIL\TSCIL-AL\data\grabmyo.py", line 5, in <module>
+    from tsai.data.preparation import SlidingWindow
+ModuleNotFoundError: No module named 'tsai'

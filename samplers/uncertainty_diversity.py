@@ -151,8 +151,8 @@ class UncertaintyDiversitySampler(BaseSampler):
             self.agent.learn_task(task, selected_idxs, new_task)
             accuracies = self.agent.evaluate(task_stream, alc, self.al_budget)
             # Ha van ood_method, akkor átadjuk a save_acc_to_csv-nek
-            ood_method = self.args.ood_method if self.args.ood_method and task_i > 0 else ''
-            self.save_acc_to_csv(accuracies, run, task_i, alc, f'_{metric}', ood_method=ood_method)
+            ood_method = self.args.ood_method if self.args.ood_method else ''
+            self.save_acc_to_csv(accuracies, run, task_i, alc, f'_{metric}', ood_method = ood_method)
 
             # Feature gyűjtés mindkét esetben (AL only és AL+OOD)
             labeled_indices = np.setdiff1d(np.arange(n_samples_current_task), idx_unlabeled)
