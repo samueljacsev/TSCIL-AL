@@ -169,6 +169,11 @@ if __name__ == "__main__":
                         help='Total number of active learning cycles')
     parser.add_argument('--al_budget', dest='al_budget', default=2, type=float,
                         help='Number of active learning steps to be executed')
+    
+
+    # OOD Detection
+    parser.add_argument('--ood_method', type=str, default='mahalanobis', choices=['mahalanobis', 'msp', 'energy'],
+                        help='Method for OOD detection')
 
 
     args = parser.parse_args()

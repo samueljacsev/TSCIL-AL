@@ -104,9 +104,14 @@ class IncrementalTaskStream(object):
             val_size += val_data[0].shape[0]
             test_size += test_data[0].shape[0]
 
+
+
             self.tasks.append((train_data, val_data, test_data))
 
         print("Training set size: {}; Val set size: {}; Test set size: {}".format(train_size, val_size, test_size))
+
+
+
 
     def setup_offline(self, cut=0.9):
         x_train, y_train, x_test, y_test, _ = self.load_data()
@@ -127,6 +132,92 @@ class IncrementalTaskStream(object):
         print("Training set size: {}; Val set size: {}; Test set size: {}".format(train_size, val_size, test_size))
 
         return train_data, val_data, test_data
+    
+    def shuffle(self):
+        """
+        Shuffle the order of the tasks in the task stream.
+        """
+        # Taskok előkészítése a ciklus előtt
+        n_tasks_exp = len(self.tasks)
+        new_tasks = []
+        classes_in_each_task = []
+
+        for task_i in range(n_tasks_exp):
+            (x_train_current, y_train_current), (x_val_current, y_val_current), (x_test_current, y_test_current) = self.tasks[task_i]
+            
+            # Véletlenszerűen kiválasztunk 3/4 részt az x_train_current-ből
+            n_samples_train = len(x_train_current)
+            n_keep_train = int(n_samples_train * 0.75)  # 3/4 rész megtartása
+            indices_train = np.random.permutation(n_samples_train)
+            keep_indices_train = indices_train[:n_keep_train]
+            remove_indices_train = indices_train[n_keep_train:]
+
+            # Megtartott és eltávolított train minták szétválasztása
+            x_train_keep = x_train_current[keep_indices_train]
+            y_train_keep = y_train_current[keep_indices_train]
+            x_train_remove = x_train_current[remove_indices_train]
+            y_train_remove = y_train_current[remove_indices_train]
+
+            # Véletlenszerűen kiválasztunk 3/4 részt az x_val_current-ből
+            n_samples_val = len(x_val_current)
+            n_keep_val = int(n_samples_val * 0.75)  # 3/4 rész megtartása
+            indices_val = np.random.permutation(n_samples_val)
+            keep_indices_val = indices_val[:n_keep_val]
+            remove_indices_val = indices_val[n_keep_val:]
+
+            # Megtartott és eltávolított validációs minták szétválasztása
+            x_val_keep = x_val_current[keep_indices_val]
+            y_val_keep = y_val_current[keep_indices_val]
+            x_val_remove = x_val_current[remove_indices_val]
+            y_val_remove = y_val_current[remove_indices_val]
+
+            # Véletlenszerűen kiválasztunk 3/4 részt az x_test_current-ből
+            n_samples_test = len(x_test_current)
+            n_keep_test = int(n_samples_test * 0.75)  # 3/4 rész megtartása
+            indices_test = np.random.permutation(n_samples_test)
+            keep_indices_test = indices_test[:n_keep_test]
+            remove_indices_test = indices_test[n_keep_test:]
+
+            # Megtartott és eltávolított teszt minták szétválasztása
+            x_test_keep = x_test_current[keep_indices_test]
+            y_test_keep = y_test_current[keep_indices_test]
+            x_test_remove = x_test_current[remove_indices_test]
+            y_test_remove = y_test_current[remove_indices_test]
+
+            # Az új task adathalmazának összeállítása
+            if task_i == 0:
+                # Task 1: Csak a megtartott minták
+                x_train_new = x_train_keep
+                y_train_new = y_train_keep
+                x_val_new = x_val_keep
+                y_val_new = y_val_keep
+                x_test_new = x_test_keep
+                y_test_new = y_test_keep
+            else:
+                # Task 2 és továbbiak: Hozzáadjuk az előző task eltávolított mintáit
+                x_train_new = np.concatenate([x_train_keep, removed_train_samples[0]], axis=0)
+                y_train_new = np.concatenate([y_train_keep, removed_train_samples[1]], axis=0)
+                x_val_new = np.concatenate([x_val_keep, removed_val_samples[0]], axis=0)
+                y_val_new = np.concatenate([y_val_keep, removed_val_samples[1]], axis=0)
+                x_test_new = np.concatenate([x_test_keep, removed_test_samples[0]], axis=0)
+                y_test_new = np.concatenate([y_test_keep, removed_test_samples[1]], axis=0)
+
+            # Az eltávolított minták mentése a következő task számára
+            removed_train_samples = (x_train_remove, y_train_remove)
+            removed_val_samples = (x_val_remove, y_val_remove)
+            removed_test_samples = (x_test_remove, y_test_remove)
+
+            # Az új task hozzáadása a listához
+            new_tasks.append(((x_train_new, y_train_new), (x_val_new, y_val_new), (x_test_new, y_test_new)))
+
+            # Az aktuális task osztályainak tárolása
+            classes_in_each_task.append(np.unique(y_train_current))
+            print(f"Task {task_i} - Classes in train data: {np.unique(y_train_current)}")
+
+
+        # A task_stream.tasks frissítése az új taskokkal
+        self.tasks = new_tasks
+        return classes_in_each_task
 
 
 def make_valid_from_train(dataset, cut=0.9):
@@ -186,3 +277,5 @@ def get_cls_order(data, fix_order=False):
         np.random.shuffle(all_classes)
         cls_order = list(all_classes)
         return cls_order
+    
+

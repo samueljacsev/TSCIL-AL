@@ -14,6 +14,7 @@ from functools import partial
 from ray import tune, air
 import torch
 from utils.setup_elements import get_buffer_size
+from sklearn.metrics import roc_auc_score
 
 
 def adjust_config_for_ablation(args, config_cl):
@@ -301,17 +302,31 @@ def tune_and_experiment_multiple_runs(args):
                 print('Task {}: contains {} train samples'.format(k, x_train.shape[0]))
                 print('Task {}: contains {} val samples'.format(k, x_val.shape[0]))
                 print('Task {}: contains {} test samples'.format(k, x_test.shape[0]))
+            
+
+            
+
+            classes_in_each_task =task_stream.shuffle()
+
+            #################### Shuffled tasks - AL + OOD ##################
+
 
             for task_i in range(n_tasks_exp):
-                # Active Learning
-                sampler.active_learn_task(run, task_stream, task_i)
-                # model.learn_task(...)
-                #agent.evaluate(task_stream, i, path=tsne_path)  # TSNE path                
+                # Az aktuális task adathalmazának betöltése
+                (x_train_current, y_train_current), (x_val_current, y_val_current), (x_test_current, y_test_current) = task_stream.tasks[task_i]
 
-                # Plot CF matrix after finishing the final task.
-                if task_i+1 == n_tasks_exp and args.cf_matrix:
-                    cf_matrix_path = args.exp_path + '/cf{}'.format(run)
-                    agent.plot_cf_matrix(path=cf_matrix_path, classes=np.arange(task_stream.n_classes))
+                print(f"\n \nTask {task_i} - Classes in train data: {np.unique(y_train_current)}")
+                print(f"Task {task_i} - Number of train samples: {len(y_train_current)}")
+
+                # Active Learning futtatása
+                sampler.active_learn_task(run, task_stream, task_i, classes_in_each_task = classes_in_each_task)
+
+
+                #Plot CF matrix after finishing the final task.
+                #if task_i + 1 == n_tasks_exp and args.cf_matrix:
+                    #cf_matrix_path = args.exp_path + '/cf{}'.format(run)
+                    #agent.plot_cf_matrix(path=cf_matrix_path, classes=np.arange(task_stream.n_classes))
+
 
             # # Save Acc of this run
             # Acc_multiple_run_valid.append(agent.Acc_tasks['valid'])
