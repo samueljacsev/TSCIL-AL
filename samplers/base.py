@@ -120,7 +120,7 @@ class BaseSampler(nn.Module, metaclass=abc.ABCMeta):
 
         # Step 2: Cluster the embeddings
         n_clusters = n_samples_per_al_cycle
-        kmeans = KMeans(n_clusters=n_clusters, random_state=run)
+        kmeans = KMeans(n_clusters=n_clusters, random_state=self.args.seed + run)
         cluster_labels = kmeans.fit_predict(all_features)
 
         # Step 3: Calculate average OOD score for each cluster

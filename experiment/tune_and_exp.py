@@ -306,7 +306,7 @@ def tune_and_experiment_multiple_runs(args):
 
             
 
-            classes_in_each_task =task_stream.shuffle()
+            classes_in_each_task =task_stream.shuffle(args.seed + run)
 
             #################### Shuffled tasks - AL + OOD ##################
 

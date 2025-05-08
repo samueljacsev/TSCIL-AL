@@ -101,6 +101,7 @@ class UncertaintyDiversitySampler(BaseSampler):
                         ood_scores
                     )
                 else:  # AL only logika
+                    np.random.seed(self.args.seed + run)
                     np.random.shuffle(idx_unlabeled)
                     selected_idxs = idx_unlabeled[:n_samples_per_al_cycle]
             else:
@@ -126,7 +127,7 @@ class UncertaintyDiversitySampler(BaseSampler):
                 all_outputs = torch.cat(all_outputs, dim=0)
 
                 # Step 2: Cluster the embeddings
-                kmeans = KMeans(n_clusters=n_clusters, random_state=run)
+                kmeans = KMeans(n_clusters=n_clusters, random_state=self.args.seed + run)
                 cluster_labels = kmeans.fit_predict(all_features)
 
                 # Step 3: Compute uncertainty scores
