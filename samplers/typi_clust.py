@@ -50,9 +50,9 @@ class TypiClustSampler(BaseSampler):
             task_i: Index of the current task.
         """
         # Set random seeds for reproducibility
-        np.random.seed(run)  # For NumPy operations
-        torch.manual_seed(run)  # For PyTorch operations
-        torch.cuda.manual_seed_all(run)  # For PyTorch CUDA operations (if using GPU)
+        np.random.seed(self.args.seed + run)  # For NumPy operations
+        torch.manual_seed(self.args.seed + run)  # For PyTorch operations
+        torch.cuda.manual_seed_all(self.args.seed + run)  # For PyTorch CUDA operations (if using GPU)
 
         task = task_stream.tasks[task_i]
         (x_train, y_train) = task[0]  # y_train is not used for 'unlabeled' data
@@ -96,7 +96,7 @@ class TypiClustSampler(BaseSampler):
                 # Step 2: Clustering for Diversity
                 print("Step 2: Clustering for Diversity")
                 n_clusters = min(n_clusters, len(idx_unlabeled))
-                kmeans = KMeans(n_clusters=n_clusters, random_state=run)  # Set random state for KMeans
+                kmeans = KMeans(n_clusters=n_clusters, random_state=self.args.seed + run)  # Set random state for KMeans
                 cluster_labels = kmeans.fit_predict(all_features[idx_unlabeled])
 
                 # Step 3: Querying Typical Examples
