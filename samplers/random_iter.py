@@ -28,13 +28,13 @@ class RandomIterSampler(BaseSampler):
         
         n_samples_per_al_cycle = self.get_n_samples_per_al_cycle(n_samples_this_task)
 
-        np.random.seed(self.seed + run)
+        np.random.seed(self.args.seed + run )
         idx_unlabeled = np.arange(n_samples_this_task)
         
         
         for alc in range(self.al_budget):
             print(f'Run: {run}, Task: {task_i}, AL cycle: {alc + 1} / {self.al_budget}')
-            np.random.seed(self.seed + run)
+            np.random.seed(self.args.seed + run + alc)
             np.random.shuffle(idx_unlabeled)
             # label data by random sampling n_samples_per_al_cycle number of samples
             labelled_idxs = idx_unlabeled[:n_samples_per_al_cycle]
