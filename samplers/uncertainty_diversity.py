@@ -104,7 +104,7 @@ class UncertaintyDiversitySampler(BaseSampler):
                         ood_scores
                     )
                 else:  # AL only logika
-                    np.random.seed(self.args.seed + run)
+                    np.random.seed(self.args.seed + run )
                     np.random.shuffle(idx_unlabeled)
                     selected_idxs = idx_unlabeled[:n_samples_per_al_cycle]
             else:
