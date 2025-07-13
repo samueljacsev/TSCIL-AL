@@ -280,6 +280,7 @@ def tune_and_experiment_multiple_runs(args):
 
         task_stream = IncrementalTaskStream(data=args.data, scenario=args.scenario, cls_order=cls_order, split='exp')
 
+
         if args.agent == 'Offline':
             val_acc, test_acc = offline_train_eval(task_stream, run, exp_args)
             # Save offline acc of this run
@@ -297,16 +298,21 @@ def tune_and_experiment_multiple_runs(args):
                 exp_args=exp_args, 
                 args=exp_args)
             
-            for k in range(n_tasks_exp):
-                (x_train, y_train), (x_val, y_val), (x_test, y_test) = task_stream.tasks[k]
-                print('Task {}: contains {} train samples'.format(k, x_train.shape[0]))
-                print('Task {}: contains {} val samples'.format(k, x_val.shape[0]))
-                print('Task {}: contains {} test samples'.format(k, x_test.shape[0]))
-            
+            # for k in range(n_tasks_exp):
+            #     (x_train, y_train), (x_val, y_val), (x_test, y_test) = task_stream.tasks[k]
+            #     print('Task {}: contains {} train samples'.format(k, x_train.shape[0]))
+            #     print('Task {}: contains {} val samples'.format(k, x_val.shape[0]))
+            #     print('Task {}: contains {} test samples'.format(k, x_test.shape[0]))
+
+            #Acc_multiple_run_valid.append(agent.Acc_tasks['valid'])
+            #Acc_multiple_run_test.append(agent.Acc_tasks['test'])
+
+            is_ood = args.ood_method is not None
+
+            if is_ood:
+                classes_in_each_task =task_stream.shuffle(args.seed + run, 0.3)
 
             
-
-            classes_in_each_task =task_stream.shuffle(args.seed + run)
 
             #################### Shuffled tasks - AL + OOD ##################
 
@@ -318,8 +324,17 @@ def tune_and_experiment_multiple_runs(args):
                 print(f"\n \nTask {task_i} - Classes in train data: {np.unique(y_train_current)}")
                 print(f"Task {task_i} - Number of train samples: {len(y_train_current)}")
 
+
+                print('------------------------------------------learn task')
                 # Active Learning futtatása
-                sampler.active_learn_task(run, task_stream, task_i, classes_in_each_task = classes_in_each_task)
+
+                if is_ood:
+                    sampler.active_learn_task(run, task_stream, task_i, classes_in_each_task)
+                else:
+                    sampler.active_learn_task(run, task_stream, task_i)
+
+                
+                agent.evaluate(task_stream, path=tsne_path)
 
 
                 #Plot CF matrix after finishing the final task.
@@ -328,9 +343,9 @@ def tune_and_experiment_multiple_runs(args):
                     #agent.plot_cf_matrix(path=cf_matrix_path, classes=np.arange(task_stream.n_classes))
 
 
-            # # Save Acc of this run
-            # Acc_multiple_run_valid.append(agent.Acc_tasks['valid'])
-            # Acc_multiple_run_test.append(agent.Acc_tasks['test'])
+            # Save Acc of this run
+            Acc_multiple_run_valid.append(agent.Acc_tasks['valid'])
+            Acc_multiple_run_test.append(agent.Acc_tasks['test'])
             
 
         run_over = time.time()
@@ -349,4 +364,44 @@ def tune_and_experiment_multiple_runs(args):
     # Acc_multiple_run_test = test_mean_anc_cil_over_runs(args, Acc_multiple_run_test)  
     # # Save the results
     # save_results(args, Acc_multiple_run_valid, Acc_multiple_run_test, Best_params, start, end)
+
+    # ################## Val: mean and CI over runs ##################
+    print('Valid Set:')
+    Acc_multiple_run_valid = np.array(Acc_multiple_run_valid)
+    if args.agent == 'Offline':
+        acc = compute_performance_offline(Acc_multiple_run_valid)
+        print('---- Offline Accuracy with 95% CI is {} ----'.format(np.around(acc, decimals=2)))
+    else:
+        avg_end_acc, avg_end_fgt, avg_cur_acc, avg_acc, avg_bwtp = compute_performance(Acc_multiple_run_valid)
+        print(' Avg_End_Acc {} Avg_End_Fgt {} Avg_Cur_Acc {} Avg_Acc {} Avg_Bwtp {} \n'
+              .format(np.around(avg_end_acc, decimals=2), np.around(avg_end_fgt, decimals=2),
+                      np.around(avg_cur_acc, decimals=2), np.around(avg_acc, decimals=2),
+                      np.around(avg_bwtp, decimals=2)))
+
+    # ################## Test: mean and CI over runs ##################
+    print('Test Set:')
+    Acc_multiple_run_test = np.array(Acc_multiple_run_test)
+
+    if args.agent == 'Offline':
+        acc = compute_performance_offline(Acc_multiple_run_test)
+        print('---- Offline Accuracy with 95% CI is {} ----'.format(np.around(acc, decimals=2)))
+    else:
+        avg_end_acc, avg_end_fgt, avg_cur_acc, avg_acc, avg_bwtp = compute_performance(Acc_multiple_run_test)
+        print('Avg_End_Acc {} Avg_End_Fgt {} Avg_Cur_Acc {} Avg_Acc {} Avg_Bwtp {}'
+              .format(np.around(avg_end_acc, decimals=2), np.around(avg_end_fgt, decimals=2),
+                      np.around(avg_cur_acc, decimals=2), np.around(avg_acc, decimals=2),
+                      np.around(avg_bwtp, decimals=2)))
+
+    # Save the results
+    result = {}
+    result['time'] = end - start
+    result['acc_array_val'] = Acc_multiple_run_valid
+    result['acc_array_test'] = Acc_multiple_run_test
+    result['ram'] = check_ram_usage()
+    result['best_params'] = Best_params
+    save_path = args.exp_path + '/result.pkl'
+    save_pickle(result, save_path)
+    #print(f"Results saved to {save_path}")
+    # results print
+    #print(f"Results: {result}")
 

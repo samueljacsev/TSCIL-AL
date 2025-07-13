@@ -32,5 +32,5 @@ class FullSampler(BaseSampler):
                               new_task=True)
         
         self.agent.learn_task(task, idxs=None, new_task=True)
-        accuracies = self.agent.evaluate(task_stream, 0, self.al_budget)
-        self.save_acc_to_csv(accuracies, run, task_i, 0)
+        #accuracies = self.agent.evaluate(task_stream, 0, self.al_budget)
+        #self.save_acc_to_csv(accuracies, run, task_i, 0)

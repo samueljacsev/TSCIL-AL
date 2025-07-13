@@ -5,6 +5,9 @@ from samplers.base import BaseSampler
 from utils.data import Dataloader_from_numpy
 import numpy as np
 import torch
+import warnings
+
+warnings.filterwarnings('ignore')
 
 
 class UncertaintyDiversitySampler(BaseSampler):
@@ -77,7 +80,7 @@ class UncertaintyDiversitySampler(BaseSampler):
         # OOD detekció és kiértékelés
         if self.args.ood_method and task_i > 0:
             _, ood_scores = self.perform_ood_detection_and_evaluation(
-                x_train, y_train, task_i, self.args.ood_method, classes_in_each_task
+                x_train, y_train, task_i, self.args.ood_method, classes_in_each_task, run
             )
 
 
@@ -148,12 +151,14 @@ class UncertaintyDiversitySampler(BaseSampler):
             idx_unlabeled = np.setdiff1d(idx_unlabeled, selected_idxs)
 
             new_task = (alc == 0)  # First cycle is a new task
+
             # Train the agent on the newly labeled data
             self.agent.learn_task(task, selected_idxs, new_task)
-            accuracies = self.agent.evaluate(task_stream, alc, self.al_budget)
+            #accuracies = self.agent.evaluate(task_stream, alc, self.al_budget)
+            
             # Ha van ood_method, akkor átadjuk a save_acc_to_csv-nek
-            ood_method = self.args.ood_method if self.args.ood_method else ''
-            self.save_acc_to_csv(accuracies, run, task_i, alc, f'_{metric}', ood_method = ood_method)
+            #ood_method = self.args.ood_method if self.args.ood_method else ''
+            #self.save_acc_to_csv(accuracies, run, task_i, alc, f'_{metric}', ood_method = ood_method)
 
             # Feature gyűjtés mindkét esetben (AL only és AL+OOD)
             labeled_indices = np.setdiff1d(np.arange(n_samples_current_task), idx_unlabeled)

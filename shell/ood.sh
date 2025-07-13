@@ -64,3 +64,23 @@ python main_tune.py --data grabmyo --encoder CNN --agent ASER --norm BN --sample
 python main_tune.py --data har --encoder CNN --agent ASER --norm BN --sampler typi_clust; `
 python main_tune.py --data uwave --encoder CNN --agent ASER --norm BN --sampler typi_clust; `
 python main_tune.py --data wisdm --encoder CNN --agent ASER --norm BN --sampler typi_clust
+
+
+python main_tune.py --data grabmyo --encoder CNN --agent ASER --norm BN --sampler uncertainty_diversity --uncertainty_type entropy --ood_method msp; `
+python main_tune.py --data grabmyo --encoder CNN --agent ASER --norm BN --sampler uncertainty_diversity --uncertainty_type entropy --ood_method mahalanobis; `
+python main_tune.py --data grabmyo --encoder CNN --agent ASER --norm BN --sampler uncertainty_diversity --uncertainty_type entropy --ood_method energy; `
+python main_tune.py --data uwave --encoder CNN --agent ASER --norm BN --sampler uncertainty_diversity --uncertainty_type entropy --ood_method msp; `
+python main_tune.py --data uwave --encoder CNN --agent ASER --norm BN --sampler uncertainty_diversity --uncertainty_type entropy --ood_method mahalanobis; `
+python main_tune.py --data uwave --encoder CNN --agent ASER --norm BN --sampler uncertainty_diversity --uncertainty_type entropy --ood_method energy; `
+python main_tune.py --data har --encoder CNN --agent ASER --norm BN --sampler uncertainty_diversity --uncertainty_type entropy --ood_method msp; `
+python main_tune.py --data har --encoder CNN --agent ASER --norm BN --sampler uncertainty_diversity --uncertainty_type entropy --ood_method mahalanobis; `
+python main_tune.py --data har --encoder CNN --agent ASER --norm BN --sampler uncertainty_diversity --uncertainty_type entropy --ood_method energy
+
+python main_tune.py --data grabmyo --encoder CNN --agent ASER --norm BN --sampler uncertainty_diversity --uncertainty_type entropy --ood_method msp; `
+python main_tune.py --data grabmyo --encoder CNN --agent ASER --norm BN --sampler uncertainty_diversity --uncertainty_type entropy --ood_method energy; `
+python main_tune.py --data grabmyo --encoder CNN --agent ASER --norm BN --sampler uncertainty_diversity --uncertainty_type entropy
+
+python main_tune.py --data dailysports --encoder CNN --agent ASER --norm BN --sampler uncertainty_diversity --uncertainty_type entropy --ood_method energy; `
+python main_tune.py --data dailysports --encoder CNN --agent ASER --norm BN --sampler uncertainty_diversity --uncertainty_type entropy; `
+python main_tune.py --data wisdm --encoder CNN --agent ASER --norm BN --sampler uncertainty_diversity --uncertainty_type entropy --ood_method msp; `
+python main_tune.py --data wisdm --encoder CNN --agent ASER --norm BN --sampler uncertainty_diversity --uncertainty_type entropy

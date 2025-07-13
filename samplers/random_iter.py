@@ -42,6 +42,6 @@ class RandomIterSampler(BaseSampler):
 
             new_task = (alc == 0)
             self.agent.learn_task(task, labelled_idxs, new_task)
-            accuracies = self.agent.evaluate(task_stream, alc, self.al_budget)
-            self.save_acc_to_csv(accuracies, run, task_i, alc)
+            #accuracies = self.agent.evaluate(task_stream, alc, self.al_budget)
+            #self.save_acc_to_csv(accuracies, run, task_i, alc)
             

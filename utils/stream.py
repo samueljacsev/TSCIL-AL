@@ -133,7 +133,7 @@ class IncrementalTaskStream(object):
 
         return train_data, val_data, test_data
     
-    def shuffle(self,random_seed):
+    def shuffle(self,random_seed, ood_ratio):
         """
         Shuffle the order of the tasks in the task stream.
         """
@@ -147,7 +147,7 @@ class IncrementalTaskStream(object):
             
             # Véletlenszerűen kiválasztunk 3/4 részt az x_train_current-ből
             n_samples_train = len(x_train_current)
-            n_keep_train = int(n_samples_train * 0.75)  # 3/4 rész megtartása
+            n_keep_train = int(n_samples_train * ood_ratio)  # 3/4 rész megtartása
             np.random.seed(random_seed)
             indices_train = np.random.permutation(n_samples_train)
             keep_indices_train = indices_train[:n_keep_train]
@@ -161,7 +161,7 @@ class IncrementalTaskStream(object):
 
             # Véletlenszerűen kiválasztunk 3/4 részt az x_val_current-ből
             n_samples_val = len(x_val_current)
-            n_keep_val = int(n_samples_val * 0.75)  # 3/4 rész megtartása
+            n_keep_val = int(n_samples_val * ood_ratio)  # 3/4 rész megtartása
             np.random.seed(random_seed)
             indices_val = np.random.permutation(n_samples_val)
             keep_indices_val = indices_val[:n_keep_val]
@@ -175,7 +175,7 @@ class IncrementalTaskStream(object):
 
             # Véletlenszerűen kiválasztunk 3/4 részt az x_test_current-ből
             n_samples_test = len(x_test_current)
-            n_keep_test = int(n_samples_test * 0.75)  # 3/4 rész megtartása
+            n_keep_test = int(n_samples_test * ood_ratio)  # 3/4 rész megtartása
             np.random.seed(random_seed)
             indices_test = np.random.permutation(n_samples_test)
             keep_indices_test = indices_test[:n_keep_test]

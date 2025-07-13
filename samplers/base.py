@@ -12,6 +12,7 @@ from agents.base import BaseLearner
 from utils.data import Dataloader_from_numpy
 from utils.metrics import compute_performance
 from result.utils import save_acc_to_csv
+import pandas as pd
 
 
 class BaseSampler(nn.Module, metaclass=abc.ABCMeta):
@@ -267,14 +268,14 @@ class BaseSampler(nn.Module, metaclass=abc.ABCMeta):
                 return ood_scores
 
             #threshold = np.median(ood_scores)
-            percentile = 25
+            percentile = 70
             threshold = np.percentile(ood_scores, percentile)
             ood_mask = (ood_scores > threshold).astype(int)
             ood_indices = np.where(ood_mask)[0]
 
             return ood_indices
     
-    def perform_ood_detection_and_evaluation(self, x_train_current, y_train_current, task_i, ood_method, classes_in_each_task):
+    def perform_ood_detection_and_evaluation(self, x_train_current, y_train_current, task_i, ood_method, classes_in_each_task, run):
         """
         Performs OOD detection, computes ROC AUC score, and prints confusion matrix.
 
@@ -305,6 +306,14 @@ class BaseSampler(nn.Module, metaclass=abc.ABCMeta):
         for cls in previous_classes:
             true_labels[y_train_current == cls] = 0  # Az előző task osztályai nem OOD-k
 
+        # print ood id ratio
+        ood_id_ratio = np.sum(true_labels == 0) / len(true_labels)
+        print(f"Task {task_i} - OOD/ID ratio: {ood_id_ratio:.4f}")
+
+        # print ood labels print id labels
+        print(f"Task {task_i} - OOD labels: {np.unique(true_labels)}")
+        print(f"Task {task_i} - ID labels: {np.unique(y_train_current)}")
+
         # ROC AUC score kiszámítása
         roc_auc = roc_auc_score(true_labels, ood_scores)
         print(f"Task {task_i} - ROC AUC score for OOD detection: {roc_auc:.4f}")
@@ -331,5 +340,75 @@ class BaseSampler(nn.Module, metaclass=abc.ABCMeta):
 
         print(f"Task {task_i} - Classes in OOD samples: {np.unique(y_train_current[ood_indices])}")
         print(f"Task {task_i} - Number of OOD samples detected: {len(ood_indices)} \n \n")
-
+        
+        # Mentés a CSV fájlba
+        self.save_ood_metrics(x_train_current, y_train_current, task_i, ood_method, ood_scores, ood_indices, classes_in_each_task, run)
         return ood_indices, ood_scores
+    
+
+
+    def save_ood_metrics(self, x_train_current, y_train_current, task_i, ood_method, ood_scores, ood_indices, classes_in_each_task, run):
+        """
+        Saves ROC AUC scores and confusion matrix metrics (TP, TN, FP, FN) to a CSV file for each OOD method.
+
+        Args:
+            x_train_current: Current training data.
+            y_train_current: Current training labels.
+            task_i: Index of the current task.
+            ood_method: Method used for OOD detection (e.g., 'energy').
+            ood_scores: OOD scores for all samples.
+            ood_indices: Indices of detected OOD samples.
+            classes_in_each_task: List of unique classes for each task.
+            run: Run identifier for distinguishing multiple runs.
+        """
+        # Valódi címkék létrehozása: új osztályok OOD-ként jelölve
+        previous_classes = []
+        for i in range(task_i):
+            previous_classes.extend(classes_in_each_task[i])
+        previous_classes = np.unique(previous_classes)
+        previous_classes = previous_classes[previous_classes != -1]
+
+        true_labels = np.ones(len(x_train_current), dtype=int)  # Alapértelmezett: minden minta OOD
+        for cls in previous_classes:
+            true_labels[y_train_current == cls] = 0  # Előző task osztályai ID-k
+
+        # ROC AUC score kiszámítása
+        roc_auc = roc_auc_score(true_labels, ood_scores)
+
+        # Predikált címkék az ood_indices alapján
+        pred_labels = np.zeros(len(x_train_current), dtype=int)  # Alapértelmezett: minden minta ID
+        pred_labels[ood_indices] = 1  # OOD minták
+
+        # Konfúziós mátrix számítás
+        true_positive = np.sum((true_labels == 1) & (pred_labels == 1))
+        false_negative = np.sum((true_labels == 1) & (pred_labels == 0))
+        false_positive = np.sum((true_labels == 0) & (pred_labels == 1))
+        true_negative = np.sum((true_labels == 0) & (pred_labels == 0))
+
+        # Mappa létrehozása: result/<dataset_name>/ood_metrics/
+        ood_folder = os.path.join("result", self.args.data, "ood_metrics")
+        os.makedirs(ood_folder, exist_ok=True)
+
+        # CSV fájl neve az OOD metódus alapján (pl. mahalanobis.csv, msp.csv, energy.csv)
+        filename = os.path.join(ood_folder, f"{ood_method}.csv")
+
+        # Adatok előkészítése
+        data = {
+            "run": [run],
+            "task": [task_i],
+            "score": [roc_auc],
+            "True_Positive": [true_positive],
+            "True_Negative": [true_negative],
+            "False_Positive": [false_positive],
+            "False_Negative": [false_negative]
+        }
+        df = pd.DataFrame(data)
+
+        # CSV fájlba mentés hozzáfűzéses módban
+        if not os.path.exists(filename):
+            df.to_csv(filename, index=False)
+        else:
+            df.to_csv(filename, mode='a', header=False, index=False)
+        print(f"OOD metrics saved to {filename}")
+
+
