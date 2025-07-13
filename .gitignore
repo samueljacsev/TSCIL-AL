@@ -164,6 +164,5 @@ debug.py
 
 # Result files
 result/ray_tune_results/
-result/tune_and_exp/
-.gitignore
+
 
