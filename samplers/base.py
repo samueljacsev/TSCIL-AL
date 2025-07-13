@@ -296,7 +296,9 @@ class BaseSampler(nn.Module, metaclass=abc.ABCMeta):
         # Valódi címkék létrehozása: az új osztályok OOD-ként vannak jelölve
         previous_classes = []
         for i in range(task_i):
+            print(f"Task {i} - Classes in each task: {classes_in_each_task[1]}")
             previous_classes.extend(classes_in_each_task[i])
+        
         previous_classes = np.unique(previous_classes)
         previous_classes = previous_classes[previous_classes != -1]  # Az -1-es osztály eltávolítása
 
@@ -310,9 +312,10 @@ class BaseSampler(nn.Module, metaclass=abc.ABCMeta):
         ood_id_ratio = np.sum(true_labels == 0) / len(true_labels)
         print(f"Task {task_i} - OOD/ID ratio: {ood_id_ratio:.4f}")
 
-        # print ood labels print id labels
-        print(f"Task {task_i} - OOD labels: {np.unique(true_labels)}")
-        print(f"Task {task_i} - ID labels: {np.unique(y_train_current)}")
+
+        # print ood labels and id labels
+        print(f"Task {task_i} - OOD labels: {np.unique(y_train_current[true_labels==1])}")
+        print(f"Task {task_i} - ID labels: {np.unique(y_train_current[true_labels==0])}")
 
         # ROC AUC score kiszámítása
         roc_auc = roc_auc_score(true_labels, ood_scores)

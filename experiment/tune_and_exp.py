@@ -311,6 +311,7 @@ def tune_and_experiment_multiple_runs(args):
 
             if is_ood:
                 classes_in_each_task =task_stream.shuffle(args.seed + run, 0.3)
+                print(f"mukodik================================================")
 
             
 
@@ -327,9 +328,10 @@ def tune_and_experiment_multiple_runs(args):
 
                 print('------------------------------------------learn task')
                 # Active Learning futtatása
+                
 
                 if is_ood:
-                    sampler.active_learn_task(run, task_stream, task_i, classes_in_each_task)
+                    sampler.active_learn_task(run, task_stream, task_i, classes_in_each_task = classes_in_each_task)
                 else:
                     sampler.active_learn_task(run, task_stream, task_i)
 
