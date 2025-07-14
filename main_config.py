@@ -76,7 +76,7 @@ if __name__ == "__main__":
     parser.add_argument('--device', dest='device', default='cuda', type=str)
     parser.add_argument('--verbose', type=boolean_string, default=True)
     parser.add_argument('--exp_start_time', dest='exp_start_time', type=str)
-    parser.add_argument('--fix_order', type=boolean_string, default=False,
+    parser.add_argument('--fix_order', type=boolean_string, default=True,
                         help='Fix the class order for different runs')
     parser.add_argument('--cf_matrix', type=boolean_string, default=True,
                         help='Plot confusion matrix or not')

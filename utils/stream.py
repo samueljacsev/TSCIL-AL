@@ -31,7 +31,7 @@ class IncrementalTaskStream(object):
         self.n_class_per_task = n_classes_per_task[data]
         self.n_classes = self.n_tasks * self.n_class_per_task
         self.order_list = cls_order[start * self.n_class_per_task: end * self.n_class_per_task]
-
+        
         print("Create {} stream : {} tasks,  classes order {} ".format(self.split, self.n_tasks, self.order_list))
         print("Input shape (L, D): {}".format(tuple(input_size_match[data])))
 
@@ -272,11 +272,13 @@ def make_valid_from_train_with_sub(dataset, cut=0.9):
     return (x_tr, y_tr, sub_tr), (x_val, y_val)
 
 
-def get_cls_order(data, fix_order=False):
+def get_cls_order(data, fix_order=False, random_seed=None):
     if fix_order:
         return preset_orders[data]
     else:
         all_classes = np.arange(n_classes[data])
+        if random_seed is not None:
+            np.random.seed(random_seed)
         np.random.shuffle(all_classes)
         cls_order = list(all_classes)
         return cls_order
