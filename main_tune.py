@@ -18,6 +18,7 @@ if __name__ == "__main__":
     parser.add_argument('--sampler', dest='sampler', default='random_iter', type=str)
     parser.add_argument('--uncertainty_type', dest='uncertainty_type', default=None, type=str)
     parser.add_argument('--ood_method', dest='ood_method', default=None, type=str)
+    parser.add_argument('--shuffle_ratio', type=float, default=0.3, help='Ratio for task stream shuffling')
     args = parser.parse_args()
 
     # Include unchanged general params

@@ -307,11 +307,12 @@ def tune_and_experiment_multiple_runs(args):
             #Acc_multiple_run_valid.append(agent.Acc_tasks['valid'])
             #Acc_multiple_run_test.append(agent.Acc_tasks['test'])
 
-            is_ood = args.ood_method is not None
+            #is_ood = args.ood_method is not None
 
-            if is_ood:
-                classes_in_each_task =task_stream.shuffle(args.seed + run, 0.3)
-                print(f"mukodik================================================")
+            #if is_ood:
+            classes_in_each_task =task_stream.shuffle(args.seed + run, args.shuffle_ratio)
+            print(f"OOD arány: {args.shuffle_ratio}")
+            print(f"ID arány: {1 - args.shuffle_ratio}")                
 
             
 
@@ -330,10 +331,14 @@ def tune_and_experiment_multiple_runs(args):
                 # Active Learning futtatása
                 
 
-                if is_ood:
-                    sampler.active_learn_task(run, task_stream, task_i, classes_in_each_task = classes_in_each_task)
-                else:
-                    sampler.active_learn_task(run, task_stream, task_i)
+                # if is_ood:
+                #     sampler.active_learn_task(run, task_stream, task_i, classes_in_each_task = classes_in_each_task)
+                # else:
+                #     sampler.active_learn_task(run, task_stream, task_i)
+
+
+                sampler.active_learn_task(run, task_stream, task_i, classes_in_each_task = classes_in_each_task)
+
 
                 
                 agent.evaluate(task_stream, path=tsne_path)

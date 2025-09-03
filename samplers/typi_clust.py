@@ -75,7 +75,7 @@ class TypiClustSampler(BaseSampler):
         # OOD detekció és kiértékelés
         if self.args.ood_method and task_i > 0:
             _, ood_scores = self.perform_ood_detection_and_evaluation(
-                x_train, y_train, task_i, self.args.ood_method, classes_in_each_task
+                x_train, y_train, task_i, self.args.ood_method, classes_in_each_task, run
             )
 
 
@@ -150,9 +150,9 @@ class TypiClustSampler(BaseSampler):
             new_task = (alc == 0)  # First cycle is a new task
             # Train the agent on the newly labeled data
             self.agent.learn_task(task, selected_idxs, new_task)
-            accuracies = self.agent.evaluate(task_stream, alc, self.al_budget)
-            ood_method = self.args.ood_method if self.args.ood_method else ''
-            self.save_acc_to_csv(accuracies, run, task_i, alc, ood_method = ood_method)
+            # accuracies = self.agent.evaluate(task_stream, alc, self.al_budget)
+            # ood_method = self.args.ood_method if self.args.ood_method else ''
+            # self.save_acc_to_csv(accuracies, run, task_i, alc, ood_method = ood_method)
 
             labeled_indices = np.setdiff1d(np.arange(n_samples_current_task), idx_unlabeled)
             if len(labeled_indices) > 0:

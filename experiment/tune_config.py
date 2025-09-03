@@ -26,13 +26,13 @@ config_default = {'scenario': 'class',
                   'early_stop': True,
                   'patience': 5,
                   'input_norm': 'LN',
-                  'mem_budget': 0.05,  # 0.01 0.05 (default)  0.1  0.2  1
+                  'mem_budget': 0.01,  # 0.01 0.05 (default)  0.1  0.2  1
                   'head': 'Linear',  # Linear (Default),  SplitCosineLinear
                   'criterion': 'CE',  # Default: CE (Default),  BCE
                   'ncm_classifier': False,  # Default: False
                   'er_sub_type': 'balanced',    # 'part' / 'balanced'
                   'al_budget': 5,  # Number of active learning steps to be executed
-                  'al_total': 20,  # Total number of active learning steps
+                  'al_total': 100,  # Total number of active learning steps
                   }
                   # 1. Linear, BCE, False; 2. Linear, CE, True; 3. SplitCosineLinear, CE, False
 

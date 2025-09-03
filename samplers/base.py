@@ -13,6 +13,8 @@ from utils.data import Dataloader_from_numpy
 from utils.metrics import compute_performance
 from result.utils import save_acc_to_csv
 import pandas as pd
+from sklearn.mixture import GaussianMixture
+
 
 
 class BaseSampler(nn.Module, metaclass=abc.ABCMeta):
@@ -84,28 +86,52 @@ class BaseSampler(nn.Module, metaclass=abc.ABCMeta):
         """
         raise NotImplementedError("This method should be overridden by subclasses.")
     
+    def estimate_ood_threshold(self, ood_scores):
+        scores = np.array(ood_scores).reshape(-1, 1)
+        gmm = GaussianMixture(n_components=2, random_state=0).fit(scores)
+        
+        means = gmm.means_.flatten()
+        order = np.argsort(means)  # [ID, OOD]
+        pi_ood = gmm.weights_[order[1]]  # OOD komponens aránya
+        
+        # Küszöb = pont, ahol a két komponens valószínűsége egyenlő
+        xs = np.linspace(scores.min(), scores.max(), 500).reshape(-1, 1)
+        p = np.exp(gmm.score_samples(xs))
+        resp = gmm.predict_proba(xs)
+        diff = resp[:, order[0]] - resp[:, order[1]]
+        crossing = xs[np.argmin(np.abs(diff))][0]
+        
+        return crossing, pi_ood
+    
 
-    def ood_filter_top_ood(self, x_train, y_train, idx_unlabeled, task_stream, n_samples_per_al_cycle, run, task_i, ood_scores):
+    def ood_filter_top_ood(self, x_train, y_train, idx_candidates, task_stream, n_samples_per_al_cycle, run, task_i, ood_scores):
         """
-        Select samples using OOD scores with clustering for the first AL cycle.
+        Select samples using OOD scores with clustering for the first AL cycle,
+        but only from the provided candidate indices (e.g., thresholded OOD indices).
 
         Args:
             x_train: Training data.
-            y_train: Training labels (for validation).
-            idx_unlabeled: Indices of unlabeled samples.
+            y_train: Training labels.
+            idx_candidates: Indices of samples to choose from (already thresholded OOD indices).
             task_stream: Task stream object.
             n_samples_per_al_cycle: Number of samples to select per AL cycle.
             run: Random seed for reproducibility.
             task_i: Task index.
-            ood_scores: OOD scores for clustering.
+            ood_scores: OOD scores for all samples.
 
         Returns:
             selected_idxs: Indices of selected samples.
         """
-        # Step 1: Extract embeddings for all samples in x_train
+        if len(idx_candidates) == 0:
+            print(f"Task {task_i} - No candidate OOD samples to select from.")
+            return np.array([])
+        
+        print(f"Task {task_i} - Number of candidate OOD samples in CLUSTERING: {len(idx_candidates)}")
+
+        # Step 1: Extract embeddings for candidate samples only
         eval_dataloader = Dataloader_from_numpy(
-            x_train,
-            np.zeros(len(x_train)),  # Dummy labels
+            x_train[idx_candidates],
+            np.zeros(len(idx_candidates)),  # Dummy labels
             self.batch_size,
             shuffle=False
         )
@@ -119,67 +145,29 @@ class BaseSampler(nn.Module, metaclass=abc.ABCMeta):
             all_features.append(features)
         all_features = np.vstack(all_features)
 
-        # Step 2: Cluster the embeddings
+        # Step 2: Cluster into as many clusters as samples to query
         n_clusters = n_samples_per_al_cycle
         kmeans = KMeans(n_clusters=n_clusters, random_state=self.args.seed + run)
         cluster_labels = kmeans.fit_predict(all_features)
 
-        # Step 3: Calculate average OOD score for each cluster
-        cluster_ood_scores_avg = np.zeros(n_clusters)
+        # Step 3: Select the top OOD sample from each cluster
+        selected_indices = []
         for cluster in range(n_clusters):
             cluster_indices = np.where(cluster_labels == cluster)[0]
             if len(cluster_indices) > 0:
-                cluster_ood_scores = ood_scores[cluster_indices]
-                cluster_ood_scores_avg[cluster] = np.mean(cluster_ood_scores)
+                cluster_scores = ood_scores[idx_candidates[cluster_indices]]
+                top_idx = cluster_indices[np.argmax(cluster_scores)]
+                selected_indices.append(idx_candidates[top_idx])
 
-        # Step 4: Determine a threshold for cluster selection
-        ood_threshold = np.percentile(ood_scores, 30)
-
-        # Step 5: Select clusters with average OOD score above the threshold
-        valid_clusters = np.where(cluster_ood_scores_avg > ood_threshold)[0]
-        if len(valid_clusters) == 0:
-            valid_clusters = np.argsort(cluster_ood_scores_avg)[-min(n_samples_per_al_cycle, n_clusters):]
-
-        # Step 6: Distribute the n_samples_per_al_cycle across valid clusters
-        selected_indices = []
-        num_valid_clusters = len(valid_clusters)
-        if num_valid_clusters > 0:
-            samples_per_cluster = max(1, n_samples_per_al_cycle // num_valid_clusters)
-            remaining_samples = n_samples_per_al_cycle % num_valid_clusters
-
-            for i, cluster in enumerate(valid_clusters):
-                cluster_indices = np.where(cluster_labels == cluster)[0]
-                if len(cluster_indices) > 0:
-                    cluster_ood_scores = ood_scores[cluster_indices]
-                    sorted_indices = np.argsort(-cluster_ood_scores)
-                    num_samples = samples_per_cluster + (1 if i < remaining_samples else 0)
-                    num_samples = min(num_samples, len(cluster_indices))
-                    selected_cluster_indices = cluster_indices[sorted_indices[:num_samples]]
-                    selected_indices.extend(selected_cluster_indices)
-
-        # Step 7: If not enough samples, fill with highest OOD scores
-        if len(selected_indices) < n_samples_per_al_cycle:
-            remaining_indices = np.setdiff1d(np.arange(len(x_train)), selected_indices)
-            remaining_ood_scores = ood_scores[remaining_indices]
-            additional_indices = remaining_indices[np.argsort(-remaining_ood_scores)[:n_samples_per_al_cycle - len(selected_indices)]]
-            selected_indices.extend(additional_indices)
-
-        # Step 8: Convert to numpy array and ensure exact number of samples
+        # Step 4: Ensure exact number of samples (if fewer clusters than requested)
         selected_indices = np.array(selected_indices)[:n_samples_per_al_cycle]
-        selected_idxs = np.array(selected_indices)
 
-        # Validate selected labels
+        # Optional: sanity check labels
         selected_labels = y_train[selected_indices]
-        if np.any(selected_labels < 0) or np.any(selected_labels >= task_stream.n_classes):
-            print(f"Warning: Invalid labels found in selected indices: {np.unique(selected_labels)}")
-            valid_mask = (selected_labels >= 0) & (selected_labels < task_stream.n_classes)
-            selected_indices = selected_indices[valid_mask]
-            selected_idxs = selected_indices[:n_samples_per_al_cycle]
+        print(f"############################################ Task {task_i} - Selected {len(selected_indices)} OOD samples with clustering.")
+        print(f"############################################ Task {task_i} - Classes in selected samples: {np.unique(selected_labels)}")
 
-        print(f"############################################Task {task_i} - Selected {len(selected_idxs)} samples using OOD scores with clustering.")
-        print(f"############################################Task {task_i} - Classes in selected samples: {np.unique(y_train[selected_idxs])}")
-
-        return selected_idxs
+        return selected_indices
     
 
     def ood_detection(self, x_data, task_i, method='entropy', return_scores=False):
@@ -260,18 +248,42 @@ class BaseSampler(nn.Module, metaclass=abc.ABCMeta):
                     diff = features[i] - mu  # (D,)
                     ood_scores[i] = np.sqrt(diff.T @ cov_inv @ diff)  # (D,) @ (D, D) @ (D,) = skaláris érték
 
-
             else:
                 raise ValueError(f"Unknown OOD detection method: {method}")
 
             if return_scores:
                 return ood_scores
 
-            #threshold = np.median(ood_scores)
-            percentile = 70
-            threshold = np.percentile(ood_scores, percentile)
-            ood_mask = (ood_scores > threshold).astype(int)
+            # #threshold = np.median(ood_scores)
+            # percentile = (1-self.args.shuffle_ratio) * 100
+            # threshold = np.percentile(ood_scores, percentile)
+            # #threshold, est_ratio = self.estimate_ood_threshold(ood_scores)
+            # #print(f"Task {task_i} - Estimated OOD threshold using GMM: {threshold:.4f}, Estimated OOD ratio: {est_ratio:.4f}")
+            # ood_mask = (ood_scores > threshold).astype(int)
+            # ood_indices = np.where(ood_mask)[0]
+
+            # Fit GMM to OOD scores
+            scores = ood_scores.reshape(-1, 1)  # GMM expects 2D array
+            gmm = GaussianMixture(n_components=4, covariance_type='full', random_state=0)
+            gmm.fit(scores)
+
+            # Compute posterior probability of being in component with higher mean
+            probs = gmm.predict_proba(scores)  # shape (N, 2)
+            means = gmm.means_.flatten()
+            ood_component = np.argmax(means)  # assume OOD has higher score
+            ood_probs = probs[:, ood_component]
+
+            # Estimated OOD ratio from mixing weight
+            est_ratio = gmm.weights_[ood_component]
+            print(f"Task {task_i} - Estimated OOD ratio: {est_ratio:.4f}")
+
+            # Threshold: posterior > 0.5
+            threshold = scores[ood_probs >= 0.5].min()
+            print(f"Task {task_i} - OOD detection threshold using GMM: {threshold:.4f}")
+            ood_mask = (ood_scores >= threshold).astype(int)
             ood_indices = np.where(ood_mask)[0]
+
+
 
             return ood_indices
     

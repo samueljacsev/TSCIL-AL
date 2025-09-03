@@ -79,7 +79,7 @@ class UncertaintyDiversitySampler(BaseSampler):
 
         # OOD detekció és kiértékelés
         if self.args.ood_method and task_i > 0:
-            _, ood_scores = self.perform_ood_detection_and_evaluation(
+            ood_indices , ood_scores = self.perform_ood_detection_and_evaluation(
                 x_train, y_train, task_i, self.args.ood_method, classes_in_each_task, run
             )
 
@@ -96,7 +96,7 @@ class UncertaintyDiversitySampler(BaseSampler):
                     selected_idxs = self.ood_filter_top_ood(
                         x_train,
                         y_train,
-                        idx_unlabeled,
+                        ood_indices,
                         task_stream,
                         n_samples_per_al_cycle,
                         run,

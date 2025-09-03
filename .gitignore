@@ -164,5 +164,7 @@ debug.py
 
 # Result files
 result/ray_tune_results/
-
-
+result/log_outputs/
+result/csv_outputs/
+result/tune_and_exp/
+result/csv2_outputs/

@@ -174,6 +174,10 @@ if __name__ == "__main__":
     # OOD Detection
     parser.add_argument('--ood_method', type=str, default='mahalanobis', choices=['mahalanobis', 'msp', 'energy'],
                         help='Method for OOD detection')
+    
+    # Shuffle ratio
+    parser.add_argument('--shuffle_ratio', type=float, default=0.3, help='Ratio for task stream shuffling')
+
 
 
     args = parser.parse_args()

@@ -210,7 +210,7 @@ class BaseLearner(nn.Module, metaclass=abc.ABCMeta):
         eval_modes = ['valid', 'test']  # 'valid' is for checking generalization.
         #row = 0
         for mode in eval_modes:
-            self.verbose = True
+           # self.verbose = True
             if self.verbose:
                 print('\n ======== Evaluate on {} set ========'.format(mode))
             for i in range(self.task_now + 1):
