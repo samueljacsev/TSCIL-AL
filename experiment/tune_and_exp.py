@@ -258,8 +258,10 @@ def tune_and_experiment_multiple_runs(args):
         tsne_path = args.exp_path + '/tsne_r{}_'.format(run)
         seed_fixer(args.seed + run)
 
+        print('IS ORDER FIXED? :', args.fix_order)
         # Set the class order for this run
-        cls_order = get_cls_order(args.data, args.fix_order)
+        cls_order = get_cls_order(args.data, False, args.seed) # args.fix_order
+        
         print('\n ######## Run {}, cls_order :{} ########'.format(run, cls_order))
 
         # Tune on the val tasks

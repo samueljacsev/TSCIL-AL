@@ -4,7 +4,7 @@ import os
 import torch
 import time
 from experiment.tune_and_exp import tune_and_experiment_multiple_runs
-from utils.utils import Logger
+from utils.utils import Logger, boolean_string
 from types import SimpleNamespace
 from experiment.tune_config import config_default
 
