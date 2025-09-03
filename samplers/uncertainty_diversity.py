@@ -87,22 +87,85 @@ class UncertaintyDiversitySampler(BaseSampler):
         for alc in range(self.al_budget):
             print(f'Run: {run}, Task: {task_i}, AL cycle: {alc + 1} / {self.al_budget}')
 
+            # if alc == 0:
+            #     # Az első ciklusban (alc == 0) eldöntjük, hogy OOD detekcióval vagy anélkül választunk mintákat
+            #     if self.args.ood_method and task_i > 0: 
+                    
+                    
+            #          # AL+OOD logika
+            #         selected_idxs = self.ood_filter_top_ood(
+            #             x_train,
+            #             y_train,
+            #             ood_indices,
+            #             task_stream,
+            #             n_samples_per_al_cycle,
+            #             run,
+            #             task_i,
+            #             ood_scores
+            #         )
             if alc == 0:
-                # Az első ciklusban (alc == 0) eldöntjük, hogy OOD detekcióval vagy anélkül választunk mintákat
-                if self.args.ood_method and task_i > 0: 
+                if self.args.ood_method and task_i > 0:
+                    # --- Step 0: define OOD indices from ground truth (PoC) ---
+                    id_classes = np.concatenate(classes_in_each_task[:task_i])  # all seen classes
+                    ood_indices = np.where(~np.isin(y_train, id_classes))[0]
                     
-                    
-                     # AL+OOD logika
-                    selected_idxs = self.ood_filter_top_ood(
-                        x_train,
-                        y_train,
-                        ood_indices,
-                        task_stream,
-                        n_samples_per_al_cycle,
-                        run,
-                        task_i,
-                        ood_scores
+                    # print id and ood 
+                    print(f"ID classes: {id_classes}")
+                    print(f"OD classes: {ood_indices}")
+
+
+                    # --- Step 1: determine counts ---
+                    n_ood_samples = int(self.args.shuffle_ratio * n_samples_per_al_cycle)
+                    n_al_samples = n_samples_per_al_cycle - n_ood_samples
+
+                    # --- Step 2: randomly choose OOD samples ---
+                    np.random.seed(self.args.seed + run)
+                    if len(ood_indices) < n_ood_samples:
+                        selected_idxs_ood = ood_indices
+                    else:
+                        selected_idxs_ood = np.random.choice(ood_indices, n_ood_samples, replace=False)
+
+                    # --- Step 3: run normal AL+diversity on remaining pool (excluding chosen OOD) ---
+                    remaining_idxs = np.setdiff1d(idx_unlabeled, selected_idxs_ood)
+
+                    eval_dataloader = Dataloader_from_numpy(
+                        x_train[remaining_idxs],
+                        np.zeros(len(remaining_idxs)),
+                        self.batch_size,
+                        shuffle=False
                     )
+
+                    all_features = []
+                    all_outputs = []
+                    for batch_id, (batch_x, _) in enumerate(eval_dataloader):
+                        batch_x = batch_x.to(self.agent.device)
+                        with torch.no_grad():
+                            features = self.agent.model.feature(batch_x)
+                            outputs = self.agent.model(batch_x)
+                        all_features.append(features.cpu().numpy())
+                        all_outputs.append(outputs)
+                    all_features = np.vstack(all_features)
+                    all_outputs = torch.cat(all_outputs, dim=0)
+
+                    # cluster only the remaining pool
+                    kmeans = KMeans(n_clusters=n_al_samples, random_state=self.args.seed + run)
+                    cluster_labels = kmeans.fit_predict(all_features)
+
+                    uncertainties = self.compute_uncertainty(all_outputs, metric=metric)
+
+                    selected_idxs_AL = []
+                    for cluster in range(n_al_samples):
+                        cluster_indices = np.where(cluster_labels == cluster)[0]
+                        cluster_uncertainties = uncertainties[cluster_indices]
+                        slct_idx = cluster_indices[np.argsort(-cluster_uncertainties)[0]]
+                        selected_idxs_AL.append(remaining_idxs[slct_idx])
+
+                    selected_idxs_AL = np.array(selected_idxs_AL)
+
+                    # --- Step 4: merge OOD + AL selections ---
+                    selected_idxs = np.concatenate([selected_idxs_ood, selected_idxs_AL])
+
+                    print(f"[PoC] AL cycle 0: selected {len(selected_idxs_ood)} OOD and {len(selected_idxs_AL)} ID samples")
                 else:  # AL only logika
                     np.random.seed(self.args.seed + run )
                     np.random.shuffle(idx_unlabeled)
