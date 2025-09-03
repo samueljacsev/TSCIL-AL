@@ -148,12 +148,15 @@ class UncertaintyDiversitySampler(BaseSampler):
                     
                     print(f"Selected OOD samples: {selected_idxs_ood} (count: {len(selected_idxs_ood)})")
 
-                    # --- Step 3: Active learning strategy for ID samples (excluding chosen OOD) ---
-                    remaining_idxs = np.setdiff1d(idx_unlabeled, selected_idxs_ood)
+                    # --- Step 3: Active learning strategy ONLY on ID samples ---
+                    # Use only ID indices for clustering and AL selection
+                    id_pool_for_al = np.setdiff1d(id_indices, selected_idxs_ood)  # Remove any ID samples already selected as OOD
+                    
+                    print(f"ID pool for active learning: {len(id_pool_for_al)} samples")
 
                     eval_dataloader = Dataloader_from_numpy(
-                        x_train[remaining_idxs],
-                        np.zeros(len(remaining_idxs)),
+                        x_train[id_pool_for_al],
+                        np.zeros(len(id_pool_for_al)),
                         self.batch_size,
                         shuffle=False
                     )
@@ -181,7 +184,7 @@ class UncertaintyDiversitySampler(BaseSampler):
                         cluster_indices = np.where(cluster_labels == cluster)[0]
                         cluster_uncertainties = uncertainties[cluster_indices]
                         slct_idx = cluster_indices[np.argsort(-cluster_uncertainties)[0]]
-                        selected_idxs_AL.append(remaining_idxs[slct_idx])
+                        selected_idxs_AL.append(id_pool_for_al[slct_idx])
 
                     selected_idxs_AL = np.array(selected_idxs_AL)
                     
