@@ -133,7 +133,35 @@ class IncrementalTaskStream(object):
 
         return train_data, val_data, test_data
     
-    def shuffle(self,random_seed, ood_ratio):
+    def _split_data_by_ratio(self, x_data, y_data, ood_ratio, random_seed):
+        """
+        Helper function to split data into keep and remove parts based on ood_ratio.
+        
+        Args:
+            x_data: Input features
+            y_data: Labels
+            ood_ratio: Ratio of samples to keep (0.0 to 1.0)
+            random_seed: Random seed for reproducibility
+            
+        Returns:
+            tuple: ((x_keep, y_keep), (x_remove, y_remove))
+        """
+        n_samples = len(x_data)
+        n_keep = int(n_samples * ood_ratio)
+        
+        np.random.seed(random_seed)
+        indices = np.random.permutation(n_samples)
+        keep_indices = indices[:n_keep]
+        remove_indices = indices[n_keep:]
+        
+        x_keep = x_data[keep_indices]
+        y_keep = y_data[keep_indices]
+        x_remove = x_data[remove_indices]
+        y_remove = y_data[remove_indices]
+        
+        return (x_keep, y_keep), (x_remove, y_remove)
+
+    def shuffle(self, random_seed, ood_ratio):
         """
         Shuffle the order of the tasks in the task stream.
         """
@@ -145,47 +173,15 @@ class IncrementalTaskStream(object):
         for task_i in range(n_tasks_exp):
             (x_train_current, y_train_current), (x_val_current, y_val_current), (x_test_current, y_test_current) = self.tasks[task_i]
             
-            # Véletlenszerűen kiválasztunk 3/4 részt az x_train_current-ből
-            n_samples_train = len(x_train_current)
-            n_keep_train = int(n_samples_train * ood_ratio)  # 3/4 rész megtartása
-            np.random.seed(random_seed)
-            indices_train = np.random.permutation(n_samples_train)
-            keep_indices_train = indices_train[:n_keep_train]
-            remove_indices_train = indices_train[n_keep_train:]
-
-            # Megtartott és eltávolított train minták szétválasztása
-            x_train_keep = x_train_current[keep_indices_train]
-            y_train_keep = y_train_current[keep_indices_train]
-            x_train_remove = x_train_current[remove_indices_train]
-            y_train_remove = y_train_current[remove_indices_train]
-
-            # Véletlenszerűen kiválasztunk 3/4 részt az x_val_current-ből
-            n_samples_val = len(x_val_current)
-            n_keep_val = int(n_samples_val * ood_ratio)  # 3/4 rész megtartása
-            np.random.seed(random_seed)
-            indices_val = np.random.permutation(n_samples_val)
-            keep_indices_val = indices_val[:n_keep_val]
-            remove_indices_val = indices_val[n_keep_val:]
-
-            # Megtartott és eltávolított validációs minták szétválasztása
-            x_val_keep = x_val_current[keep_indices_val]
-            y_val_keep = y_val_current[keep_indices_val]
-            x_val_remove = x_val_current[remove_indices_val]
-            y_val_remove = y_val_current[remove_indices_val]
-
-            # Véletlenszerűen kiválasztunk 3/4 részt az x_test_current-ből
-            n_samples_test = len(x_test_current)
-            n_keep_test = int(n_samples_test * ood_ratio)  # 3/4 rész megtartása
-            np.random.seed(random_seed)
-            indices_test = np.random.permutation(n_samples_test)
-            keep_indices_test = indices_test[:n_keep_test]
-            remove_indices_test = indices_test[n_keep_test:]
-
-            # Megtartott és eltávolított teszt minták szétválasztása
-            x_test_keep = x_test_current[keep_indices_test]
-            y_test_keep = y_test_current[keep_indices_test]
-            x_test_remove = x_test_current[remove_indices_test]
-            y_test_remove = y_test_current[remove_indices_test]
+            # Split train, validation, and test data using helper function
+            (x_train_keep, y_train_keep), (x_train_remove, y_train_remove) = self._split_data_by_ratio(
+                x_train_current, y_train_current, ood_ratio, random_seed)
+            
+            (x_val_keep, y_val_keep), (x_val_remove, y_val_remove) = self._split_data_by_ratio(
+                x_val_current, y_val_current, ood_ratio, random_seed)
+            
+            (x_test_keep, y_test_keep), (x_test_remove, y_test_remove) = self._split_data_by_ratio(
+                x_test_current, y_test_current, ood_ratio, random_seed)
 
             # Az új task adathalmazának összeállítása
             if task_i == 0:
@@ -216,7 +212,6 @@ class IncrementalTaskStream(object):
             # Az aktuális task osztályainak tárolása
             classes_in_each_task.append(np.unique(y_train_current))
             print(f"Task {task_i} - Classes in train data: {np.unique(y_train_current)}")
-
 
         # A task_stream.tasks frissítése az új taskokkal
         self.tasks = new_tasks

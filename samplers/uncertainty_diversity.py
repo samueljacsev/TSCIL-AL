@@ -105,27 +105,50 @@ class UncertaintyDiversitySampler(BaseSampler):
             #         )
             if alc == 0:
                 if self.args.ood_method and task_i > 0:
-                    # --- Step 0: define OOD indices from ground truth (PoC) ---
-                    id_classes = np.concatenate(classes_in_each_task[:task_i])  # all seen classes
-                    ood_indices = np.where(~np.isin(y_train, id_classes))[0]
+                    # --- Step 0: Separate OOD and ID classes from ground truth (PoC) ---
+                    # Get classes that the model has actually seen in previous tasks (after shuffle)
+                    id_classes_list = []
+                    for prev_task_idx in range(task_i):
+                        prev_task = task_stream.tasks[prev_task_idx]
+                        prev_y_train = prev_task[0][1]  # Get labels from training data
+                        id_classes_list.extend(np.unique(prev_y_train))
                     
-                    # print id and ood 
-                    print(f"ID classes: {id_classes}")
-                    print(f"OD classes: {ood_indices}")
-
+                    id_classes = np.unique(id_classes_list)  # Remove duplicates and sort
+                    
+                    # Find OOD and ID indices based on ground truth labels
+                    ood_indices = np.where(~np.isin(y_train, id_classes))[0]
+                    id_indices = np.where(np.isin(y_train, id_classes))[0]
+                    
+                    # Get actual class labels for OOD and ID samples
+                    ood_class_labels = np.unique(y_train[ood_indices]) if len(ood_indices) > 0 else []
+                    id_class_labels = np.unique(y_train[id_indices]) if len(id_indices) > 0 else []
+                    
+                    # Print detailed information about OOD and ID separation
+                    print("="*60)
+                    print(f"[Task {task_i}, AL Cycle 0] OOD/ID Separation Results:")
+                    print(f"ID classes (previously seen): {id_class_labels}")
+                    print(f"ID sample indices: {id_indices} (count: {len(id_indices)})")
+                    print(f"OOD classes (new/unseen): {ood_class_labels}")
+                    print(f"OOD sample indices: {ood_indices} (count: {len(ood_indices)})")
+                    print("="*60)
 
                     # --- Step 1: determine counts ---
                     n_ood_samples = int(self.args.shuffle_ratio * n_samples_per_al_cycle)
                     n_al_samples = n_samples_per_al_cycle - n_ood_samples
 
-                    # --- Step 2: randomly choose OOD samples ---
+                    print(f"Sampling strategy: {n_ood_samples} OOD samples (random) + {n_al_samples} ID samples (AL+diversity)")
+
+                    # --- Step 2: Random sampling for OOD samples ---
                     np.random.seed(self.args.seed + run)
                     if len(ood_indices) < n_ood_samples:
                         selected_idxs_ood = ood_indices
+                        print(f"Warning: Only {len(ood_indices)} OOD samples available, less than requested {n_ood_samples}")
                     else:
                         selected_idxs_ood = np.random.choice(ood_indices, n_ood_samples, replace=False)
+                    
+                    print(f"Selected OOD samples: {selected_idxs_ood} (count: {len(selected_idxs_ood)})")
 
-                    # --- Step 3: run normal AL+diversity on remaining pool (excluding chosen OOD) ---
+                    # --- Step 3: Active learning strategy for ID samples (excluding chosen OOD) ---
                     remaining_idxs = np.setdiff1d(idx_unlabeled, selected_idxs_ood)
 
                     eval_dataloader = Dataloader_from_numpy(
@@ -161,11 +184,15 @@ class UncertaintyDiversitySampler(BaseSampler):
                         selected_idxs_AL.append(remaining_idxs[slct_idx])
 
                     selected_idxs_AL = np.array(selected_idxs_AL)
+                    
+                    print(f"Selected ID samples (AL+diversity): {selected_idxs_AL} (count: {len(selected_idxs_AL)})")
+                    print(f"ID sample classes: {np.unique(y_train[selected_idxs_AL])}")
 
                     # --- Step 4: merge OOD + AL selections ---
                     selected_idxs = np.concatenate([selected_idxs_ood, selected_idxs_AL])
 
-                    print(f"[PoC] AL cycle 0: selected {len(selected_idxs_ood)} OOD and {len(selected_idxs_AL)} ID samples")
+                    print(f"[PoC] Total selected samples: {len(selected_idxs)} ({len(selected_idxs_ood)} OOD + {len(selected_idxs_AL)} ID)")
+                    print("="*60)
                 else:  # AL only logika
                     np.random.seed(self.args.seed + run )
                     np.random.shuffle(idx_unlabeled)
