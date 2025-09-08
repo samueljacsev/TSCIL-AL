@@ -7,9 +7,9 @@ from agents.utils.name_match import agents_replay
 
 content_root = os.path.abspath('.')
 config_default = {'scenario': 'class',
-                  'runs': 4,
+                  'runs': 1,
                   'runs_val': 2,  # To increase the confidence of best_config
-                  'seed': 4, # 1234,
+                  'seed': 1234, # 1234,
                   'verbose': True,
                   'path_prefix': content_root + '/result/tune_and_exp',
                   'fix_order': False,
@@ -26,13 +26,13 @@ config_default = {'scenario': 'class',
                   'early_stop': True,
                   'patience': 5,
                   'input_norm': 'LN',
-                  'mem_budget': 0.01,  # 0.01 0.05 (default)  0.1  0.2  1
+                  'mem_budget': 0.05,  # 0.01 0.05 (default)  0.1  0.2  1
                   'head': 'Linear',  # Linear (Default),  SplitCosineLinear
                   'criterion': 'CE',  # Default: CE (Default),  BCE
                   'ncm_classifier': False,  # Default: False
                   'er_sub_type': 'balanced',    # 'part' / 'balanced'
-                  'al_budget': 5,  # Number of active learning steps to be executed
-                  'al_total': 100,  # Total number of active learning steps
+                  'al_budget': 3,  # Number of active learning steps to be executed
+                  'al_total': 8,  # Total number of active learning steps
                   }
                   # 1. Linear, BCE, False; 2. Linear, CE, True; 3. SplitCosineLinear, CE, False
 
