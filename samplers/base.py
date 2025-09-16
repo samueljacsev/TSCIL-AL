@@ -74,6 +74,29 @@ class BaseSampler(nn.Module, metaclass=abc.ABCMeta):
         print('Average current accuracy:', avg_cur_acc)
         print('Average accuracy:', avg_acc)
         #print('Average BWT+:', avg_bwtp)
+
+    def extract_features_and_outputs(self, x_array):
+
+        # Step 1: Extract embeddings for all unlabeled samples
+        eval_dataloader = Dataloader_from_numpy(
+        x_array,
+        np.zeros(len(x_array)),  # Dummy labels
+        self.batch_size,
+        shuffle=False)
+
+        all_features, all_outputs = [], []
+        for batch_id, (batch_x, _) in enumerate(eval_dataloader):
+            batch_x = batch_x.to(self.agent.device)
+            with torch.no_grad():
+                # Extract embeddings and outputs
+                features = self.agent.model.feature(batch_x)  # Feature extraction
+                outputs = self.agent.model(batch_x)  # Forward pass
+            all_features.append(features.cpu().numpy())
+            all_outputs.append(outputs)
+        all_features = np.vstack(all_features)
+        all_outputs = torch.cat(all_outputs, dim=0)
+
+        return all_features, all_outputs
         
 
     @abstractmethod
@@ -107,6 +130,10 @@ class BaseSampler(nn.Module, metaclass=abc.ABCMeta):
     def ood_filter_top_ood(self, x_train, y_train, idx_unlabeled, task_stream, n_samples_per_al_cycle, run, task_i, ood_scores):
             """
             Select samples using OOD scores with clustering for the first AL cycle.
+    def ood_filter_top_ood(self, x_train, idx_candidates, n_samples_per_al_cycle, run, ood_scores):
+        """
+        Select samples using OOD scores with clustering for the first AL cycle,
+        but only from the provided candidate indices (e.g., thresholded OOD indices).
 
             Args:
                 x_train: Training data.
@@ -117,6 +144,12 @@ class BaseSampler(nn.Module, metaclass=abc.ABCMeta):
                 run: Random seed for reproducibility.
                 task_i: Task index.
                 ood_scores: OOD scores for clustering.
+        Args:
+            x_train: Training data.
+            idx_candidates: Indices of samples to choose from (already thresholded OOD indices).
+            n_samples_per_al_cycle: Number of samples to select per AL cycle.
+            run: Random seed for reproducibility.
+            ood_scores: OOD scores for all samples.
 
             Returns:
                 selected_idxs: Indices of selected samples.
@@ -137,6 +170,12 @@ class BaseSampler(nn.Module, metaclass=abc.ABCMeta):
                     features = features.cpu().numpy()
                 all_features.append(features)
             all_features = np.vstack(all_features)
+        Returns:
+            selected_idxs: Indices of selected samples.
+        """
+
+        # Step 1: Extract embeddings for candidate samples only
+        all_features, all_outputs = self.extract_features_and_outputs(x_train[idx_candidates])
 
             # Step 2: Cluster the embeddings
             n_clusters = n_samples_per_al_cycle
@@ -197,6 +236,17 @@ class BaseSampler(nn.Module, metaclass=abc.ABCMeta):
 
             print(f"############################################Task {task_i} - Selected {len(selected_idxs)} samples using OOD scores with clustering.")
             print(f"############################################Task {task_i} - Classes in selected samples: {np.unique(y_train[selected_idxs])}")
+        # Step 3: Select the top OOD sample from each cluster
+        selected_indices = []
+        for cluster in range(n_clusters):
+            cluster_indices = np.where(cluster_labels == cluster)[0]
+            if len(cluster_indices) > 0:
+                cluster_scores = ood_scores[idx_candidates[cluster_indices]]
+                top_idx = cluster_indices[np.argmax(cluster_scores)]
+                selected_indices.append(idx_candidates[top_idx])
+
+        # Step 4: Ensure exact number of samples (if fewer clusters than requested)
+        selected_indices = np.array(selected_indices)[:n_samples_per_al_cycle]
 
             return selected_idxs
     

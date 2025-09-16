@@ -2,7 +2,6 @@ from sklearn.cluster import KMeans
 from types import SimpleNamespace
 from agents.base import BaseLearner
 from samplers.base import BaseSampler
-from utils.data import Dataloader_from_numpy
 import numpy as np
 import torch
 import warnings
@@ -205,27 +204,8 @@ class UncertaintyDiversitySampler(BaseSampler):
                     np.random.shuffle(idx_unlabeled)
                     selected_idxs = idx_unlabeled[:n_samples_per_al_cycle]
             else:
-                # Step 1: Extract embeddings for all unlabeled samples
-                eval_dataloader = Dataloader_from_numpy(
-                    x_train[idx_unlabeled],
-                    np.zeros(len(idx_unlabeled)),  # Dummy labels
-                    self.batch_size,
-                    shuffle=False
-                )
-
-                all_features = []
-                all_outputs = []
-                for batch_id, (batch_x, _) in enumerate(eval_dataloader):
-                    batch_x = batch_x.to(self.agent.device)
-                    with torch.no_grad():
-                        # Extract embeddings and outputs
-                        features = self.agent.model.feature(batch_x)  # Feature extraction
-                        outputs = self.agent.model(batch_x)  # Forward pass
-                    all_features.append(features.cpu().numpy())
-                    all_outputs.append(outputs)
-                all_features = np.vstack(all_features)
-                all_outputs = torch.cat(all_outputs, dim=0)
-
+                all_features, all_outputs = self.extract_features_and_outputs(x_train[idx_unlabeled])
+                
                 # Step 2: Cluster the embeddings
                 kmeans = KMeans(n_clusters=n_clusters, random_state=self.args.seed + run)
                 cluster_labels = kmeans.fit_predict(all_features)
@@ -251,30 +231,11 @@ class UncertaintyDiversitySampler(BaseSampler):
 
             # Train the agent on the newly labeled data
             self.agent.learn_task(task, selected_idxs, new_task)
-            #accuracies = self.agent.evaluate(task_stream, alc, self.al_budget)
-            
-            # Ha van ood_method, akkor átadjuk a save_acc_to_csv-nek
-            #ood_method = self.args.ood_method if self.args.ood_method else ''
-            #self.save_acc_to_csv(accuracies, run, task_i, alc, f'_{metric}', ood_method = ood_method)
 
             # Feature gyűjtés mindkét esetben (AL only és AL+OOD)
             labeled_indices = np.setdiff1d(np.arange(n_samples_current_task), idx_unlabeled)
             if len(labeled_indices) > 0:
-                eval_dataloader = Dataloader_from_numpy(
-                    x_train[labeled_indices],
-                    np.zeros(len(labeled_indices)),
-                    self.batch_size,
-                    shuffle=False
-                )
-
-                all_features = []
-                for batch_id, (batch_x, _) in enumerate(eval_dataloader):
-                    batch_x = batch_x.to(self.agent.device)
-                    with torch.no_grad():
-                        features = self.agent.model.feature(batch_x)
-                    all_features.append(features.cpu().numpy())
-                all_features = np.vstack(all_features)
-                task_features.append(all_features)
+                all_features, _ = self.extract_features_and_outputs(x_train[labeled_indices])
 
         # Task features mentése
         if task_features:
