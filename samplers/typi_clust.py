@@ -122,3 +122,7 @@ class TypiClustSampler(BaseSampler):
             self.agent.learn_task(task, selected_idxs, new_task)
             accuracies = self.agent.evaluate(task_stream, alc, self.al_budget)
             self.save_acc_to_csv(accuracies, run, task_i, alc)
+
+            if alc == self.al_budget - 1:
+                return accuracies
+                

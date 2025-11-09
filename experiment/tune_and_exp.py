@@ -303,11 +303,23 @@ def tune_and_experiment_multiple_runs(args):
                 print('Task {}: contains {} val samples'.format(k, x_val.shape[0]))
                 print('Task {}: contains {} test samples'.format(k, x_test.shape[0]))
 
+            Acc_tasks = {'valid': [],
+                         'test':  []}
+
             for task_i in range(n_tasks_exp):
-                y_tain = task_stream[0][1]
-                print(set(y_train))
+                # y_tain = task_stream[0][1]
+                # print(set(y_train))
                 # Active Learning
-                sampler.active_learn_task(run, task_stream, task_i)
+                task_acc = sampler.active_learn_task(run, task_stream, task_i)
+
+                print('----------------------')
+                print('Task {}: Test Accuracies over AL cycles: {}'.format(task_i, task_acc))
+
+
+                Acc_tasks['test'].append(task_acc)
+
+                print(Acc_tasks['test'])
+
                 # model.learn_task(...)
                 #agent.evaluate(task_stream, i, path=tsne_path)  # TSNE path                
 
@@ -320,6 +332,8 @@ def tune_and_experiment_multiple_runs(args):
             # Acc_multiple_run_valid.append(agent.Acc_tasks['valid'])
             # Acc_multiple_run_test.append(agent.Acc_tasks['test'])
             
+            Acc_multiple_run_test.append(Acc_tasks['test'])
+            
 
         run_over = time.time()
         print('\n Finish Run {}: total {} sec'.format(run, run_over - run_start))
@@ -331,10 +345,10 @@ def tune_and_experiment_multiple_runs(args):
     end = time.time()
     print('\n All runs finish. Total running time: {} sec'.format(end - start))
 
-    # # ################## Val: mean and CI over runs ##################
+    # ################## Val: mean and CI over runs ##################
     # Acc_multiple_run_valid = val_mean_anc_cil_over_runs(args, Acc_multiple_run_valid)
-    # ################## Test: mean and CI over runs ##################
-    # Acc_multiple_run_test = test_mean_anc_cil_over_runs(args, Acc_multiple_run_test)  
-    # # Save the results
-    # save_results(args, Acc_multiple_run_valid, Acc_multiple_run_test, Best_params, start, end)
+    ################## Test: mean and CI over runs ##################
+    Acc_multiple_run_test = test_mean_anc_cil_over_runs(args, Acc_multiple_run_test)  
+    # Save the results
+    save_results(args, Acc_multiple_run_valid, Acc_multiple_run_test, Best_params, start, end)
 
