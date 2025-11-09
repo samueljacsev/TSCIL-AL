@@ -19,110 +19,114 @@ class TypiClustSampler(BaseSampler):
                  args: SimpleNamespace):
         super().__init__(agent, exp_args, args, name='TypiClust')
 
+
+    def get_clusters(self, all_features, n_clusters):
+        """Perform K-means clustering on features for diversity."""
+        print("Step 1: Clustering for Diversity")
+        n_clusters = min(n_clusters, len(self.idx_unlabeled))
+        kmeans = KMeans(n_clusters=n_clusters, random_state=self.random_state)
+        return kmeans.fit_predict(all_features)
+
+
     def compute_typicality(self, features, k_sym):
-        """
-        Compute typicality for a batch of features.
-
-        Args:
-            features: Feature representations of the data.
-            k_sym: Number of nearest neighbors to consider (should match n_samples_per_al_cycle).
-
-        Returns:
-            typicalities: Array of typicality scores.
-        """
+        """Compute typicality scores based on k-nearest neighbor distances."""
         from sklearn.metrics.pairwise import euclidean_distances
-
-        # Compute pairwise distances
+        
         distances = euclidean_distances(features, features)
-        # Sort distances to find k_sym nearest neighbors
-        sorted_distances = np.sort(distances, axis=1)[:, 1:k_sym+1]  # Exclude self-distance
-        # Compute typicality as the inverse of the average distance to k_sym nearest neighbors
-        typicalities = 1 / (np.mean(sorted_distances, axis=1) + 1e-10)
-
+        # Exclude self-distance (first column after sorting)
+        k_nearest_distances = np.sort(distances, axis=1)[:, 1:k_sym + 1]
+        mean_distances = np.mean(k_nearest_distances, axis=1)
+        
+        # Typicality is inverse of mean distance
+        typicalities = 1.0 / (mean_distances + 1e-10)
         return typicalities
 
-    def active_learn_task(self, run, task_stream, task_i):
-        """
-        Selects the next few samples to be labeled based on the TypiClust strategy.
+    def _cluster_priority(self, cluster_labels):
+        """Rank clusters by labeled coverage (ascending) and size (descending)."""
+        unlabeled_assignments = cluster_labels[self.idx_unlabeled]
+        unique_clusters, cluster_sizes = np.unique(unlabeled_assignments, return_counts=True)
+        
+        # Count labeled samples per cluster
+        if self.idx_labeled.size > 0:
+            labeled_assignments = cluster_labels[self.idx_labeled]
+            labeled_counts = np.array([np.sum(labeled_assignments == c) for c in unique_clusters])
+        else:
+            labeled_counts = np.zeros(len(unique_clusters), dtype=int)
+        
+        # Sort by labeled count (ascending), then by cluster size (descending)
+        cluster_order = np.lexsort((-cluster_sizes, labeled_counts))
+        return unique_clusters[cluster_order], unlabeled_assignments
 
-        Args:
-            task_stream: Task stream containing tasks.
-            task_i: Index of the current task.
-        """
-        # Set random seeds for reproducibility
-        np.random.seed(self.args.seed + run)  # For NumPy operations
-        torch.manual_seed(self.args.seed + run)  # For PyTorch operations
-        torch.cuda.manual_seed_all(self.args.seed + run)  # For PyTorch CUDA operations (if using GPU)
+    def _select_typical_indices(self, sorted_clusters, unlabeled_assignments, typicalities, target):
+        """Select most typical samples from clusters in round-robin fashion."""
+        # Map each cluster to its unlabeled sample indices
+        cluster_indices = {
+            cluster: list(np.where(unlabeled_assignments == cluster)[0]) 
+            for cluster in sorted_clusters
+        }
+        
+        selected = []
+        while len(selected) < target:
+            selected_this_round = False
+            
+            for cluster in sorted_clusters:
+                if len(selected) >= target:
+                    break
+                    
+                candidates = cluster_indices[cluster]
+                if not candidates:
+                    continue
+                
+                # Select sample with highest typicality score
+                best_idx = max(candidates, key=lambda idx: typicalities[idx])
+                selected.append(best_idx)
+                candidates.remove(best_idx)
+                selected_this_round = True
+            
+            # Stop if no cluster had candidates
+            if not selected_this_round:
+                break
+        
+        return np.array(selected, dtype=int)
 
-        task = task_stream.tasks[task_i]
-        (x_train, y_train) = task[0]  # y_train is not used for 'unlabeled' data
-
-        n_samples_current_task = x_train.shape[0]
-        print('Number of samples in current task:', n_samples_current_task)
-
-        n_samples_per_al_cycle = self.get_n_samples_per_al_cycle(n_samples_current_task)
-        n_clusters = n_samples_per_al_cycle
-
-        # Initialize unlabeled indices
-        idx_unlabeled = np.arange(n_samples_current_task)
-
-        # Step 1: Representation Learning
-        print("Step 1: Representation Learning")
-        # Use the agent's model to extract features
-        eval_dataloader = Dataloader_from_numpy(
-            x_train,
-            np.zeros(len(x_train)),  # Dummy labels
-            self.batch_size,
-            shuffle=False
-        )
-
-        all_features = []
-        for batch_id, (batch_x, _) in enumerate(eval_dataloader):
-            batch_x = batch_x.to(self.agent.device)
-            with torch.no_grad():
-                features = self.agent.model.feature(batch_x)  # Use the feature method
-            all_features.append(features.cpu().numpy())
-        all_features = np.vstack(all_features)  # Combine all batches
-
+    def active_learn_sampler(self, run, task_stream, task_i):
+        """Execute TypiClust active learning strategy."""
+        accuracies = np.array([])
+        
         for alc in range(self.al_budget):
-            print(f'Run: {run}, Task: {task_i}, AL cycle: {alc + 1} / {self.al_budget}')
+            print(f'AL cycle: {alc + 1} / {self.al_budget}')
 
-            if alc == 0:
-                # Randomly select the first batch of samples
-                np.random.seed(run)  # Set random seed for shuffling
-                np.random.shuffle(idx_unlabeled)
-                selected_idxs = idx_unlabeled[:n_samples_per_al_cycle]
-            else:
-                # Step 2: Clustering for Diversity
-                print("Step 2: Clustering for Diversity")
-                n_clusters = min(n_clusters, len(idx_unlabeled))
-                kmeans = KMeans(n_clusters=n_clusters, random_state=self.args.seed + run)  # Set random state for KMeans
-                cluster_labels = kmeans.fit_predict(all_features[idx_unlabeled])
+            # Extract features from training data
+            x_train, _ = self.current_task[0]
+            all_features, _ = self.extract_features_and_outputs(x_train)
+            
+            # Cluster all samples
+            n_clusters = min(len(self.idx_labeled) + self.n_samples_per_al_cycle, 
+                           self.idx_unlabeled.size)
+            cluster_labels = self.get_clusters(all_features, n_clusters)
+            sorted_clusters, unlabeled_assignments = self._cluster_priority(cluster_labels)
+            
+            # Compute typicality scores for unlabeled samples
+            print("Step 2: Querying Typical Examples")
+            unlabeled_features = all_features[self.idx_unlabeled]
+            k_nn = min(20, len(unlabeled_features) - 1)
+            typicalities = self.compute_typicality(unlabeled_features, k_nn)
+            
+            # Select most typical samples from each cluster
+            local_indices = self._select_typical_indices(
+                sorted_clusters, unlabeled_assignments, typicalities, 
+                self.n_samples_per_al_cycle
+            )
+            selected_idxs = self.idx_unlabeled[local_indices]
+            
+            # Update labeled and unlabeled sets
+            self.idx_labeled = np.concatenate([self.idx_labeled, selected_idxs])
+            self.idx_unlabeled = np.setdiff1d(self.idx_unlabeled, selected_idxs, 
+                                             assume_unique=True)
 
-                # Step 3: Querying Typical Examples
-                print("Step 3: Querying Typical Examples")
-                typicalities = self.compute_typicality(all_features[idx_unlabeled], n_samples_per_al_cycle)
-
-                # Select the most typical example from each cluster
-                selected_idxs = []
-                for cluster in range(n_clusters):
-                    cluster_indices = np.where(cluster_labels == cluster)[0]
-                    cluster_typicalities = typicalities[cluster_indices]
-                    most_typical_idx = cluster_indices[np.argmax(cluster_typicalities)]
-                    selected_idxs.append(idx_unlabeled[most_typical_idx])
-
-                # Limit the number of selected samples to the budget per cycle
-                selected_idxs = np.array(selected_idxs[:n_samples_per_al_cycle])
-
-            # Update unlabeled indices
-            idx_unlabeled = np.setdiff1d(idx_unlabeled, selected_idxs)
-
-            new_task = (alc == 0)  # First cycle is a new task
-            # Train the agent on the newly labeled data
-            self.agent.learn_task(task, selected_idxs, new_task)
+            # Train and evaluate
+            self.agent.learn_task(self.current_task, selected_idxs, alc == 0)
             accuracies = self.agent.evaluate(task_stream, alc, self.al_budget)
             self.save_acc_to_csv(accuracies, run, task_i, alc)
 
-            if alc == self.al_budget - 1:
-                return accuracies
-                
+        return accuracies
