@@ -2,10 +2,8 @@
 from types import SimpleNamespace
 from agents.base import BaseLearner
 from samplers.base import BaseSampler
-from utils.data import Dataloader_from_numpy
 from sklearn.cluster import KMeans
 import numpy as np
-import torch
 
 
 class TypiClustSampler(BaseSampler):
