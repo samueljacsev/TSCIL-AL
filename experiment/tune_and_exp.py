@@ -320,6 +320,8 @@ def tune_and_experiment_multiple_runs(args):
 
             #################### Shuffled tasks - AL + OOD ##################
 
+            Acc_tasks = {'valid': [],
+                         'test':  []}
 
             for task_i in range(n_tasks_exp):
                 # Az aktuális task adathalmazának betöltése
@@ -339,22 +341,25 @@ def tune_and_experiment_multiple_runs(args):
                 #     sampler.active_learn_task(run, task_stream, task_i)
 
 
-                sampler.active_learn_task(run, task_stream, task_i, classes_in_each_task = classes_in_each_task)
-
-
+                task_acc = sampler.active_learn_task(run, task_stream, task_i, classes_in_each_task = classes_in_each_task)
                 
-                agent.evaluate(task_stream, path=tsne_path)
+                print('----------------------')
+                print('Task {}: Test Accuracies over AL cycles: {}'.format(task_i, task_acc))
+                
+                Acc_tasks['test'].append(task_acc)
+                
+                #agent.evaluate(task_stream, path=tsne_path)
 
 
                 #Plot CF matrix after finishing the final task.
-                #if task_i + 1 == n_tasks_exp and args.cf_matrix:
-                    #cf_matrix_path = args.exp_path + '/cf{}'.format(run)
-                    #agent.plot_cf_matrix(path=cf_matrix_path, classes=np.arange(task_stream.n_classes))
+                if task_i + 1 == n_tasks_exp and args.cf_matrix:
+                    cf_matrix_path = args.exp_path + '/cf{}'.format(run)
+                    agent.plot_cf_matrix(path=cf_matrix_path, classes=np.arange(task_stream.n_classes))
 
 
             # Save Acc of this run
-            Acc_multiple_run_valid.append(agent.Acc_tasks['valid'])
-            Acc_multiple_run_test.append(agent.Acc_tasks['test'])
+            #Acc_multiple_run_valid.append(agent.Acc_tasks['valid'])
+            Acc_multiple_run_test.append(Acc_tasks['test'])
             
 
         run_over = time.time()
@@ -367,50 +372,50 @@ def tune_and_experiment_multiple_runs(args):
     end = time.time()
     print('\n All runs finish. Total running time: {} sec'.format(end - start))
 
-    # # ################## Val: mean and CI over runs ##################
-    # Acc_multiple_run_valid = val_mean_anc_cil_over_runs(args, Acc_multiple_run_valid)
-    # ################## Test: mean and CI over runs ##################
-    # Acc_multiple_run_test = test_mean_anc_cil_over_runs(args, Acc_multiple_run_test)  
-    # # Save the results
-    # save_results(args, Acc_multiple_run_valid, Acc_multiple_run_test, Best_params, start, end)
+    # ################## Val: mean and CI over runs ##################
+    #Acc_multiple_run_valid = val_mean_anc_cil_over_runs(args, Acc_multiple_run_valid)
+    ################## Test: mean and CI over runs ##################
+    Acc_multiple_run_test = test_mean_anc_cil_over_runs(args, Acc_multiple_run_test)  
+    # Save the results
+    save_results(args, Acc_multiple_run_valid, Acc_multiple_run_test, Best_params, start, end)
 
     # ################## Val: mean and CI over runs ##################
-    print('Valid Set:')
-    Acc_multiple_run_valid = np.array(Acc_multiple_run_valid)
-    if args.agent == 'Offline':
-        acc = compute_performance_offline(Acc_multiple_run_valid)
-        print('---- Offline Accuracy with 95% CI is {} ----'.format(np.around(acc, decimals=2)))
-    else:
-        avg_end_acc, avg_end_fgt, avg_cur_acc, avg_acc, avg_bwtp = compute_performance(Acc_multiple_run_valid)
-        print(' Avg_End_Acc {} Avg_End_Fgt {} Avg_Cur_Acc {} Avg_Acc {} Avg_Bwtp {} \n'
-              .format(np.around(avg_end_acc, decimals=2), np.around(avg_end_fgt, decimals=2),
-                      np.around(avg_cur_acc, decimals=2), np.around(avg_acc, decimals=2),
-                      np.around(avg_bwtp, decimals=2)))
+    # print('Valid Set:')
+    # Acc_multiple_run_valid = np.array(Acc_multiple_run_valid)
+    # if args.agent == 'Offline':
+    #     acc = compute_performance_offline(Acc_multiple_run_valid)
+    #     print('---- Offline Accuracy with 95% CI is {} ----'.format(np.around(acc, decimals=2)))
+    # else:
+    #     avg_end_acc, avg_end_fgt, avg_cur_acc, avg_acc, avg_bwtp = compute_performance(Acc_multiple_run_valid)
+    #     print(' Avg_End_Acc {} Avg_End_Fgt {} Avg_Cur_Acc {} Avg_Acc {} Avg_Bwtp {} \n'
+    #           .format(np.around(avg_end_acc, decimals=2), np.around(avg_end_fgt, decimals=2),
+    #                   np.around(avg_cur_acc, decimals=2), np.around(avg_acc, decimals=2),
+    #                   np.around(avg_bwtp, decimals=2)))
 
-    # ################## Test: mean and CI over runs ##################
-    print('Test Set:')
-    Acc_multiple_run_test = np.array(Acc_multiple_run_test)
+    # # ################## Test: mean and CI over runs ##################
+    # print('Test Set:')
+    # Acc_multiple_run_test = np.array(Acc_multiple_run_test)
 
-    if args.agent == 'Offline':
-        acc = compute_performance_offline(Acc_multiple_run_test)
-        print('---- Offline Accuracy with 95% CI is {} ----'.format(np.around(acc, decimals=2)))
-    else:
-        avg_end_acc, avg_end_fgt, avg_cur_acc, avg_acc, avg_bwtp = compute_performance(Acc_multiple_run_test)
-        print('Avg_End_Acc {} Avg_End_Fgt {} Avg_Cur_Acc {} Avg_Acc {} Avg_Bwtp {}'
-              .format(np.around(avg_end_acc, decimals=2), np.around(avg_end_fgt, decimals=2),
-                      np.around(avg_cur_acc, decimals=2), np.around(avg_acc, decimals=2),
-                      np.around(avg_bwtp, decimals=2)))
+    # if args.agent == 'Offline':
+    #     acc = compute_performance_offline(Acc_multiple_run_test)
+    #     print('---- Offline Accuracy with 95% CI is {} ----'.format(np.around(acc, decimals=2)))
+    # else:
+    #     avg_end_acc, avg_end_fgt, avg_cur_acc, avg_acc, avg_bwtp = compute_performance(Acc_multiple_run_test)
+    #     print('Avg_End_Acc {} Avg_End_Fgt {} Avg_Cur_Acc {} Avg_Acc {} Avg_Bwtp {}'
+    #           .format(np.around(avg_end_acc, decimals=2), np.around(avg_end_fgt, decimals=2),
+    #                   np.around(avg_cur_acc, decimals=2), np.around(avg_acc, decimals=2),
+    #                   np.around(avg_bwtp, decimals=2)))
 
-    # Save the results
-    result = {}
-    result['time'] = end - start
-    result['acc_array_val'] = Acc_multiple_run_valid
-    result['acc_array_test'] = Acc_multiple_run_test
-    result['ram'] = check_ram_usage()
-    result['best_params'] = Best_params
-    save_path = args.exp_path + '/result.pkl'
-    save_pickle(result, save_path)
-    #print(f"Results saved to {save_path}")
-    # results print
-    #print(f"Results: {result}")
+    # # Save the results
+    # result = {}
+    # result['time'] = end - start
+    # result['acc_array_val'] = Acc_multiple_run_valid
+    # result['acc_array_test'] = Acc_multiple_run_test
+    # result['ram'] = check_ram_usage()
+    # result['best_params'] = Best_params
+    # save_path = args.exp_path + '/result.pkl'
+    # save_pickle(result, save_path)
+    # #print(f"Results saved to {save_path}")
+    # # results print
+    # #print(f"Results: {result}")
 

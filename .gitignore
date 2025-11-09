@@ -168,3 +168,9 @@ result/log_outputs/
 result/csv_outputs/
 result/tune_and_exp/
 result/csv2_outputs/
+result/dailysports/
+result/uwave/
+result/har/
+result/grabmyo/
+result/wisdm/
+ood_debug_logs/

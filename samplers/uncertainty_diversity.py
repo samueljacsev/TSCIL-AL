@@ -45,85 +45,185 @@ class UncertaintyDiversitySampler(BaseSampler):
 
         return uncertainties
 
-    
-    def pseudo_separate_ood_and_id_samples(self, run, task_stream, task_i, n_samples_per_al_cycle, y_train, x_train, metric='entropy'):
+    # def select_with_ood_active_learn(self, x_train, idx_pool, y_train, n_samples_per_al_cycle, run, task_i, ood_method, al_metric, classes_in_each_task=None):
+    #     """
+    #     Universal OOD+Active selection: supports GMM, KM2, DRE, etc. for OOD ratio estimation.
+    #     mpe_method: "gmm" | "km2" | "dre" (hardcoded for now)
+    #     """
+    #     if len(idx_pool) == 0:
+    #         return np.array([], dtype=int)
         
-        # --- Step 0: Separate OOD and ID classes from ground truth (PoC) ---
-        # Get classes that the model has actually seen in previous tasks (after shuffle)
-        id_classes_list = []
-        for prev_task_idx in range(task_i):
-            prev_task = task_stream.tasks[prev_task_idx]
-            prev_y_train = prev_task[0][1]  # Get labels from training data
-            id_classes_list.extend(np.unique(prev_y_train))
         
-        id_classes = np.unique(id_classes_list)  # Remove duplicates and sort
-        
-        # Find OOD and ID indices based on ground truth labels
-        ood_indices = np.where(~np.isin(y_train, id_classes))[0]
-        id_indices = np.where(np.isin(y_train, id_classes))[0]
-        
-        # Get actual class labels for OOD and ID samples
-        ood_class_labels = np.unique(y_train[ood_indices]) if len(ood_indices) > 0 else []
-        id_class_labels = np.unique(y_train[id_indices]) if len(id_indices) > 0 else []
-        
-        # Print detailed information about OOD and ID separation
-        print("="*60)
-        print(f"[Task {task_i}, AL Cycle 0] OOD/ID Separation Results:")
-        print(f"ID classes (previously seen): {id_class_labels}")
-        print(f"ID sample indices: {id_indices} (count: {len(id_indices)})")
-        print(f"OOD classes (new/unseen): {ood_class_labels}")
-        print(f"OOD sample indices: {ood_indices} (count: {len(ood_indices)})")
-        print("="*60)
 
-        # --- Step 1: determine counts ---
-        n_ood_samples = int(self.args.shuffle_ratio * n_samples_per_al_cycle)
-        n_al_samples = n_samples_per_al_cycle - n_ood_samples
+    #     pool_x = x_train[idx_pool]
+    #     pool_y = y_train[idx_pool]
 
-        print(f"Sampling strategy: {n_ood_samples} OOD samples (random) + {n_al_samples} ID samples (AL+diversity)")
+    #     ood_indices_pool = self.perform_ood_detection_and_evaluation(
+    #         pool_x,
+    #         pool_y,
+    #         task_i,
+    #         ood_method=ood_method,
+    #         classes_in_each_task=classes_in_each_task,
+    #         run=run,
+    #     )
 
-        # --- Step 2: Random sampling for OOD samples ---
-        np.random.seed(self.args.seed + run)
-        if len(ood_indices) < n_ood_samples:
-            selected_idxs_ood = ood_indices
-            print(f"Warning: Only {len(ood_indices)} OOD samples available, less than requested {n_ood_samples}")
+    #     # Convert local pool indices to global
+    #     selected_ood = idx_pool[ood_indices_pool]
+
+    #     # Compute budgets
+    #     n_ood = len(selected_ood)
+    #     n_al  = n_samples_per_al_cycle - n_ood
+    #     n_al = max(0, n_al)
+
+    #     print(f"Selected {n_ood} OOD samples, {n_al} AL samples for this cycle.")
+
+    #     # --- Active learning on remaining pool ---
+    #     selected_al = []
+    #     if n_al > 0:
+    #         remaining = np.setdiff1d(idx_pool, selected_ood, assume_unique=False)
+    #         if len(remaining) > 0:
+    #             all_features, all_outputs = self.extract_features_and_outputs(x_train[remaining])
+    #             k = min(n_al, len(remaining))
+    #             if k > 0:
+    #                 kmeans = KMeans(n_clusters=k, random_state=self.args.seed + run)
+    #                 cluster_labels = kmeans.fit_predict(all_features)
+    #                 uncertainties = self.compute_uncertainty(all_outputs, metric=al_metric)
+
+    #                 for c in range(k):
+    #                     c_idx = np.where(cluster_labels == c)[0]
+    #                     if len(c_idx) == 0:
+    #                         continue
+    #                     c_unc = uncertainties[c_idx]
+    #                     pick_local = c_idx[np.argmax(c_unc)]
+    #                     selected_al.append(remaining[pick_local])
+
+    #     selected_ood = np.array(selected_ood, dtype=int)
+    #     selected_al = np.array(selected_al, dtype=int) if len(selected_al) else np.array([], dtype=int)
+    #     selected = np.concatenate([selected_ood, selected_al])
+
+    #     # Ensure exact budget and uniqueness
+    #     if len(selected) > n_samples_per_al_cycle:
+    #         selected = selected[:n_samples_per_al_cycle]
+    #     if len(selected) < n_samples_per_al_cycle:
+    #         remaining = np.setdiff1d(idx_pool, selected)
+    #         if len(remaining) > 0:
+    #             extra_needed = n_samples_per_al_cycle - len(selected)
+    #             extra_scores = self.ood_detection(x_train[remaining], task_i, method=ood_method, return_scores=True)
+    #             add = remaining[np.argsort(-extra_scores)[:extra_needed]]
+    #             selected = np.concatenate([selected, add])
+
+    #     return selected.astype(int)
+
+
+    def select_with_ood_active_learn(self, x_train, idx_pool, y_train,
+                                    n_samples_per_al_cycle, run, task_i,
+                                    ood_method, al_metric,
+                                    classes_in_each_task=None):
+        """
+        Combined OOD + Active Learning selection.
+        - Uses estimated OOD ratio (from threshold-based evaluation) to determine
+        how many OOD vs. AL samples to select.
+        - Selects top OOD scores according to that ratio.
+        """
+        if len(idx_pool) == 0:
+            print("[WARN] Empty pool passed to select_with_ood_active_learn().")
+            return np.array([], dtype=int)
+
+        # --- 1. Run OOD detection and evaluation ---
+        pool_x = x_train[idx_pool]
+        pool_y = y_train[idx_pool]
+
+        ood_indices_pool, ood_scores_pool, est_ratio = self.perform_ood_detection_and_evaluation(
+            pool_x,
+            pool_y,
+            task_i,
+            ood_method=ood_method,
+            classes_in_each_task=classes_in_each_task,
+            run=run,
+        )
+
+        # --- 2. Compute desired budget split ---
+        est_ratio = float(np.clip(est_ratio, 0.0, 1.0))
+        #n_ood_target = int(round(est_ratio * n_samples_per_al_cycle))
+        #n_ood_target = max(0, min(n_ood_target, n_samples_per_al_cycle))
+        n_ood_target = int(round(0.2 * n_samples_per_al_cycle))
+        n_al_target = n_samples_per_al_cycle - n_ood_target
+
+        print(f"\n[INFO] Task {task_i} - Active Learning cycle budget:")
+        print(f"  • Total budget = {n_samples_per_al_cycle}")
+        print(f"  • Estimated OOD ratio = {est_ratio:.4f}")
+        print(f"  • Target OOD samples = {n_ood_target}")
+        print(f"  • Target AL samples  = {n_al_target}")
+
+        # --- 3. Randomly sample from detected OOD indices (for diversity, not extremes) ---
+        if n_ood_target > 0 and len(ood_indices_pool) > 0:
+            # Use detected OOD indices, not top scores (avoids selecting only extreme outliers)
+            n_ood_available = min(n_ood_target, len(ood_indices_pool))
+            np.random.seed(self.args.seed + run + task_i)  # Reproducible random sampling
+            selected_ood_local = np.random.choice(ood_indices_pool, size=n_ood_available, replace=False)
+            selected_ood = idx_pool[selected_ood_local]
         else:
-            selected_idxs_ood = np.random.choice(ood_indices, n_ood_samples, replace=False)
-        
-        print(f"Selected OOD samples: {selected_idxs_ood} (count: {len(selected_idxs_ood)})")
+            selected_ood = np.array([], dtype=int)
 
-        # --- Step 3: Active learning strategy ONLY on ID samples ---
-        # Use only ID indices for clustering and AL selection
-        id_pool_for_al = np.setdiff1d(id_indices, selected_idxs_ood)  # Remove any ID samples already selected as OOD
-        
-        print(f"ID pool for active learning: {len(id_pool_for_al)} samples")
+        print(f"[DEBUG] Detected {len(ood_indices_pool)} OOD above threshold, "
+            f"randomly selected {len(selected_ood)} for diversity (not top scores).")
+        if len(selected_ood) > 0:
+            print(f"[DEBUG] OOD selected class IDs: {np.unique(y_train[selected_ood])}")
 
-        all_features, all_outputs = self.extract_features_and_outputs(x_train[id_pool_for_al])
+        # --- 4. Active Learning selection for remaining pool ---
+        selected_al = []
+        remaining = np.setdiff1d(idx_pool, selected_ood, assume_unique=False)
 
-        # cluster only the remaining pool
-        kmeans = KMeans(n_clusters=n_al_samples, random_state=self.args.seed + run)
-        cluster_labels = kmeans.fit_predict(all_features)
+        if n_al_target > 0 and len(remaining) > 0:
+            print(f"[DEBUG] Running AL selection on remaining {len(remaining)} samples...")
+            all_features, all_outputs = self.extract_features_and_outputs(x_train[remaining])
+            k = min(n_al_target, len(remaining))
 
-        uncertainties = self.compute_uncertainty(all_outputs, metric=metric)
+            if k > 0:
+                kmeans = KMeans(n_clusters=k, random_state=self.args.seed + run)
+                cluster_labels = kmeans.fit_predict(all_features)
+                uncertainties = self.compute_uncertainty(all_outputs, metric=al_metric)
 
-        selected_idxs_AL = []
-        for cluster in range(n_al_samples):
-            cluster_indices = np.where(cluster_labels == cluster)[0]
-            cluster_uncertainties = uncertainties[cluster_indices]
-            slct_idx = cluster_indices[np.argmax(-cluster_uncertainties)]
-            selected_idxs_AL.append(id_pool_for_al[slct_idx])
+                for c in range(k):
+                    c_idx = np.where(cluster_labels == c)[0]
+                    if len(c_idx) == 0:
+                        continue
+                    c_unc = uncertainties[c_idx]
+                    pick_local = c_idx[np.argmax(c_unc)]
+                    selected_al.append(remaining[pick_local])
+        else:
+            print(f"[INFO] Skipping AL selection (remaining={len(remaining)}, n_al_target={n_al_target}).")
 
-        selected_idxs_AL = np.array(selected_idxs_AL)
-        
-        print(f"Selected ID samples (AL+diversity): {selected_idxs_AL} (count: {len(selected_idxs_AL)})")
-        print(f"ID sample classes: {np.unique(y_train[selected_idxs_AL])}")
+        # --- 5. Combine selections ---
+        selected_ood = np.array(selected_ood, dtype=int)
+        selected_al = np.array(selected_al, dtype=int) if len(selected_al) else np.array([], dtype=int)
+        selected = np.concatenate([selected_ood, selected_al])
 
-        # --- Step 4: merge OOD + AL selections ---
-        selected_idxs = np.concatenate([selected_idxs_ood, selected_idxs_AL])
+        # --- 6. Ensure correct total count and uniqueness ---
+        selected = np.unique(selected)
+        if len(selected) > n_samples_per_al_cycle:
+            selected = selected[:n_samples_per_al_cycle]
+            print(f"[WARN] Truncated selection to match budget ({n_samples_per_al_cycle}).")
 
-        print(f"[PoC] Total selected samples: {len(selected_idxs)} ({len(selected_idxs_ood)} OOD + {len(selected_idxs_AL)} ID)")
-        print("="*60)
-        
-        return selected_idxs
+        if len(selected) < n_samples_per_al_cycle:
+            remaining = np.setdiff1d(idx_pool, selected)
+            if len(remaining) > 0:
+                extra_needed = n_samples_per_al_cycle - len(selected)
+                print(f"[INFO] Filling missing {extra_needed} samples randomly from remaining pool.")
+                # Random sampling for diversity (not top scores)
+                np.random.seed(self.args.seed + run + task_i + 1)
+                extra_needed_actual = min(extra_needed, len(remaining))
+                add = np.random.choice(remaining, size=extra_needed_actual, replace=False)
+                selected = np.concatenate([selected, add])
+
+        # --- 7. Final debug info ---
+        print(f"[FINAL] Task {task_i}: total selected = {len(selected)} "
+            f"({len(selected_ood)} OOD + {len(selected_al)} AL)")
+        print(f"[FINAL] Unique selected classes: {np.unique(y_train[selected])}\n")
+
+        return selected.astype(int)
+
+
 
 
     def active_learn_task(self, run, task_stream, task_i, metric='entropy', classes_in_each_task=None):
@@ -153,6 +253,7 @@ class UncertaintyDiversitySampler(BaseSampler):
         # Initialize unlabeled indices
         idx_unlabeled = np.arange(n_samples_current_task)
         task_features = []
+        task_labels = []  # Collect labels per cycle, combine at task end
             
 
         for alc in range(self.al_budget):
@@ -160,22 +261,48 @@ class UncertaintyDiversitySampler(BaseSampler):
             
             if alc == 0:
                 if self.args.ood_method and task_i > 0:
-                    # OOD detection and evaluation
-                    if (PSEUDO_SEPARATE := True):
-                        selected_idxs = self.pseudo_separate_ood_and_id_samples(run, task_stream, task_i, n_samples_per_al_cycle, y_train, x_train, self.args.uncertainty_type)
-                    else:
-                        ood_indices, ood_scores = self.perform_ood_detection_and_evaluation(x_train, y_train, task_i, self.args.ood_method, classes_in_each_task, run)
-                        selected_idxs = self.ood_filter_top_ood(x_train, y_train, ood_indices, task_stream, n_samples_per_al_cycle, run, task_i, ood_scores)
+                    # Stage-1 simple path: GMM-based ratio and threshold on OOD scores, no memory, no ground-truth split
+                    selected_idxs = self.select_with_ood_active_learn(
+                        x_train=x_train,
+                        y_train=y_train,
+                        idx_pool=idx_unlabeled,
+                        n_samples_per_al_cycle=n_samples_per_al_cycle,
+                        run=run,
+                        task_i=task_i,
+                        ood_method=self.args.ood_method,
+                        al_metric=self.args.uncertainty_type or metric,
+                        classes_in_each_task=classes_in_each_task
+                    )
 
-                            # Optional: sanity check labels
+                    # Optional: sanity check labels
                     selected_labels = y_train[selected_idxs]
-                    print(f"############################################ Task {task_i} - Selected {len(selected_idxs)} OOD samples with clustering.")
                     print(f"############################################ Task {task_i} - Classes in selected samples: {np.unique(selected_labels)}")
 
-                else:  # AL only logika
-                    np.random.seed(self.args.seed + run )
-                    np.random.shuffle(idx_unlabeled)
-                    selected_idxs = idx_unlabeled[:n_samples_per_al_cycle]
+                else:  # HERE WE SHOULD USE ACTIVE LEARNING WITH DIVERSITY
+                    # np.random.seed(self.args.seed + run)
+                    # np.random.shuffle(idx_unlabeled)
+                    # selected_idxs = idx_unlabeled[:n_samples_per_al_cycle]
+                                # ---- Standard Uncertainty + Diversity selection ----
+                    all_features, all_outputs = self.extract_features_and_outputs(x_train[idx_unlabeled])
+
+                    # Cluster the feature embeddings for diversity
+                    kmeans = KMeans(n_clusters=n_clusters, random_state=self.args.seed + run)
+                    cluster_labels = kmeans.fit_predict(all_features)
+
+                    # Compute uncertainty
+                    uncertainties = self.compute_uncertainty(all_outputs, metric=metric)
+
+                    # Select most uncertain sample from each cluster
+                    selected_idxs = []
+                    for cluster in range(n_clusters):
+                        cluster_indices = np.where(cluster_labels == cluster)[0]
+                        if len(cluster_indices) == 0:
+                            continue
+                        cluster_uncertainties = uncertainties[cluster_indices]
+                        slct_idx = cluster_indices[np.argmax(cluster_uncertainties)]
+                        selected_idxs.append(idx_unlabeled[slct_idx])
+
+                    selected_idxs = np.array(selected_idxs[:n_samples_per_al_cycle])
             else:
                 all_features, all_outputs = self.extract_features_and_outputs(x_train[idx_unlabeled])
                 
@@ -205,15 +332,43 @@ class UncertaintyDiversitySampler(BaseSampler):
             # Train the agent on the newly labeled data
             self.agent.learn_task(task, selected_idxs, new_task)
 
-            # Feature gyűjtés mindkét esetben (AL only és AL+OOD)
-            labeled_indices = np.setdiff1d(np.arange(n_samples_current_task), idx_unlabeled)
-            if len(labeled_indices) > 0:
-                all_features, _ = self.extract_features_and_outputs(x_train[labeled_indices])
+            accuracies = self.agent.evaluate(task_stream, alc, self.al_budget)
+            ood_method = self.args.ood_method if self.args.ood_method else ''
+            self.save_acc_to_csv(accuracies, run, task_i, alc, f'_{metric}', ood_method = ood_method)
+            
+            # store only newly labeled indices in this AL cycle
+            newly_labeled = selected_idxs  
+            if len(newly_labeled) > 0:
+                all_features, _ = self.extract_features_and_outputs(x_train[newly_labeled])
+                task_features.append(all_features)
+                task_labels.append(y_train[newly_labeled])  # Collect labels per cycle
 
-        # Task features mentése
+            # if alc == self.al_budget - 1:
+            #      return accuracies
+
+        # Task-level storage: features and labels of all labeled samples (once per task)
         if task_features:
             task_features_combined = np.vstack(task_features)
             self.id_features_list.append(task_features_combined)
-            print(f"Task {task_i} - Stored {len(task_features_combined)} features in id_features_list.")
+            print(f"[DEBUG] Task {task_i}: Stored {len(task_features_combined)} features in id_features_list.")
+        
+        if task_labels:
+            task_labels_combined = np.concatenate(task_labels)
+            if not hasattr(self, "id_labels_list"):
+                self.id_labels_list = []
+            self.id_labels_list.append(task_labels_combined)
+            print(f"[DEBUG] Task {task_i}: Stored {len(task_labels_combined)} labels in id_labels_list.")
 
-        return idx_unlabeled
+        # Store logits once per task to support ID-threshold computation across tasks
+        labeled_indices_final = np.setdiff1d(np.arange(n_samples_current_task), idx_unlabeled)
+        if len(labeled_indices_final) > 0:
+            _, all_outputs_end = self.extract_features_and_outputs(x_train[labeled_indices_final])
+            task_outputs = all_outputs_end.cpu().numpy() if hasattr(all_outputs_end, "cpu") else all_outputs_end
+            if task_outputs.ndim > 2:
+                task_outputs = task_outputs.reshape(task_outputs.shape[0], -1)
+            if not hasattr(self, "id_outputs_list"):
+                self.id_outputs_list = []
+            self.id_outputs_list.append(task_outputs)
+            print(f"[DEBUG] Task {task_i}: Stored {len(task_outputs)} outputs in id_outputs_list.")
+
+        return accuracies
