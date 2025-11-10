@@ -5,6 +5,7 @@ from samplers.random_iter import RandomIterSampler
 from samplers.uncertainty import UncertaintySampler
 from samplers.typi_clust import TypiClustSampler
 from samplers.uncertainty_diversity import UncertaintyDiversitySampler
+from samplers.tcud import TypiClustUncertaintyDiversitySampler
 
 samplers = {
     'full': FullSampler,
@@ -12,5 +13,6 @@ samplers = {
     'random_iter': RandomIterSampler,
     'uncertainty': UncertaintySampler,
     'typi_clust': TypiClustSampler,
-    'uncertainty_diversity': UncertaintyDiversitySampler
+    'uncertainty_diversity': UncertaintyDiversitySampler,
+    'tcud': TypiClustUncertaintyDiversitySampler
 }
