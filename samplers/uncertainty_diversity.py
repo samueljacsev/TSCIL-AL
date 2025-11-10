@@ -2,7 +2,6 @@ from sklearn.cluster import KMeans
 from types import SimpleNamespace
 from agents.base import BaseLearner
 from samplers.base import BaseSampler
-from utils.data import Dataloader_from_numpy
 import numpy as np
 import torch
 
@@ -17,116 +16,92 @@ class UncertaintyDiversitySampler(BaseSampler):
                  exp_args: SimpleNamespace,
                  args: SimpleNamespace):
         super().__init__(agent, exp_args, args, name='UncertaintyWithDiversity')
+        self.metric = args.uncertainty_type if args.uncertainty_type else 'entropy'
 
-    def compute_uncertainty(self, outputs, metric='least_confidence'):
+    def compute_uncertainty(self, outputs):
         """
         Compute uncertainty for a batch of outputs.
 
         Args:
             outputs: Model outputs (logits or probabilities).
-            metric: Uncertainty metric ('entropy', 'margin', 'least_confidence').
 
         Returns:
             uncertainties: Array of uncertainty scores.
         """
         probabilities = torch.softmax(outputs, dim=1).cpu().numpy()
 
-        if metric == 'entropy':
+        if self.metric == 'entropy':
             uncertainties = -np.sum(probabilities * np.log(probabilities + 1e-10), axis=1)
-        elif metric == 'margin':
+        elif self.metric == 'margin':
             sorted_probs = -np.sort(-probabilities, axis=1)  # Sort in descending order
             uncertainties = 1 - (sorted_probs[:, 0] - sorted_probs[:, 1])
-        elif metric == 'least_confidence':
+        elif self.metric == 'least_confidence':
             uncertainties = 1 - np.max(probabilities, axis=1)
         else:
-            raise ValueError(f"Unknown uncertainty metric: {metric}")
+            raise ValueError(f"Unknown uncertainty metric: {self.metric}")
 
         return uncertainties
 
-    def active_learn_task(self, run, task_stream, task_i, metric='least_confidence'):
-        """
-        Selects the next few samples to be labeled based on uncertainty sampling with diversity.
-
-        Args:
-            task_stream: Task stream containing tasks.
-            task_i: Index of the current task.
-            metric: Uncertainty metric ('entropy', 'margin', 'least_confidence').
-        """
+    def active_learn_sampler(self, run, task_stream, task_i):
+        """Execute uncertainty-based active learning with diversity enforcement."""
+        accuracies = np.array([])
         
-        # Set random seeds for reproducibility
-        np.random.seed(run)
-        torch.manual_seed(run)
-        torch.cuda.manual_seed_all(run)
-        
-        if self.args.uncertainty_type is not None:
-            metric = self.args.uncertainty_type
-
-        task = task_stream.tasks[task_i]
-        (x_train, y_train) = task[0]  # y_train is not used for unlabeled data
-
-        n_samples_current_task = x_train.shape[0]
-        print('Number of samples in current task:', n_samples_current_task)
-
-        n_samples_per_al_cycle = self.get_n_samples_per_al_cycle(n_samples_current_task)
-        n_clusters = n_samples_per_al_cycle # Number of clusters for diversity sampling
-
-        # Initialize unlabeled indices
-        idx_unlabeled = np.arange(n_samples_current_task)
-
         for alc in range(self.al_budget):
-            print(f'Run: {run}, Task: {task_i}, AL cycle: {alc + 1} / {self.al_budget}')
+            print(f'AL cycle: {alc + 1} / {self.al_budget}')
 
             if alc == 0:
                 # Randomly select the first batch of samples
-                np.random.seed(run)
-                np.random.shuffle(idx_unlabeled)
-                selected_idxs = idx_unlabeled[:n_samples_per_al_cycle]
+                np.random.shuffle(self.idx_unlabeled)
+                selected_idxs = self.idx_unlabeled[:self.n_samples_per_al_cycle].copy()
             else:
-                # Step 1: Extract embeddings for all unlabeled samples
-                eval_dataloader = Dataloader_from_numpy(
-                    x_train[idx_unlabeled],
-                    np.zeros(len(idx_unlabeled)),  # Dummy labels
-                    self.batch_size,
-                    shuffle=False
-                )
+                # Extract features and outputs for unlabeled samples
+                x_train, _ = self.current_task[0]
+                x_unlabeled = x_train[self.idx_unlabeled]
+                unlabeled_features, unlabeled_outputs = self.extract_features_and_outputs(x_unlabeled)
 
-                all_features = []
-                all_outputs = []
-                for batch_id, (batch_x, _) in enumerate(eval_dataloader):
-                    batch_x = batch_x.to(self.agent.device)
-                    with torch.no_grad():
-                        # Extract embeddings and outputs
-                        features = self.agent.model.feature(batch_x)  # Feature extraction
-                        outputs = self.agent.model(batch_x)  # Forward pass
-                    all_features.append(features.cpu().numpy())
-                    all_outputs.append(outputs)
-                all_features = np.vstack(all_features)
-                all_outputs = torch.cat(all_outputs, dim=0)
+                # Cluster the embeddings for diversity
+                # Number of clusters = number of labeled samples + samples to select this cycle
+                n_clusters = min(len(self.idx_labeled) + self.n_samples_per_al_cycle, self.idx_unlabeled.size)
+                print(f"Clustering into {n_clusters} clusters for diversity")
+                kmeans = KMeans(n_clusters=n_clusters, random_state=self.random_state)
+                cluster_labels = kmeans.fit_predict(unlabeled_features)
 
-                # Step 2: Cluster the embeddings
-                kmeans = KMeans(n_clusters=n_clusters, random_state=run)
-                cluster_labels = kmeans.fit_predict(all_features)
+                # Compute uncertainty scores
+                print(f"Computing uncertainty using {self.metric} metric")
+                uncertainties = self.compute_uncertainty(unlabeled_outputs)
 
-                # Step 3: Compute uncertainty scores
-                uncertainties = self.compute_uncertainty(all_outputs, metric=metric)
-
-                # Step 4: Select the most uncertain sample from each cluster
-                selected_idxs = []
-                for cluster in range(n_clusters):
-                    cluster_indices = np.where(cluster_labels == cluster)[0]  # Indices in this cluster
-                    cluster_uncertainties = uncertainties[cluster_indices]  # Uncertainty scores for this cluster
-                    slct_idx = cluster_indices[np.argsort(-cluster_uncertainties)[0]]
-                    # Add the selected indices to the list
-                    selected_idxs.append(idx_unlabeled[slct_idx])
-                    
-                selected_idxs = np.array(selected_idxs[:n_samples_per_al_cycle])
+                # Calculate mean uncertainty for each cluster using vectorized operations
+                cluster_sums = np.bincount(cluster_labels, weights=uncertainties)
+                cluster_counts = np.bincount(cluster_labels)
+                # Only keep clusters with at least one sample
+                valid_clusters = cluster_counts > 0
+                cluster_mean_uncertainties = np.divide(cluster_sums[valid_clusters], 
+                                                       cluster_counts[valid_clusters])
+                cluster_info = np.where(valid_clusters)[0]
                 
+                # Sort clusters by mean uncertainty (descending)
+                sorted_cluster_indices = np.argsort(-cluster_mean_uncertainties)[:self.n_samples_per_al_cycle]
+                top_uncertain_clusters = cluster_info[sorted_cluster_indices]
                 
-            # Update unlabeled indices
-            idx_unlabeled = np.setdiff1d(idx_unlabeled, selected_idxs)
+                # Select the most uncertain exemplar from each of the top clusters
+                selected_local_idxs = []
+                for cluster in top_uncertain_clusters:
+                    cluster_indices = np.where(cluster_labels == cluster)[0]
+                    cluster_uncertainties = uncertainties[cluster_indices]
+                    most_uncertain_idx = cluster_indices[np.argmax(cluster_uncertainties)]
+                    selected_local_idxs.append(most_uncertain_idx)
+                
+                selected_local_idxs = np.array(selected_local_idxs)
+                selected_idxs = self.idx_unlabeled[selected_local_idxs]
 
-            new_task = (alc == 0)  # First cycle is a new task
-            # Train the agent on the newly labeled data
-            self.agent.learn_task(task, selected_idxs, new_task)
+            # Update labeled and unlabeled sets
+            self.idx_labeled = np.concatenate([self.idx_labeled, selected_idxs])
+            self.idx_unlabeled = np.setdiff1d(self.idx_unlabeled, selected_idxs, 
+                                             assume_unique=True)
+
+            # Train and evaluate
+            self.agent.learn_task(self.current_task, selected_idxs, alc == 0)
             accuracies = self.agent.evaluate(task_stream, alc, self.al_budget)
-            self.save_acc_to_csv(accuracies, run, task_i, alc, f'_{metric}')
+            self.save_acc_to_csv(accuracies, run, task_i, alc, f'_{self.metric}')
+
+        return accuracies
