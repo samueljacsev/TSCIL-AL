@@ -160,7 +160,7 @@ class TypiClustUncertaintyDiversitySampler(BaseSampler):
                     self.n_samples_per_al_cycle
                 )
                 selected_idxs = self.idx_unlabeled[local_indices]
-            elif alc < 3:
+            elif alc < self.al_budget - 2:
                 # Cycles 2-3: Use Uncertainty-Diversity strategy (with clustering)
                 print("Using Uncertainty-Diversity strategy (with clustering)")
                 # Extract features and outputs for unlabeled samples
