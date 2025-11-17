@@ -2,7 +2,7 @@
 from types import SimpleNamespace
 from agents.base import BaseLearner
 from samplers.base import BaseSampler
-from sklearn.cluster import KMeans
+from sklearn.cluster import KMeans, MiniBatchKMeans
 import numpy as np
 
 
@@ -17,13 +17,31 @@ class TypiClustSampler(BaseSampler):
                  args: SimpleNamespace):
         super().__init__(agent, exp_args, args, name='TypiClust')
 
-
-    def get_clusters(self, all_features, n_clusters):
-        """Perform K-means clustering on features for diversity."""
-        print("Step 1: Clustering for Diversity")
+    def get_clusters(self, features, n_clusters):
+        """
+        Perform K-means clustering on features for diversity.
+        Uses MiniBatchKMeans for large datasets or many clusters for efficiency.
+        
+        Args:
+            features: Feature vectors to cluster.
+            n_clusters: Number of clusters to create.
+            
+        Returns:
+            cluster_labels: Array of cluster assignments.
+        """
         n_clusters = min(n_clusters, len(self.idx_unlabeled))
-        kmeans = KMeans(n_clusters=n_clusters, random_state=self.random_state)
-        return kmeans.fit_predict(all_features)
+        
+        # Use MiniBatchKMeans for better scalability with large datasets or many clusters
+        if n_clusters > 50 or len(features) > 10000:
+            print(f"Using MiniBatchKMeans for {n_clusters} clusters on {len(features)} samples")
+            kmeans = MiniBatchKMeans(n_clusters=n_clusters, 
+                                    batch_size=min(5000, len(features)),
+                                    random_state=self.random_state)
+        else:
+            print(f"Using KMeans for {n_clusters} clusters on {len(features)} samples")
+            kmeans = KMeans(n_clusters=n_clusters, random_state=self.random_state)
+        
+        return kmeans.fit_predict(features)
 
 
     def compute_typicality(self, features, k_sym):
@@ -99,6 +117,7 @@ class TypiClustSampler(BaseSampler):
             all_features, _ = self.extract_features_and_outputs(x_train)
             
             # Cluster all samples
+            print("Step 1: Clustering for Diversity")
             n_clusters = min(len(self.idx_labeled) + self.n_samples_per_al_cycle, 
                            self.idx_unlabeled.size)
             cluster_labels = self.get_clusters(all_features, n_clusters)
@@ -107,7 +126,7 @@ class TypiClustSampler(BaseSampler):
             # Compute typicality scores for unlabeled samples
             print("Step 2: Querying Typical Examples")
             unlabeled_features = all_features[self.idx_unlabeled]
-            k_nn = min(20, len(unlabeled_features) - 1)
+            k_nn = min(max(self.n_samples_per_al_cycle, 20), len(unlabeled_features) - 1)
             typicalities = self.compute_typicality(unlabeled_features, k_nn)
             
             # Select most typical samples from each cluster

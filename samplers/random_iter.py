@@ -27,6 +27,7 @@ class RandomIterSampler(BaseSampler):
             # Randomly select samples from unlabeled pool
             np.random.shuffle(self.idx_unlabeled)
             selected_idxs = self.idx_unlabeled[:self.n_samples_per_al_cycle].copy()
+            print(f'Number of selected indices: {len(selected_idxs)}')
 
             # Update labeled and unlabeled sets
             self.idx_labeled = np.concatenate([self.idx_labeled, selected_idxs])

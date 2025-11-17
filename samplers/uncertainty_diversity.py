@@ -1,4 +1,4 @@
-from sklearn.cluster import KMeans
+from sklearn.cluster import KMeans, MiniBatchKMeans
 from types import SimpleNamespace
 from agents.base import BaseLearner
 from samplers.base import BaseSampler
@@ -17,6 +17,30 @@ class UncertaintyDiversitySampler(BaseSampler):
                  args: SimpleNamespace):
         super().__init__(agent, exp_args, args, name='UncertaintyWithDiversity')
         self.metric = args.uncertainty_type if args.uncertainty_type else 'entropy'
+
+    def get_clusters(self, features, n_clusters):
+        """
+        Perform K-means clustering on features for diversity.
+        Uses MiniBatchKMeans for large datasets or many clusters for efficiency.
+        
+        Args:
+            features: Feature vectors to cluster.
+            n_clusters: Number of clusters to create.
+            
+        Returns:
+            cluster_labels: Array of cluster assignments.
+        """
+        # Use MiniBatchKMeans for better scalability with large datasets or many clusters
+        if n_clusters > 50 or len(features) > 10000:
+            print(f"Using MiniBatchKMeans for {n_clusters} clusters on {len(features)} samples")
+            kmeans = MiniBatchKMeans(n_clusters=n_clusters, 
+                                    batch_size=min(5000, len(features)),
+                                    random_state=self.random_state)
+        else:
+            print(f"Using KMeans for {n_clusters} clusters on {len(features)} samples")
+            kmeans = KMeans(n_clusters=n_clusters, random_state=self.random_state)
+        
+        return kmeans.fit_predict(features)
 
     def compute_uncertainty(self, outputs):
         """
@@ -63,8 +87,7 @@ class UncertaintyDiversitySampler(BaseSampler):
                 # Number of clusters = number of labeled samples + samples to select this cycle
                 n_clusters = min(len(self.idx_labeled) + self.n_samples_per_al_cycle, self.idx_unlabeled.size)
                 print(f"Clustering into {n_clusters} clusters for diversity")
-                kmeans = KMeans(n_clusters=n_clusters, random_state=self.random_state)
-                cluster_labels = kmeans.fit_predict(unlabeled_features)
+                cluster_labels = self.get_clusters(unlabeled_features, n_clusters)
 
                 # Compute uncertainty scores
                 print(f"Computing uncertainty using {self.metric} metric")

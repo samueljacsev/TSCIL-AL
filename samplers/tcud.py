@@ -1,4 +1,4 @@
-from sklearn.cluster import KMeans
+from sklearn.cluster import KMeans, MiniBatchKMeans
 from sklearn.metrics.pairwise import euclidean_distances
 from types import SimpleNamespace
 from agents.base import BaseLearner
@@ -9,9 +9,10 @@ import torch
 
 class TypiClustUncertaintyDiversitySampler(BaseSampler):
     """
-    TypiClustUncertaintyDiversitySampler: A hybrid sampler combining TypiClust and Uncertainty-Diversity strategies.
-    - First AL cycle: Uses TypiClust (typicality-based selection with clustering)
-    - Subsequent cycles: Uses Uncertainty-Diversity (cluster-based uncertainty sampling)
+    TypiClustUncertaintyDiversitySampler: A hybrid sampler combining multiple strategies.
+    - Cycles 0-1: TypiClust (typicality-based selection with clustering)
+    - Cycles 2-3: Uncertainty-Diversity (cluster-based uncertainty sampling)
+    - Cycles 4+: Pure Uncertainty (no clustering/diversity)
     """
 
     def __init__(self,
@@ -20,6 +21,30 @@ class TypiClustUncertaintyDiversitySampler(BaseSampler):
                  args: SimpleNamespace):
         super().__init__(agent, exp_args, args, name='TypiClustUncertaintyDiversity')
         self.metric = args.uncertainty_type if args.uncertainty_type else 'entropy'
+
+    def get_clusters(self, features, n_clusters):
+        """
+        Perform K-means clustering on features for diversity.
+        Uses MiniBatchKMeans for large datasets or many clusters for efficiency.
+        
+        Args:
+            features: Feature vectors to cluster.
+            n_clusters: Number of clusters to create.
+            
+        Returns:
+            cluster_labels: Array of cluster assignments.
+        """
+        # Use MiniBatchKMeans for better scalability with large datasets or many clusters
+        if n_clusters > 50 or len(features) > 10000:
+            print(f"Using MiniBatchKMeans for {n_clusters} clusters on {len(features)} samples")
+            kmeans = MiniBatchKMeans(n_clusters=n_clusters, 
+                                    batch_size=min(5000, len(features)),
+                                    random_state=self.random_state)
+        else:
+            print(f"Using KMeans for {n_clusters} clusters on {len(features)} samples")
+            kmeans = KMeans(n_clusters=n_clusters, random_state=self.random_state)
+        
+        return kmeans.fit_predict(features)
 
     def compute_typicality(self, features, k_sym):
         """Compute typicality scores based on k-nearest neighbor distances."""
@@ -111,8 +136,8 @@ class TypiClustUncertaintyDiversitySampler(BaseSampler):
         for alc in range(self.al_budget):
             print(f'AL cycle: {alc + 1} / {self.al_budget}')
 
-            if alc < 2:
-                # First cycle: Use TypiClust strategy
+            if alc < 1:
+                # First cycles: Use TypiClust strategy with clustering
                 print("Using TypiClust strategy for initial selection")
                 x_train, _ = self.current_task[0]
                 all_features, _ = self.extract_features_and_outputs(x_train)
@@ -120,8 +145,7 @@ class TypiClustUncertaintyDiversitySampler(BaseSampler):
                 # Cluster all samples
                 n_clusters = min(self.n_samples_per_al_cycle, self.idx_unlabeled.size)
                 print(f"Step 1: Clustering for Diversity - {n_clusters} clusters")
-                kmeans = KMeans(n_clusters=n_clusters, random_state=self.random_state)
-                cluster_labels = kmeans.fit_predict(all_features)
+                cluster_labels = self.get_clusters(all_features, n_clusters)
                 sorted_clusters, unlabeled_assignments = self._cluster_priority(cluster_labels)
                 
                 # Compute typicality scores for unlabeled samples
@@ -136,9 +160,9 @@ class TypiClustUncertaintyDiversitySampler(BaseSampler):
                     self.n_samples_per_al_cycle
                 )
                 selected_idxs = self.idx_unlabeled[local_indices]
-            else:
-                # Subsequent cycles: Use Uncertainty-Diversity strategy
-                print("Using Uncertainty-Diversity strategy")
+            elif alc < 3:
+                # Cycles 2-3: Use Uncertainty-Diversity strategy (with clustering)
+                print("Using Uncertainty-Diversity strategy (with clustering)")
                 # Extract features and outputs for unlabeled samples
                 x_train, _ = self.current_task[0]
                 x_unlabeled = x_train[self.idx_unlabeled]
@@ -148,8 +172,7 @@ class TypiClustUncertaintyDiversitySampler(BaseSampler):
                 # Number of clusters = number of labeled samples + samples to select this cycle
                 n_clusters = min(len(self.idx_labeled) + self.n_samples_per_al_cycle, self.idx_unlabeled.size)
                 print(f"Clustering into {n_clusters} clusters for diversity")
-                kmeans = KMeans(n_clusters=n_clusters, random_state=self.random_state)
-                cluster_labels = kmeans.fit_predict(unlabeled_features)
+                cluster_labels = self.get_clusters(unlabeled_features, n_clusters)
 
                 # Compute uncertainty scores
                 print(f"Computing uncertainty using {self.metric} metric")
@@ -178,6 +201,21 @@ class TypiClustUncertaintyDiversitySampler(BaseSampler):
                 
                 selected_local_idxs = np.array(selected_local_idxs)
                 selected_idxs = self.idx_unlabeled[selected_local_idxs]
+            else:
+                # Cycles 4+: Use pure Uncertainty sampling (no clustering/diversity)
+                print("Using pure Uncertainty sampling (no diversity)")
+                # Extract outputs for unlabeled samples
+                x_train, _ = self.current_task[0]
+                x_unlabeled = x_train[self.idx_unlabeled]
+                _, unlabeled_outputs = self.extract_features_and_outputs(x_unlabeled)
+
+                # Compute uncertainty scores
+                print(f"Computing uncertainty using {self.metric} metric")
+                uncertainties = self.compute_uncertainty(unlabeled_outputs)
+
+                # Select the most uncertain samples
+                local_indices = np.argsort(-uncertainties)[:self.n_samples_per_al_cycle]
+                selected_idxs = self.idx_unlabeled[local_indices]
 
             # Update labeled and unlabeled sets
             self.idx_labeled = np.concatenate([self.idx_labeled, selected_idxs])

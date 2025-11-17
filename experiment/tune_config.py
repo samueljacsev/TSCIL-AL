@@ -6,7 +6,7 @@ import os
 from agents.utils.name_match import agents_replay
 
 content_root = os.path.abspath('.')
-_al_total = 100
+_al_total = 20
 config_default = {'scenario': 'class',
                   'runs': 5,
                   'runs_val': 2,  # To increase the confidence of best_config
@@ -27,7 +27,7 @@ config_default = {'scenario': 'class',
                   'early_stop': True,
                   'patience': 5,
                   'input_norm': 'LN',
-                  'mem_budget': 3 / _al_total,  # 0.01 0.05 (default)  0.1  0.2  1
+                  'mem_budget':  min(0.05, 3 / _al_total),  # 0.01 0.05 (default)  0.1  0.2  1
                   'head': 'Linear',  # Linear (Default),  SplitCosineLinear
                   'criterion': 'CE',  # Default: CE (Default),  BCE
                   'ncm_classifier': False,  # Default: False
