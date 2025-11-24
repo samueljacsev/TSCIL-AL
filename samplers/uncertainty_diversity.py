@@ -69,6 +69,7 @@ class UncertaintyDiversitySampler(BaseSampler):
     def active_learn_sampler(self, run, task_stream, task_i):
         """Execute uncertainty-based active learning with diversity enforcement."""
         accuracies = np.array([])
+        task_buffer = np.array([], dtype=int)
         
         for alc in range(self.al_budget):
             print(f'AL cycle: {alc + 1} / {self.al_budget}')
@@ -121,9 +122,12 @@ class UncertaintyDiversitySampler(BaseSampler):
             self.idx_labeled = np.concatenate([self.idx_labeled, selected_idxs])
             self.idx_unlabeled = np.setdiff1d(self.idx_unlabeled, selected_idxs, 
                                              assume_unique=True)
+            
+            # Add selected samples to the task buffer
+            task_buffer = np.concatenate([task_buffer, selected_idxs])
 
             # Train and evaluate
-            self.agent.learn_task(self.current_task, selected_idxs, alc == 0)
+            self.agent.learn_task(self.current_task, task_buffer, alc == 0)
             accuracies = self.agent.evaluate(task_stream, alc, self.al_budget)
             self.save_acc_to_csv(accuracies, run, task_i, alc, f'_{self.metric}')
 

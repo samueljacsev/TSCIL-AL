@@ -6,7 +6,7 @@ import os
 from agents.utils.name_match import agents_replay
 
 content_root = os.path.abspath('.')
-_al_total = 20
+_al_total = 150
 config_default = {'scenario': 'class',
                   'runs': 5,
                   'runs_val': 2,  # To increase the confidence of best_config
@@ -32,7 +32,7 @@ config_default = {'scenario': 'class',
                   'criterion': 'CE',  # Default: CE (Default),  BCE
                   'ncm_classifier': False,  # Default: False
                   'er_sub_type': 'balanced',    # 'part' / 'balanced'
-                  'al_budget': 6,  # Number of active learning steps to be executed
+                  'al_budget': 3,  # Number of active learning steps to be executed
                   'al_total': _al_total,  # Total number of active learning steps
                   }
                   # 1. Linear, BCE, False; 2. Linear, CE, True; 3. SplitCosineLinear, CE, False

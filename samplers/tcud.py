@@ -10,17 +10,17 @@ import torch
 class TypiClustUncertaintyDiversitySampler(BaseSampler):
     """
     TypiClustUncertaintyDiversitySampler: A hybrid sampler combining multiple strategies.
-    - Cycles 0-1: TypiClust (typicality-based selection with clustering)
-    - Cycles 2-3: Uncertainty-Diversity (cluster-based uncertainty sampling)
-    - Cycles 4+: Pure Uncertainty (no clustering/diversity)
+    - Cycles [0:1]: TypiClust (typicality-based selection with clustering)
+    - Cycles [2:-2]: Uncertainty-Diversity (cluster-based uncertainty sampling)
+    - Cycles [-2:]: Pure Uncertainty (no clustering/diversity)
     """
 
     def __init__(self,
                  agent: BaseLearner,
                  exp_args: SimpleNamespace,
                  args: SimpleNamespace):
-        super().__init__(agent, exp_args, args, name='TypiClustUncertaintyDiversity')
-        self.metric = args.uncertainty_type if args.uncertainty_type else 'entropy'
+        super().__init__(agent, exp_args, args, name='TypiClustUncertaintyDiversity2')
+        self.metric = args.uncertainty_type if args.uncertainty_type else 'least_confidence'
 
     def get_clusters(self, features, n_clusters):
         """
@@ -70,7 +70,7 @@ class TypiClustUncertaintyDiversitySampler(BaseSampler):
             labeled_counts = np.zeros(len(unique_clusters), dtype=int)
         
         # Sort by labeled count (ascending), then by cluster size (descending)
-        cluster_order = np.lexsort((-cluster_sizes, labeled_counts))
+        cluster_order = np.lexsort((labeled_counts, -cluster_sizes,))
         return unique_clusters[cluster_order], unlabeled_assignments
 
     def _select_typical_indices(self, sorted_clusters, unlabeled_assignments, typicalities, target):
@@ -132,6 +132,7 @@ class TypiClustUncertaintyDiversitySampler(BaseSampler):
     def active_learn_sampler(self, run, task_stream, task_i):
         """Execute hybrid TypiClust-Uncertainty-Diversity active learning strategy."""
         accuracies = np.array([])
+        task_buffer = np.array([], dtype=int)
         
         for alc in range(self.al_budget):
             print(f'AL cycle: {alc + 1} / {self.al_budget}')
@@ -151,7 +152,7 @@ class TypiClustUncertaintyDiversitySampler(BaseSampler):
                 # Compute typicality scores for unlabeled samples
                 print("Step 2: Querying Typical Examples")
                 unlabeled_features = all_features[self.idx_unlabeled]
-                k_nn = min(20, len(unlabeled_features) - 1)
+                k_nn = min(max(self.n_samples_per_al_cycle, 20), len(unlabeled_features) - 1)
                 typicalities = self.compute_typicality(unlabeled_features, k_nn)
                 
                 # Select most typical samples from each cluster
@@ -182,7 +183,7 @@ class TypiClustUncertaintyDiversitySampler(BaseSampler):
                 cluster_sums = np.bincount(cluster_labels, weights=uncertainties)
                 cluster_counts = np.bincount(cluster_labels)
                 # Only keep clusters with at least one sample
-                valid_clusters = cluster_counts > 0
+                valid_clusters = cluster_counts > 20
                 cluster_mean_uncertainties = np.divide(cluster_sums[valid_clusters], 
                                                        cluster_counts[valid_clusters])
                 cluster_info = np.where(valid_clusters)[0]
@@ -199,7 +200,7 @@ class TypiClustUncertaintyDiversitySampler(BaseSampler):
                     most_uncertain_idx = cluster_indices[np.argmax(cluster_uncertainties)]
                     selected_local_idxs.append(most_uncertain_idx)
                 
-                selected_local_idxs = np.array(selected_local_idxs)
+                selected_local_idxs = np.array(selected_local_idxs, dtype=int)
                 selected_idxs = self.idx_unlabeled[selected_local_idxs]
             else:
                 # Cycles 4+: Use pure Uncertainty sampling (no clustering/diversity)
@@ -221,9 +222,12 @@ class TypiClustUncertaintyDiversitySampler(BaseSampler):
             self.idx_labeled = np.concatenate([self.idx_labeled, selected_idxs])
             self.idx_unlabeled = np.setdiff1d(self.idx_unlabeled, selected_idxs, 
                                              assume_unique=True)
+            
+            # Add selected samples to the task buffer
+            task_buffer = np.concatenate([task_buffer, selected_idxs])
 
             # Train and evaluate
-            self.agent.learn_task(self.current_task, selected_idxs, alc == 0)
+            self.agent.learn_task(self.current_task, task_buffer, alc == 0)
             accuracies = self.agent.evaluate(task_stream, alc, self.al_budget)
             self.save_acc_to_csv(accuracies, run, task_i, alc, f'_{self.metric}')
 

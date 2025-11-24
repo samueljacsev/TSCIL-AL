@@ -160,14 +160,15 @@ if __name__ == "__main__":
 
     # Active Learning
     parser.add_argument('--sampler', dest='sampler', default='random_iter', type=str,
-                        choices=['full', 'random', 'random_iter', 'uncertainty', 'typi_clust', 'uncertainty_diversity', 'tcud'],
+                        choices=['full', 'random', 'random_iter', 'uncertainty', 'typi_clust', \
+                                 'uncert_div', 'tcud', 'kmeans_ppp', 'coreset'],
                         help='Active learning samplers')
-    parser.add_argument('--uncertainty_type', dest='uncertainty_type', default=None, type=str,
-                    choices=['margin', 'least_confidence', 'entropy'],
+    parser.add_argument('--uncert_type', dest='uncertainty_type', default=None, type=str,
+                    choices=['margin', 'lc', 'entropy'],
                     help='Type of uncertainty sampling (only used if sampler=uncertainty)')
     parser.add_argument('--al_total', dest='al_total', default=20, type=int,
                         help='Total number of active learning cycles')
-    parser.add_argument('--al_budget', dest='al_budget', default=2, type=float,
+    parser.add_argument('--al_budget', dest='al_budget', default=2, type=int,
                         help='Number of active learning steps to be executed')
 
 

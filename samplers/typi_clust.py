@@ -57,10 +57,15 @@ class TypiClustSampler(BaseSampler):
         typicalities = 1.0 / (mean_distances + 1e-10)
         return typicalities
 
-    def _cluster_priority(self, cluster_labels):
+    def _cluster_priority(self, cluster_labels, min_cluster_size=10):
         """Rank clusters by labeled coverage (ascending) and size (descending)."""
         unlabeled_assignments = cluster_labels[self.idx_unlabeled]
         unique_clusters, cluster_sizes = np.unique(unlabeled_assignments, return_counts=True)
+        
+        # Filter out clusters with fewer than min_cluster_size samples
+        valid_mask = cluster_sizes >= min_cluster_size
+        unique_clusters = unique_clusters[valid_mask]
+        cluster_sizes = cluster_sizes[valid_mask]
         
         # Count labeled samples per cluster
         if self.idx_labeled.size > 0:
@@ -70,7 +75,7 @@ class TypiClustSampler(BaseSampler):
             labeled_counts = np.zeros(len(unique_clusters), dtype=int)
         
         # Sort by labeled count (ascending), then by cluster size (descending)
-        cluster_order = np.lexsort((-cluster_sizes, labeled_counts))
+        cluster_order = np.lexsort((labeled_counts, -cluster_sizes))
         return unique_clusters[cluster_order], unlabeled_assignments
 
     def _select_typical_indices(self, sorted_clusters, unlabeled_assignments, typicalities, target):
@@ -108,6 +113,7 @@ class TypiClustSampler(BaseSampler):
     def active_learn_sampler(self, run, task_stream, task_i):
         """Execute TypiClust active learning strategy."""
         accuracies = np.array([])
+        task_buffer = np.array([], dtype=int)
         
         for alc in range(self.al_budget):
             print(f'AL cycle: {alc + 1} / {self.al_budget}')
@@ -118,15 +124,15 @@ class TypiClustSampler(BaseSampler):
             
             # Cluster all samples
             print("Step 1: Clustering for Diversity")
-            n_clusters = min(len(self.idx_labeled) + self.n_samples_per_al_cycle, 
-                           self.idx_unlabeled.size)
+            n_clusters = min(len(self.idx_labeled) + self.n_samples_per_al_cycle, self.idx_unlabeled.size)
             cluster_labels = self.get_clusters(all_features, n_clusters)
-            sorted_clusters, unlabeled_assignments = self._cluster_priority(cluster_labels)
+            min_cluster_size = 0 if alc == 0 else self.n_samples_per_al_cycle // 2
+            sorted_clusters, unlabeled_assignments = self._cluster_priority(cluster_labels, min_cluster_size=min_cluster_size)
             
             # Compute typicality scores for unlabeled samples
             print("Step 2: Querying Typical Examples")
             unlabeled_features = all_features[self.idx_unlabeled]
-            k_nn = min(max(self.n_samples_per_al_cycle, 20), len(unlabeled_features) - 1)
+            k_nn = min(max(self.n_samples_per_al_cycle, 10), len(unlabeled_features) - 1)
             typicalities = self.compute_typicality(unlabeled_features, k_nn)
             
             # Select most typical samples from each cluster
@@ -141,8 +147,11 @@ class TypiClustSampler(BaseSampler):
             self.idx_unlabeled = np.setdiff1d(self.idx_unlabeled, selected_idxs, 
                                              assume_unique=True)
 
+            # Add selected samples to the task buffer
+            task_buffer = np.concatenate([task_buffer, selected_idxs])
+
             # Train and evaluate
-            self.agent.learn_task(self.current_task, selected_idxs, alc == 0)
+            self.agent.learn_task(self.current_task, task_buffer, alc == 0)
             accuracies = self.agent.evaluate(task_stream, alc, self.al_budget)
             self.save_acc_to_csv(accuracies, run, task_i, alc)
 

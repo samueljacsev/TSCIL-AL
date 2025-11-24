@@ -112,7 +112,7 @@ def tune_hyperparams_on_val_tasks(args, cls_order, config_generic={}, config_mod
     best_params = {}
     
     # Optimized params for uvawe and har when batch_size = buffer_size on the TRAIN 
-    if args.encoder == 'CNN' and args.agent == 'ASER' and args.norm == 'BN':
+    if args.encoder == 'CNN' and args.agent in ['ASER', 'ER'] and args.norm == 'BN':
         if args.data == 'uwave':
             best_params = {'generic': {'lr': 0.001, 'lradj': 'step15', 'batch_size': 40, 'weight_decay': 0}, 
                     'model': {'feature_dim': 128, 'n_layers': 4, 'dropout': 0}, 
