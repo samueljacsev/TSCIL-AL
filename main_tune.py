@@ -16,7 +16,7 @@ if __name__ == "__main__":
     parser.add_argument('--agent', dest='agent', default='DT2W', type=str)
     parser.add_argument('--norm', dest='norm', default='BN', type=str)
     parser.add_argument('--sampler', dest='sampler', default='random_iter', type=str)
-    parser.add_argument('--uncertainty_type', dest='uncertainty_type', default=None, type=str)
+    parser.add_argument('--uncert_type', dest='uncertainty_type', default=None, type=str)
     args = parser.parse_args()
 
     # Include unchanged general params

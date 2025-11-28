@@ -38,7 +38,7 @@ class UncertaintySampler(BaseSampler):
             # Compute margin (difference between top-2 probabilities)
             sorted_probs = -np.sort(-probabilities, axis=1)  # Sort in descending order
             uncertainties = 1 - (sorted_probs[:, 0] - sorted_probs[:, 1])
-        elif self.metric == 'least_confidence':
+        elif self.metric == 'lc':
             # Compute least confidence (1 - max probability)
             uncertainties = 1 - np.max(probabilities, axis=1)
         else:
@@ -84,6 +84,6 @@ class UncertaintySampler(BaseSampler):
             # Train and evaluate
             self.agent.learn_task(self.current_task, task_buffer, alc == 0)
             accuracies = self.agent.evaluate(task_stream, alc, self.al_budget)
-            self.save_acc_to_csv(accuracies, run, task_i, alc, f'_{self.metric}')
+            self.save_acc_to_csv(accuracies, run, task_i, alc, f'-{self.metric}')
 
         return accuracies

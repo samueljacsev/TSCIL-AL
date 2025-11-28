@@ -25,30 +25,36 @@ class ExperienceReplay(BaseLearner):
         self.model.train()
         for batch_id, (x, y) in enumerate(dataloader):
             x, y = x.to(self.device), y.to(self.device)
-            total += y.size(0)
 
             if y.size == 1:
                 y.unsqueeze()
 
             self.optimizer.zero_grad()
-            loss_ce = 0
 
             if self.task_now > 0:  # Replay after 1st task
                 x_buf, y_buf = self.buffer.retrieve(x=x, y=y)
-                outputs_buf = self.model(x_buf)
-                loss_ce = self.criterion(outputs_buf, y_buf)
-
-            outputs = self.model(x)
-            loss_ce += self.criterion(outputs, y)
+                combined_batch = torch.cat((x_buf, x))
+                combined_labels = torch.cat((y_buf, y))
+                total += combined_labels.size(0)
+                outputs = self.model(combined_batch)
+                loss_ce = self.criterion(outputs, combined_labels)
+            else:
+                total += y.size(0)
+                outputs = self.model(x)
+                loss_ce = self.criterion(outputs, y)
+                
             loss_ce.backward()
             self.optimizer_step(epoch=epoch)
-
+        
             if self.er_mode == 'online':
                 self.buffer.update(x, y)
 
             epoch_loss += loss_ce
             prediction = torch.argmax(outputs, dim=1)
-            correct += prediction.eq(y).sum().item()
+            if self.task_now > 0:
+                correct += prediction.eq(combined_labels).sum().item()
+            else:
+                correct += prediction.eq(y).sum().item()
 
         epoch_acc = 100. * (correct / total)
         epoch_loss /= (batch_id + 1)

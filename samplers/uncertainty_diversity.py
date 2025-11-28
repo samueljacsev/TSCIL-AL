@@ -59,7 +59,7 @@ class UncertaintyDiversitySampler(BaseSampler):
         elif self.metric == 'margin':
             sorted_probs = -np.sort(-probabilities, axis=1)  # Sort in descending order
             uncertainties = 1 - (sorted_probs[:, 0] - sorted_probs[:, 1])
-        elif self.metric == 'least_confidence':
+        elif self.metric == 'lc':
             uncertainties = 1 - np.max(probabilities, axis=1)
         else:
             raise ValueError(f"Unknown uncertainty metric: {self.metric}")

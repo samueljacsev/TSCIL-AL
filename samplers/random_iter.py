@@ -14,7 +14,7 @@ class RandomIterSampler(BaseSampler):
                  agent: BaseLearner,
                  exp_args: SimpleNamespace,
                  args: SimpleNamespace ):
-        super().__init__(agent, exp_args, args, name='RandomIter')
+        super().__init__(agent, exp_args, args, name='Random')
 
 
     def active_learn_sampler(self, run, task_stream, task_i):
