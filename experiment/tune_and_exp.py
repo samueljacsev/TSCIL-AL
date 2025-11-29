@@ -129,12 +129,12 @@ def tune_hyperparams_on_val_tasks(args, cls_order, config_generic={}, config_mod
                         "agent": {"aser_k": 3, "aser_type": "asvm", "aser_n_smp_cls": 2}}
         
         elif args.data == 'wisdm':
-            best_params = {"generic": {"lr": 0.001, "lradj": "TST", "batch_size": 20, "weight_decay": 0}, 
+            best_params = {"generic": {"lr": 0.001, "lradj": "TST", "batch_size": 43, "weight_decay": 0}, 
                         "model": {"feature_dim": 128, "n_layers": 4, "dropout": 0.3}, 
                         "agent": {"aser_k": 3, "aser_type": "asvm", "aser_n_smp_cls": 8}}
         
         elif args.data == 'grabmyo':
-            best_params = {"generic": {"lr": 0.001, "lradj": "TST", "batch_size": 100, "weight_decay": 0}, 
+            best_params = {"generic": {"lr": 0.001, "lradj": "TST", "batch_size": 203, "weight_decay": 0}, 
                             "model": {"feature_dim": 128, "n_layers": 4, "dropout": 0.3}, 
                             "agent": {"aser_k": 3, "aser_type": "asvm", "aser_n_smp_cls": 8}}
         if best_params:

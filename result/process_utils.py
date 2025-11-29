@@ -1,6 +1,19 @@
 import pandas as pd
 import numpy as np
 import os
+import matplotlib.pyplot as plt
+
+from pathlib import Path
+import sys
+import numpy as np
+
+# If this notebook lives in `result/` (as yours does), parent() is repo root
+repo_root = Path.cwd().resolve().parent  # -> /home/sam/Downloads/gh/TSCIL-AL
+sys.path.insert(0, str(repo_root))
+
+from utils.metrics import compute_performance
+
+
 
 def get_filtered_files(data_filter, cycles_filter):
     cycles_filter = [str(c) for c in cycles_filter]
@@ -19,7 +32,6 @@ def generate_score_files(filtered_files):
         df = pd.read_csv(path)
         df = df.groupby(['task', 'cycle',]).mean() # mean over all (default=5) runs
         df.drop(columns=['run'], inplace=True)
-        # unpack task column
         df['task'] = df.index.get_level_values(0)
         df['cycle'] = df.index.get_level_values(1)
         df = df.reset_index(drop=True)
@@ -33,10 +45,15 @@ def generate_score_files(filtered_files):
         lambda row: np.mean([v for v in row[task_cols] if v > 1e-5]), axis=1).round(2)
 
         df['learning_accuracy'] = df.apply(
-            lambda row: round(row[f'task_{int(row["task"]) + 1}'], 2), axis=1).round(2)
+        lambda row: round(row[f'task_{int(row["task"]) + 1}'], 2), axis=1).round(2)
+
+        # Reorder columns to match original structure: task, cycle, then task_cols, then metrics
+        ordered_cols = ['task', 'cycle'] + task_cols + ['average_accuracy', 'learning_accuracy']
+        df = df[ordered_cols]
 
         dir = os.path.dirname(path)
         file = path[len(dir)+1:]
+
         df.to_csv(os.path.join(dir+'_scores', 'score_'+ file), index=False)
         
 
@@ -51,24 +68,27 @@ def filter_methods(names, filters = []):
     return filtered_names
 
 
-def aggregate_al_strategies(folder, strategy_fileter, budget, total, acc, group=['cycle', 'task']):   
+def aggregate_al_strategies(folder, strategy_fileter, budget, total, acc):  
     files = os.listdir(folder)
     files = filter_methods(files, strategy_fileter)
+
+    meta_df = None
 
     strategy_scores = {}
     for file in files:
         if file.split('_')[-4] == str(budget) and file.split('_')[-2] == str(total):
             score_fn = os.path.join(folder, file)
             score_df = pd.read_csv(score_fn)
-            if group != []:
-                score_df = score_df.groupby(group).mean()
             strategy_scores[file] = (score_df[acc])
+            if meta_df is None:
+                meta_df = score_df[['task', 'cycle']]
             
     # merge all dataframes
     merged_df = pd.concat(strategy_scores.values(), axis=1)
     merged_df.columns = strategy_scores.keys()
     merged_df = merged_df.rename(columns={col: col.split('_')[1] +'-'+ col.split('_')[2] for col in merged_df.columns})
     merged_df = merged_df.reset_index()
+    merged_df = pd.concat([meta_df, merged_df], axis=1)
 
     return merged_df
 
@@ -132,7 +152,7 @@ def plot_progress(df, loc='best', figsize=(13, 7), title=None, X_label=None, Y_l
     if df['cycle'].nunique() > 1:
         cycles = df['cycle'].values.tolist()
         tasks = df['task'].values.tolist()
-        x_ticklabels = [(t+1, a+1) for a, t in zip(tasks, cycles)]
+        x_ticklabels = [(t+1, a+1) for t, a in zip(tasks, cycles)]
 
     # Create color mapping based on base name (without -ASER or -ER suffix)
     colors = plt.cm.tab10.colors
@@ -157,5 +177,103 @@ def plot_progress(df, loc='best', figsize=(13, 7), title=None, X_label=None, Y_l
     ax.set_ylabel(Y_label if Y_label is not None else 'Accuracy')
     ax.set_title(title if title is not None else f'Accuracy per Cycle {"in task " + str(task) if task is not None else "for all tasks"}')
     ax.legend(loc=loc)
+    plt.tight_layout()
+    plt.show()
+
+
+
+    # -------------- FINAL EVALUATION METHODS --------------- #
+
+def get_multiple_al_methods_summary(filtered_files):
+    keys = ['_'.join(f.split('/')[1].split('_')[:2]) for f in filtered_files]
+    acc_multiple_dataset_multiple_run = {}
+
+    for k, f in zip(keys, filtered_files):
+        #print(f"Processing file: {f} with key: {k}")
+        acc_df = pd.read_csv(f)
+
+        Acc_multiple_run_test = []
+        task_cols = [col for col in acc_df.columns if 'task_' in col]
+        df_task_level = task_level_filter(acc_df)
+        n_runs = df_task_level['run'].nunique()
+        for run in range(n_runs):
+            Acc_tasks = {'test':  []}
+            for row in df_task_level[df_task_level['run']==run].iterrows():
+                Acc_tasks['test'].append(row[1][task_cols].values)
+            Acc_multiple_run_test.append(Acc_tasks['test'])
+        Acc_multiple_run_test = np.array(Acc_multiple_run_test)
+        acc_multiple_dataset_multiple_run[k] = Acc_multiple_run_test
+    return acc_multiple_dataset_multiple_run
+
+
+def ger_multiple_methods_summary_df(acc_multiple_dataset_multiple_run):
+    columns = ['Method', 'Avg End Acc', 'Avg End Acc error', 'Avg End Fgt',
+           'Avg End Fgt error', 'Avg Cur Acc', 'Avg Cur Acc error',
+           'Avg Acc', 'Avg Acc error']
+    rows = []
+    for k, data in acc_multiple_dataset_multiple_run.items():
+        #print(f"Computing performance for key: {k}")
+        avg_end_acc, avg_end_fgt, avg_cur_acc, avg_acc, _ = compute_performance(data)
+
+        # Ensure we store floats (numpy scalars are okay too)
+        rows.append({
+            'Method': k,
+            'Avg End Acc': np.around(avg_end_acc[0], decimals=2),
+            'Avg End Acc error': np.around(avg_end_acc[1], decimals=2),
+            'Avg End Fgt': np.around(avg_end_fgt[0], decimals=2),
+            'Avg End Fgt error': np.around(avg_end_fgt[1], decimals=2),
+            'Avg Cur Acc': np.around(avg_cur_acc[0], decimals=2),
+            'Avg Cur Acc error': np.around(avg_cur_acc[1], decimals=2),
+            'Avg Acc': np.around(avg_acc[0], decimals=2),
+            'Avg Acc error': np.around(avg_acc[1], decimals=2)
+        })
+
+    rows = sorted(rows, key=lambda x: x['Method'], reverse=True)
+    results_df = pd.DataFrame.from_records(rows, columns=columns)
+
+    # Round numeric columns once (keeps AL method as-is)
+    num_cols = results_df.select_dtypes(include='number').columns
+    results_df[num_cols] = results_df[num_cols].round(2)
+
+    return results_df
+
+
+def plot_score_values(results_df, DATASET, loc='best'):
+    # Prepare data for plotting
+    metrics = ['Avg End Acc', 'Avg End Fgt', 'Avg Cur Acc']
+    error_metrics = ['Avg End Acc error', 'Avg End Fgt error', 'Avg Cur Acc error']
+    colors = ['#3498db', '#e74c3c', '#2ecc71']  # Modern blue, coral red, emerald green
+
+
+    # Set up the plot
+    fig, ax = plt.subplots(figsize=(11, 7))
+
+    # Bar width and positions
+    n_methods = len(results_df)
+    n_metrics = len(metrics)
+    width = 0.25
+    x = np.arange(n_methods)
+
+    # Plot bars for each metric
+    for idx, (metric, error_metric, color) in enumerate(zip(metrics, error_metrics, colors)):
+        values = results_df[metric].values
+        raw_errors = results_df[error_metric].values
+        # Clip errors so they don't make bars go below 0 or above 100
+        errors = np.minimum(raw_errors, np.minimum(values, 100 - values))
+        
+        offset = (idx - n_metrics/2 + 0.5) * width
+        bars = ax.bar(x + offset, values, width, yerr=errors, capsize=4, 
+                    alpha=0.85, color=color, label=metric, edgecolor='white', linewidth=1.2)
+
+    # Customize plot
+    ax.set_xlabel('Method', fontsize=12)
+    ax.set_ylabel('Metric Value (%)', fontsize=12)
+    ax.set_title(f'{DATASET} - Learning Methods Comparison', fontsize=14, pad=20)
+    ax.set_xticks(x)
+    ax.set_xticklabels(results_df['Method'].str.replace('_', ' '), rotation=30, ha='right', fontsize=10)
+    ax.legend(loc=loc, fontsize=10, framealpha=0.9)
+    ax.grid(axis='y', alpha=0.6, linestyle='--')
+    ax.set_axisbelow(True)
+
     plt.tight_layout()
     plt.show()
