@@ -17,7 +17,7 @@ class KMeansPPPSampler(BaseSampler):
                  agent: BaseLearner,
                  exp_args: SimpleNamespace,
                  args: SimpleNamespace):
-        super().__init__(agent, exp_args, args, name='kmeans_ppp')
+        super().__init__(agent, exp_args, args, name='Kmeans-ppp')
 
     def _calc_starting_state(self, X, starting_points, x_squared_norms, score_weight):
         """
@@ -74,6 +74,10 @@ class KMeansPPPSampler(BaseSampler):
             centers: Selected feature vectors
             indices: Indices of selected samples in original dataset
         """
+        # Handle edge case where no samples need to be selected
+        if n_clusters <= 0:
+            return np.empty((0, X.shape[1]), dtype=X.dtype), np.array([], dtype=int)
+        
         if score_weight is None:
             score_weight = np.ones(X.shape[0])
         else:

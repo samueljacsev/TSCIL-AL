@@ -16,7 +16,7 @@ class UncertaintySampler(BaseSampler):
                  exp_args: SimpleNamespace,
                  args: SimpleNamespace):
         super().__init__(agent, exp_args, args, name='Uncertainty')
-        self.metric = args.uncertainty_type if args.uncertainty_type else 'margin'
+        self.metric = args.score_type if args.score_type else 'margin'
 
 
     def compute_uncertainty(self, outputs):

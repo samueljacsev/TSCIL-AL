@@ -4,13 +4,7 @@ from agents.base import BaseLearner
 from samplers.base import BaseSampler
 from sklearn.cluster import KMeans, MiniBatchKMeans
 import numpy as np
-
-# Try to import FAISS for GPU-accelerated NN search
-try:
-    import faiss
-    FAISS_AVAILABLE = True
-except ImportError:
-    FAISS_AVAILABLE = False
+import time
 
 
 class TypiClustSampler(BaseSampler):
@@ -21,11 +15,10 @@ class TypiClustSampler(BaseSampler):
     - Clusters all samples (labeled + unlabeled)
     - Prioritizes clusters with fewer labeled samples and larger size
     - Selects the most typical (highest density) sample from each cluster
-    - Uses FAISS for fast GPU-accelerated nearest neighbor search when available
     """
     
-    MIN_CLUSTER_SIZE = 5
-    MAX_NUM_CLUSTERS = 500
+    MIN_CLUSTER_SIZE = 3
+    MAX_NUM_CLUSTERS = np.inf  # No hard limit on clusters
     K_NN = 20  # Default number of neighbors for typicality
 
     def __init__(self,
@@ -50,46 +43,14 @@ class TypiClustSampler(BaseSampler):
         
         # Use MiniBatchKMeans for better scalability (matches original implementation)
         if n_clusters > 50:
-            print(f"Using MiniBatchKMeans for {n_clusters} clusters on {len(features)} samples")
             kmeans = MiniBatchKMeans(n_clusters=n_clusters, 
                                     batch_size=min(5000, len(features)),
                                     random_state=self.random_state)
         else:
-            print(f"Using KMeans for {n_clusters} clusters on {len(features)} samples")
             kmeans = KMeans(n_clusters=n_clusters, 
                           random_state=self.random_state)
         
         return kmeans.fit_predict(features)
-
-    def _get_nn_faiss(self, features, num_neighbors):
-        """
-        Calculate nearest neighbors using FAISS (GPU-accelerated when available).
-        
-        Args:
-            features: Feature vectors (N x D).
-            num_neighbors: Number of neighbors to find.
-            
-        Returns:
-            distances: Distance to each neighbor (N x num_neighbors).
-            indices: Indices of neighbors (N x num_neighbors).
-        """
-        d = features.shape[1]
-        features = np.ascontiguousarray(features.astype(np.float32))
-        
-        cpu_index = faiss.IndexFlatL2(d)
-        
-        # Try to use GPU if available
-        try:
-            gpu_index = faiss.index_cpu_to_all_gpus(cpu_index)
-            index = gpu_index
-        except Exception:
-            index = cpu_index
-        
-        index.add(features)
-        distances, indices = index.search(features, num_neighbors + 1)
-        
-        # Index 0 is the same sample (distance 0), drop it
-        return distances[:, 1:], indices[:, 1:]
 
     def _get_nn_sklearn(self, features, num_neighbors):
         """
@@ -131,24 +92,19 @@ class TypiClustSampler(BaseSampler):
         # Ensure we have at least 1 neighbor
         k_nn = max(1, min(k_nn, len(features) - 1))
         
-        if FAISS_AVAILABLE:
-            distances, _ = self._get_nn_faiss(features, k_nn)
-        else:
-            distances, _ = self._get_nn_sklearn(features, k_nn)
-        
+        distances, _ = self._get_nn_sklearn(features, k_nn)
         mean_distance = distances.mean(axis=1)
         
         # Typicality is inverse of mean distance (high density = high typicality)
         typicalities = 1.0 / (mean_distance + 1e-5)
         return typicalities
 
-    def _build_cluster_df(self, cluster_labels, relevant_indices, existing_indices):
+    def _build_cluster_df(self, cluster_labels, existing_indices):
         """
         Build cluster information similar to original implementation using pandas.
         
         Args:
             cluster_labels: Cluster assignment for each sample in relevant_indices.
-            relevant_indices: Combined labeled + unlabeled indices.
             existing_indices: Indices within relevant_indices that are already labeled.
             
         Returns:
@@ -161,7 +117,13 @@ class TypiClustSampler(BaseSampler):
         
         # Count cluster sizes and labeled samples per cluster
         cluster_ids, cluster_sizes = np.unique(labels, return_counts=True)
-        cluster_labeled_counts = np.bincount(labels[existing_indices], minlength=len(cluster_ids))
+        
+        # Fix for ValueError: All arrays must be of the same length
+        if len(cluster_ids) > 0:
+            counts = np.bincount(labels[existing_indices], minlength=cluster_ids.max() + 1)
+            cluster_labeled_counts = counts[cluster_ids]
+        else:
+            cluster_labeled_counts = np.array([], dtype=int)
         
         clusters_df = pd.DataFrame({
             'cluster_id': cluster_ids,
@@ -194,11 +156,13 @@ class TypiClustSampler(BaseSampler):
         Returns:
             selected: Indices of selected samples (within the features array).
         """
+
         sorted_clusters, labels = self._build_cluster_df(
-            cluster_labels, np.arange(len(features)), existing_indices
+            cluster_labels, existing_indices
         )
         
         if len(sorted_clusters) == 0:
+            print("Fallback: No valid clusters found for selection.")
             # Fallback: no valid clusters, select randomly from unlabeled
             unlabeled_mask = np.ones(len(features), dtype=bool)
             unlabeled_mask[existing_indices] = False
@@ -206,10 +170,11 @@ class TypiClustSampler(BaseSampler):
             return np.random.choice(unlabeled_indices, size=min(budget, len(unlabeled_indices)), replace=False)
         
         selected = []
-        
+
         for i in range(budget):
             # Round-robin through clusters
             cluster = sorted_clusters[i % len(sorted_clusters)]
+            print(f"Selecting from cluster {cluster}")
             
             # Get indices of samples in this cluster (not yet selected)
             indices = np.where(labels == cluster)[0]
@@ -227,13 +192,13 @@ class TypiClustSampler(BaseSampler):
                     # All clusters exhausted
                     break
             
-            # Compute typicality within this cluster
+            # Compute typicality for this cluster with adaptive K_NN
             rel_feats = features[indices]
             k_nn = min(self.K_NN, len(indices) // 2)
-            typicality = self.compute_typicality(rel_feats, k_nn)
+            k_nn = max(1, k_nn)  # Ensure at least 1 neighbor
             
-            # Select the most typical sample
-            best_local_idx = typicality.argmax()
+            cluster_typicalities = self.compute_typicality(rel_feats, k_nn)
+            best_local_idx = cluster_typicalities.argmax()
             idx = indices[best_local_idx]
             
             selected.append(idx)
@@ -259,25 +224,34 @@ class TypiClustSampler(BaseSampler):
             print(f"Step 1: Clustering into {n_clusters} clusters for diversity")
             cluster_labels = self.get_clusters(all_features, n_clusters)
             
-            # Build relevant indices (labeled + unlabeled for this task)
-            relevant_indices = np.concatenate([self.idx_labeled, self.idx_unlabeled]).astype(int)
-            relevant_features = all_features[relevant_indices]
-            relevant_clusters = cluster_labels[relevant_indices]
-            
-            # existing_indices: positions within relevant_indices that are labeled
-            existing_indices = np.arange(len(self.idx_labeled))
-            
             # Select samples using TypiClust strategy
             print("Step 2: Selecting typical samples from clusters")
-            selected_local = self.select_samples(
-                relevant_features, 
-                relevant_clusters, 
-                existing_indices, 
+            selected_idxs = self.select_samples(
+                all_features, 
+                cluster_labels, 
+                self.idx_labeled.astype(int), 
                 self.n_samples_per_al_cycle
             )
+
+            safe_mode=True
+            if safe_mode:
+                # find the ground-truth labels for selected samples
+                _, y_train = self.current_task[0]
+                selected_labels = np.array([y_train[idx] for idx in selected_idxs])
+                # print n_unique labels in selected samples
+                if len(np.unique(selected_labels)) < 2:
+                    print("Warning: Selected samples contain less than 2 unique classes.")
+                    # replace the last selected sample with a random unlabeled sample of a different class
+                    unlabeled_mask = np.ones(len(all_features), dtype=bool)
+                    unlabeled_mask[self.idx_labeled.astype(int)] = False
+                    unlabeled_indices = np.where(unlabeled_mask)[0]
+                    for alt_idx in unlabeled_indices:
+                        if y_train[alt_idx] not in selected_labels:
+                            print(f"Replacing index {selected_idxs[-1]} with index {alt_idx} of class {y_train[alt_idx]}")
+                            selected_idxs[-1] = alt_idx
+                            break
             
-            # Map back to original indices
-            selected_idxs = relevant_indices[selected_local]
+
             
             # Update labeled and unlabeled sets
             self.idx_labeled = np.concatenate([self.idx_labeled, selected_idxs])

@@ -29,6 +29,10 @@ def get_filtered_files(data_filter, cycles_filter):
 
 def generate_score_files(filtered_files):
     for path in filtered_files:
+        # Skip empty files
+        if os.path.getsize(path) == 0:
+            print(f"Warning: Skipping empty file: {path}")
+            continue
         df = pd.read_csv(path)
         df = df.groupby(['task', 'cycle',]).mean() # mean over all (default=5) runs
         df.drop(columns=['run'], inplace=True)
@@ -134,7 +138,7 @@ def highlight_max(row):
     return styles
 
 
-def plot_progress(df, loc='best', figsize=(13, 7), title=None, X_label=None, Y_label=None, task=None):
+def plot_progress(df, loc='best', figsize=(13, 7), title=None, X_label=None, Y_label=None, task=None, break_between_tasks=False):
     import matplotlib.pyplot as plt
     
     strategy_cols = [col for col in df.columns if col not in ['cycle', 'index', 'task']]
@@ -159,6 +163,14 @@ def plot_progress(df, loc='best', figsize=(13, 7), title=None, X_label=None, Y_l
     
     fig, ax = plt.subplots(figsize=figsize)
     
+    # Identify task boundaries - where to break the lines
+    task_changes = []
+    if break_between_tasks and 'task' in df.columns:
+        tasks = df['task'].values
+        for i in range(1, len(tasks)):
+            if tasks[i] != tasks[i-1]:
+                task_changes.append(i)
+    
     # Plot each pair with same color, ASER solid, ER dotted
     color_idx = 0
     for i, (aser_col, er_col) in enumerate(zip(aser_cols, er_cols)):
@@ -168,8 +180,31 @@ def plot_progress(df, loc='best', figsize=(13, 7), title=None, X_label=None, Y_l
         else:
             color = colors[color_idx % len(colors)]
             color_idx += 1
-        ax.plot(df.index, df[aser_col], marker='o', linestyle='-', color=color, label=aser_col)
-        ax.plot(df.index, df[er_col], marker='o', linestyle=':', color=color, label=er_col)
+        
+        # Plot with breaks between tasks
+        if break_between_tasks and task_changes:
+            # Split data into segments by task
+            segments = []
+            start_idx = 0
+            for change_idx in task_changes:
+                segments.append((start_idx, change_idx))
+                start_idx = change_idx
+            segments.append((start_idx, len(df)))
+            
+            # Plot each segment separately
+            for seg_start, seg_end in segments:
+                indices = df.index[seg_start:seg_end]
+                # Only add label to first segment
+                label_aser = aser_col if seg_start == 0 else None
+                label_er = er_col if seg_start == 0 else None
+                ax.plot(indices, df[aser_col].iloc[seg_start:seg_end], 
+                       marker='o', linestyle='-', color=color, label=label_aser)
+                ax.plot(indices, df[er_col].iloc[seg_start:seg_end], 
+                       marker='o', linestyle=':', color=color, label=label_er)
+        else:
+            # Plot continuously (old behavior)
+            ax.plot(df.index, df[aser_col], marker='o', linestyle='-', color=color, label=aser_col)
+            ax.plot(df.index, df[er_col], marker='o', linestyle=':', color=color, label=er_col)
 
     ax.set_xticks(range(len(df)))
     ax.set_xticklabels(x_ticklabels)
@@ -206,7 +241,7 @@ def get_multiple_al_methods_summary(filtered_files):
     return acc_multiple_dataset_multiple_run
 
 
-def ger_multiple_methods_summary_df(acc_multiple_dataset_multiple_run):
+def get_multiple_methods_summary_df(acc_multiple_dataset_multiple_run):
     columns = ['Method', 'Avg End Acc', 'Avg End Acc error', 'Avg End Fgt',
            'Avg End Fgt error', 'Avg Cur Acc', 'Avg Cur Acc error',
            'Avg Acc', 'Avg Acc error']
@@ -277,3 +312,121 @@ def plot_score_values(results_df, DATASET, loc='best'):
 
     plt.tight_layout()
     plt.show()
+
+
+#--------------------Statistical Significance Testing-------------------------#
+class MultipleRun():
+    def __init__(self, dataset, CIL_method, AL_method, al_budget, al_total):
+        self.dataset = dataset.lower()
+        self.CIL_method = CIL_method
+        self.AL_method = AL_method
+        self.al_budget = al_budget
+        self.al_total = al_total
+        self.is_baseline = self.AL_method.lower() == 'random'
+        self.A_curr = []
+        self.A_T = []
+        self.F_T = []
+
+        self._load_data()
+
+    def __eq__(self, value):
+        value.CIL_method == self.CIL_method and\
+        value.AL_method == self.AL_method and\
+        value.al_budget == self.al_budget and\
+        value.al_total == self.al_total
+
+    def __str__(self):
+        return f"Dataset={self.dataset} CIL={self.CIL_method} AL={self.AL_method} budget={self.al_budget} total={self.al_total} baseline={self.is_baseline}"
+    
+    def _load_data(self):
+        # dataset and AL_total filters
+        filtered_files = get_filtered_files([self.dataset],[self.al_budget])
+        # AL method filter
+        filtered_files = [f for f in filtered_files if f.split('_')[0].split('/')[1] == self.AL_method]
+        # CIL method filter
+        filtered_files = [f for f in filtered_files if f.split('_')[1] == self.CIL_method]
+        # AL_total filter
+        filtered_files = [f for f in filtered_files if f.split('_')[-2] == str(self.al_total)]
+
+        assert len(filtered_files) == 1, f"Expected one file, found {len(filtered_files)} for {self.AL_method}_{self.CIL_method}"
+
+        acc_df = pd.read_csv(filtered_files[0])
+        df_task_level = task_level_filter(acc_df)
+        task_cols = [col for col in df_task_level.columns if 'task_' in col]
+        n_runs = df_task_level['run'].nunique()
+        for run in range(n_runs):
+            Acc_tasks = {'test':  []}
+            for row in df_task_level[df_task_level['run']==run].iterrows():
+                Acc_tasks['test'].append(row[1][task_cols].values)
+            # calculate for a single run
+            avg_end_acc, avg_end_fgt, avg_cur_acc, avg_acc, _ = compute_performance(np.array([Acc_tasks['test']]))
+            self.A_curr.append(avg_cur_acc[0])
+            self.A_T.append(avg_end_acc[0])
+            self.F_T.append(avg_end_fgt[0])
+
+def perform_paired_t_test(multiple_runs):
+    import pandas as pd
+    from scipy import stats
+    import numpy as np
+
+    # Collect results
+    results = []
+
+    for mr in multiple_runs:
+        if mr.is_baseline:
+            continue
+        
+        baseline = next((b for b in multiple_runs 
+                        if b.CIL_method == mr.CIL_method and b.is_baseline), None)
+        
+        if baseline is None:
+            continue
+        
+        for metric_name in ['A_T', 'A_curr', 'F_T']:
+            mr_values = mr.__dict__[metric_name]
+            baseline_values = baseline.__dict__[metric_name]
+            
+            # Welch's t-test (unpaired, unequal variances)
+            t_stat, p_value_two = stats.ttest_ind(mr_values, baseline_values, equal_var=False)
+            t_stat, p_value_two = stats.ttest_rel(mr_values, baseline_values)
+
+            
+            # For F_T, a lower value is better (outperformance).
+            # For A_T/A_curr, a higher value is better.
+            
+            # p_value for being better
+            if metric_name == 'F_T':
+                # Better = lower value, so t_stat should be negative
+                p_value_better = p_value_two / 2 if t_stat < 0 else 1 - p_value_two / 2
+            else:
+                # Better = higher value, so t_stat should be positive
+                p_value_better = p_value_two / 2 if t_stat > 0 else 1 - p_value_two / 2
+
+            # p_value for being worse
+            p_value_worse = 1 - p_value_better
+
+            mr_mean = np.mean(mr_values)
+            baseline_mean = np.mean(baseline_values)
+            diff = mr_mean - baseline_mean
+            
+            # Significance markers
+            sig_better = "***" if p_value_better < 0.001 else "**" if p_value_better < 0.01 else "*" if p_value_better < 0.05 else ""
+            sig_worse = "***" if p_value_worse < 0.001 else "**" if p_value_worse < 0.01 else "*" if p_value_worse < 0.05 else ""
+            
+            results.append({
+                'Dataset': mr.dataset,
+                'CIL': mr.CIL_method,
+                'AL_Method': mr.AL_method,
+                'Metric': metric_name,
+                'Baseline_Mean': baseline_mean,
+                'Method_Mean': mr_mean,
+                'Diff': diff,
+                't_stat': t_stat,
+                'p_better': p_value_better,
+                'sig_better': sig_better,
+                'p_worse': p_value_worse,
+                'sig_worse': sig_worse
+            })
+
+    # Create DataFrame
+    return pd.DataFrame(results)

@@ -16,7 +16,7 @@ class UncertaintyDiversitySampler(BaseSampler):
                  exp_args: SimpleNamespace,
                  args: SimpleNamespace):
         super().__init__(agent, exp_args, args, name='UncertaintyWithDiversity')
-        self.metric = args.uncertainty_type if args.uncertainty_type else 'entropy'
+        self.metric = args.score_type if args.score_type else 'entropy'
 
     def get_clusters(self, features, n_clusters):
         """

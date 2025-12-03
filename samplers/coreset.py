@@ -85,8 +85,7 @@ class CoreSetSampler(BaseSampler):
                 unlabeled_features, 
                 unlabeled_features[[idx], :]
             )
-            for j in range(m):
-                min_dist[j] = min(min_dist[j], dist_new_ctr[j, 0])
+            min_dist = np.minimum(min_dist, dist_new_ctr[:, 0])
 
         return np.array(idxs, dtype=int)
 
