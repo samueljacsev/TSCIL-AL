@@ -248,7 +248,7 @@ class TypiCoreSampler(BaseSampler):
             all_features, _ = self.extract_features_and_outputs(x_train)
             
             # Switch strategy based on cycle number
-            if alc < 2:
+            if alc % 2 == 0:
                 # First 2 cycles: Use TypiClust
                 print(f"Using TypiClust strategy (cycle {alc + 1}/2)")
                 
