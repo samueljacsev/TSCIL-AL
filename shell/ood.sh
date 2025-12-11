@@ -223,3 +223,36 @@ python main_tune.py --data dailysports --encoder CNN --agent ASER --norm BN --sa
 python main_tune.py --data dailysports --encoder CNN --agent ASER --norm BN --sampler typi_clust --ood_method mahalanobis --shuffle_ratio 0.2; `
 python main_tune.py --data dailysports --encoder CNN --agent ASER --norm BN --sampler typi_clust --ood_method energy --shuffle_ratio 0.2; `
 python main_tune.py --data dailysports --encoder CNN --agent ASER --norm BN --sampler typi_clust --shuffle_ratio 0.2; `
+
+
+########################################################################### NEW OOD  ##########################################################################################
+
+python main_tune.py --data dailysports --encoder CNN --agent ASER --norm BN --sampler uncertainty_diversity --uncertainty_type entropy --ood_method knn  --shuffle_ratio 0.2; `
+python main_tune.py --data dailysports --encoder CNN --agent ASER --norm BN --sampler uncertainty_diversity --uncertainty_type entropy --ood_method cosine --shuffle_ratio 0.2; `
+python main_tune.py --data dailysports --encoder CNN --agent ASER --norm BN --sampler uncertainty_diversity --uncertainty_type entropy --shuffle_ratio 0.2; `
+
+python main_tune.py --data har --encoder CNN --agent ASER --norm BN --sampler uncertainty_diversity --uncertainty_type entropy --ood_method knn  --shuffle_ratio 0.2; `
+python main_tune.py --data har --encoder CNN --agent ASER --norm BN --sampler uncertainty_diversity --uncertainty_type entropy --ood_method cosine --shuffle_ratio 0.2; `
+python main_tune.py --data har --encoder CNN --agent ASER --norm BN --sampler uncertainty_diversity --uncertainty_type entropy --shuffle_ratio 0.2; `
+
+python main_tune.py --data uwave --encoder CNN --agent ASER --norm BN --sampler uncertainty_diversity --uncertainty_type entropy --ood_method knn  --shuffle_ratio 0.2; `
+python main_tune.py --data uwave --encoder CNN --agent ASER --norm BN --sampler uncertainty_diversity --uncertainty_type entropy --ood_method cosine --shuffle_ratio 0.2; `
+python main_tune.py --data uwave --encoder CNN --agent ASER --norm BN --sampler uncertainty_diversity --uncertainty_type entropy --shuffle_ratio 0.2; `
+
+
+python main_tune.py --data dailysports --encoder CNN --agent ASER --norm BN --sampler random_iter --shuffle_ratio 0.2; `
+
+
+########################################################################### selection budget benchmark  ##########################################################################################
+##### 0.1 ####### 0.2 ######### 0.3 ########
+python main_tune.py --data dailysports --encoder CNN --agent ASER --norm BN --sampler uncertainty_diversity --uncertainty_type entropy --ood_method knn  --shuffle_ratio 0.2; `
+python main_tune.py --data dailysports --encoder CNN --agent ASER --norm BN --sampler uncertainty_diversity --uncertainty_type entropy --ood_method cosine --shuffle_ratio 0.2; `
+python main_tune.py --data dailysports --encoder CNN --agent ASER --norm BN --sampler uncertainty_diversity --uncertainty_type entropy --shuffle_ratio 0.2; `
+
+python main_tune.py --data har --encoder CNN --agent ASER --norm BN --sampler uncertainty_diversity --uncertainty_type entropy --ood_method knn  --shuffle_ratio 0.2; `
+python main_tune.py --data har --encoder CNN --agent ASER --norm BN --sampler uncertainty_diversity --uncertainty_type entropy --ood_method cosine --shuffle_ratio 0.2; `
+python main_tune.py --data har --encoder CNN --agent ASER --norm BN --sampler uncertainty_diversity --uncertainty_type entropy --shuffle_ratio 0.2; `
+
+python main_tune.py --data uwave --encoder CNN --agent ASER --norm BN --sampler uncertainty_diversity --uncertainty_type entropy --ood_method knn  --shuffle_ratio 0.2; `
+python main_tune.py --data uwave --encoder CNN --agent ASER --norm BN --sampler uncertainty_diversity --uncertainty_type entropy --ood_method cosine --shuffle_ratio 0.2; `
+python main_tune.py --data uwave --encoder CNN --agent ASER --norm BN --sampler uncertainty_diversity --uncertainty_type entropy --shuffle_ratio 0.2; `

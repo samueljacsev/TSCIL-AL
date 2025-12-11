@@ -112,34 +112,67 @@ def tune_hyperparams_on_val_tasks(args, cls_order, config_generic={}, config_mod
     #     print('Batch size is set to buffer size: {}'.format(buffer_size))
 
     
+    # # Optimized params for uvawe and har when batch_size = buffer_size on the TRAIN 
+    # if args.data == 'uwave' and args.encoder == 'CNN' and args.agent == 'ASER' and args.norm == 'BN':
+    #     best_params = {'generic': {'lr': 0.001, 'lradj': 'step15', 'batch_size': 40, 'weight_decay': 0}, 
+    #                'model': {'feature_dim': 128, 'n_layers': 4, 'dropout': 0}, 
+    #                'agent': {'aser_k': 3, 'aser_type': 'asvm', 'aser_n_smp_cls': 2}}
+    
+    # elif args.data == 'har': # 0.05 366, 0.01 72, 0.005 36
+    #     best_params = {'generic': {'lr': 0.001, 'lradj': 'TST', 'batch_size': 36, 'weight_decay': 0}, 
+    #                     'model': {'feature_dim': 128, 'n_layers': 4, 'dropout': 0}, 
+    #                     'agent': {'aser_k': 3, 'aser_type': 'asvm', 'aser_n_smp_cls': 4}}
+    
+    # elif args.data == 'dailysports':
+    #     best_params = {"generic": {"lr": 0.001, "lradj": "TST", "batch_size": 84, "weight_decay": 0}, 
+    #                    "model": {"feature_dim": 128, "n_layers": 4, "dropout": 0.3}, 
+    #                    "agent": {"aser_k": 3, "aser_type": "asvm", "aser_n_smp_cls": 2}}
+        
+    # elif args.data == 'wisdm':
+    #     best_params = {"generic": {"lr": 0.001, "lradj": "TST", "batch_size": 600, "weight_decay": 0}, 
+    #                    "model": {"feature_dim": 128, "n_layers": 4, "dropout": 0.3}, 
+    #                    "agent": {"aser_k": 3, "aser_type": "asvm", "aser_n_smp_cls": 8}}
+        
+    # elif args.data == 'grabmyo':
+    #     best_params = {"generic": {"lr": 0.001, "lradj": "TST", "batch_size": 1020, "weight_decay": 0}, 
+    #                     "model": {"feature_dim": 128, "n_layers": 4, "dropout": 0.3}, 
+    #                     "agent": {"aser_k": 3, "aser_type": "asvm", "aser_n_smp_cls": 8}}
+        
+    # return dict(best_params['model'], **best_params['agent'], **best_params['generic'])
+    
+
+
+    best_params = {}
+    
     # Optimized params for uvawe and har when batch_size = buffer_size on the TRAIN 
-    if args.data == 'uwave' and args.encoder == 'CNN' and args.agent == 'ASER' and args.norm == 'BN':
-        best_params = {'generic': {'lr': 0.001, 'lradj': 'step15', 'batch_size': 40, 'weight_decay': 0}, 
-                   'model': {'feature_dim': 128, 'n_layers': 4, 'dropout': 0}, 
-                   'agent': {'aser_k': 3, 'aser_type': 'asvm', 'aser_n_smp_cls': 2}}
+    if args.encoder == 'CNN' and args.agent == 'ASER' and args.norm == 'BN':
+        if args.data == 'uwave':
+            best_params = {'generic': {'lr': 0.001, 'lradj': 'step15', 'batch_size': 10, 'weight_decay': 0}, 
+                    'model': {'feature_dim': 128, 'n_layers': 4, 'dropout': 0}, 
+                    'agent': {'aser_k': 3, 'aser_type': 'asvm', 'aser_n_smp_cls': 2}}
     
-    elif args.data == 'har': # 0.05 366, 0.01 72, 0.005 36
-        best_params = {'generic': {'lr': 0.001, 'lradj': 'TST', 'batch_size': 36, 'weight_decay': 0}, 
-                        'model': {'feature_dim': 128, 'n_layers': 4, 'dropout': 0}, 
-                        'agent': {'aser_k': 3, 'aser_type': 'asvm', 'aser_n_smp_cls': 4}}
+        elif args.data == 'har':
+            best_params = {'generic': {'lr': 0.001, 'lradj': 'TST', 'batch_size': 36, 'weight_decay': 0}, 
+                            'model': {'feature_dim': 128, 'n_layers': 4, 'dropout': 0}, 
+                            'agent': {'aser_k': 3, 'aser_type': 'asvm', 'aser_n_smp_cls': 4}}
     
-    elif args.data == 'dailysports':
-        best_params = {"generic": {"lr": 0.001, "lradj": "TST", "batch_size": 84, "weight_decay": 0}, 
-                       "model": {"feature_dim": 128, "n_layers": 4, "dropout": 0.3}, 
-                       "agent": {"aser_k": 3, "aser_type": "asvm", "aser_n_smp_cls": 2}}
+        elif args.data == 'dailysports':#84
+            best_params = {"generic": {"lr": 0.001, "lradj": "TST", "batch_size": 84, "weight_decay": 0}, 
+                        "model": {"feature_dim": 128, "n_layers": 4, "dropout": 0.3}, 
+                        "agent": {"aser_k": 3, "aser_type": "asvm", "aser_n_smp_cls": 2}}
         
-    elif args.data == 'wisdm':
-        best_params = {"generic": {"lr": 0.001, "lradj": "TST", "batch_size": 600, "weight_decay": 0}, 
-                       "model": {"feature_dim": 128, "n_layers": 4, "dropout": 0.3}, 
-                       "agent": {"aser_k": 3, "aser_type": "asvm", "aser_n_smp_cls": 8}}
-        
-    elif args.data == 'grabmyo':
-        best_params = {"generic": {"lr": 0.001, "lradj": "TST", "batch_size": 1020, "weight_decay": 0}, 
+        elif args.data == 'wisdm':
+            best_params = {"generic": {"lr": 0.001, "lradj": "TST", "batch_size": 40, "weight_decay": 0}, 
                         "model": {"feature_dim": 128, "n_layers": 4, "dropout": 0.3}, 
                         "agent": {"aser_k": 3, "aser_type": "asvm", "aser_n_smp_cls": 8}}
         
-    return dict(best_params['model'], **best_params['agent'], **best_params['generic'])
-    
+        elif args.data == 'grabmyo':
+            best_params = {"generic": {"lr": 0.001, "lradj": "TST", "batch_size": 100, "weight_decay": 0}, 
+                            "model": {"feature_dim": 128, "n_layers": 4, "dropout": 0.3}, 
+                            "agent": {"aser_k": 3, "aser_type": "asvm", "aser_n_smp_cls": 8}}
+        if best_params:
+            print('patience: {}, buffer size: {}, batch size: {}'.format(args.patience, get_buffer_size(args), best_params['generic']['batch_size']))
+            return dict(best_params['model'], **best_params['agent'], **best_params['generic'])
     
 
     
@@ -352,9 +385,9 @@ def tune_and_experiment_multiple_runs(args):
 
 
                 #Plot CF matrix after finishing the final task.
-                if task_i + 1 == n_tasks_exp and args.cf_matrix:
-                    cf_matrix_path = args.exp_path + '/cf{}'.format(run)
-                    agent.plot_cf_matrix(path=cf_matrix_path, classes=np.arange(task_stream.n_classes))
+                # if task_i + 1 == n_tasks_exp and args.cf_matrix:
+                #     cf_matrix_path = args.exp_path + '/cf{}'.format(run)
+                #     agent.plot_cf_matrix(path=cf_matrix_path, classes=np.arange(task_stream.n_classes))
 
 
             # Save Acc of this run

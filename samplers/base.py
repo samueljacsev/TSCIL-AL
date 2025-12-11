@@ -57,7 +57,7 @@ class BaseSampler(nn.Module, metaclass=abc.ABCMeta):
         print('# Number of samples in the AL cycle:', n_samples_per_al_cycle)
         return n_samples_per_al_cycle #+ 1 # buffer was truncated
     
-    def save_acc_to_csv(self, accs_data, run, task, cycle, ext='', ood_method=''):
+    def save_acc_to_csv(self, accs_data, run, task, cycle, ext='', ood_method='', selection_budget=0.0):
         mean_excd_0 = np.mean(accs_data[accs_data != 0], axis=0)
         print(f'Acc_vector: {accs_data}, Mean: {mean_excd_0} ')
         ood_suffix = f'_{ood_method}' if ood_method else ''  # Ha van OOD metódus, illesszük be a nevét
@@ -146,6 +146,106 @@ class BaseSampler(nn.Module, metaclass=abc.ABCMeta):
         print(f"[LOG] Saved OOD debug data: {csv_path} ({len(scores)} samples)")
 
     
+    def estimate_ood_threshold_GMM(self, ood_scores, task_i, run=0, n_components=2):
+        """
+        DEPRECATED: GMM-based ratio estimation approach (retained for ablation study).
+        
+        Attempts to estimate OOD ratio by fitting a 2-component GMM to the 1D OOD score distribution.
+        Assumes ID scores form one component (lower) and OOD scores form another (higher).
+        
+        Issues found in practice:
+        1. High overlap between ID/OOD distributions causes misestimation
+        2. GMM convergence is non-deterministic (depends on initialization)
+        3. Fails when distributions are not well-separated (near-OOD scenario)
+        
+        Args:
+            ood_scores: 1D array of OOD scores from current pool
+            task_i: Current task index
+            run: Current run number
+            n_components: Number of GMM components (default=2)
+            
+        Returns:
+            threshold: Estimated threshold value
+            est_ratio: Estimated OOD ratio
+        """
+        from sklearn.mixture import GaussianMixture
+        
+        # Get true ratio from args
+        true_ratio = self.args.shuffle_ratio #getattr(self.args, 'shuffle_ratio', 0.2)
+        print(f"[GMM] Truuuuuuuuuuuuuuuuuuuuuuuuue OOD ratio : {true_ratio}")
+        
+        # Reshape for sklearn
+        scores_reshaped = ood_scores.reshape(-1, 1)
+        
+        # Fit 2-component GMM
+        gmm = GaussianMixture(n_components=n_components, random_state=self.args.seed + run, max_iter=100)
+        gmm.fit(scores_reshaped)
+        
+        # Extract parameters
+        means = gmm.means_.flatten()
+        weights = gmm.weights_
+        
+        # Assume component with higher mean is OOD
+        ood_component_idx = np.argmax(means)
+        id_component_idx = 1 - ood_component_idx
+        
+        est_ratio = weights[ood_component_idx]
+        
+        # Alternative: use estimated ratio to select top-k
+        #threshold_topk = np.percentile(ood_scores, (1 - est_ratio) * 100)
+        
+        print(f"[GMM] Est ratio: {est_ratio:.4f} | True ratio: {true_ratio:.4f} | "
+              f"Converged: {gmm.converged_} | Iters: {gmm.n_iter_}")
+        print(f"[GMM] Component means: ID={means[id_component_idx]:.4f}, OOD={means[ood_component_idx]:.4f}")
+        #print(f"[GMM] Threshold (top-k): {threshold_topk:.4f}")
+        
+        # Save results to CSV
+        self._save_gmm_results(task_i, run, est_ratio, true_ratio, gmm.converged_, gmm.n_iter_)
+        
+        return est_ratio
+
+    def _save_gmm_results(self, task_i, run, est_ratio, true_ratio, converged, n_iter):
+        """
+        Save GMM estimation results to CSV for later analysis.
+        
+        Args:
+            task_i: Task index
+            run: Run number
+            est_ratio: Estimated OOD ratio from GMM
+            true_ratio: True OOD ratio (shuffle_ratio)
+            converged: Whether GMM converged
+            n_iter: Number of EM iterations
+        """
+        # Get dataset name
+        dataset_name = getattr(self.args, 'data', 'unknown')
+        
+        # Create directory
+        gmm_dir = os.path.join("result", "gmmscores")
+        os.makedirs(gmm_dir, exist_ok=True)
+        
+        # CSV filename per dataset
+        csv_path = os.path.join(gmm_dir, f"{dataset_name}_gmm_results.csv")
+        
+        # Prepare data
+        data = {
+            'run': run,
+            'task': task_i,
+            'estimated_ratio': est_ratio,
+            'true_ratio': true_ratio,
+            'ratio_error': abs(est_ratio - true_ratio),
+            'converged': converged,
+            'n_iterations': n_iter
+        }
+        df = pd.DataFrame([data])
+        
+        # Save (append if file exists)
+        if not os.path.exists(csv_path):
+            df.to_csv(csv_path, index=False)
+        else:
+            df.to_csv(csv_path, mode='a', header=False, index=False)
+        
+        print(f"[GMM] Saved results to {csv_path}")
+
     def estimate_ood_threshold(self, task_i, method='energy', percentile=99):
         """
         Estimate an OOD threshold from previously labeled ID data only.
@@ -278,75 +378,6 @@ class BaseSampler(nn.Module, metaclass=abc.ABCMeta):
             print(f"[WARN] Could not save ID OOD debug data: {e}")
 
         return threshold
-
-    
-
-    # def ood_filter_top_ood(self, x_train, n_samples_per_al_cycle, run, ood_scores):
-    #     """
-    #     Select samples using OOD scores with clustering for the first AL cycle.
-
-    #     Args:
-    #         x_train: Training data.
-    #         n_samples_per_al_cycle: Number of samples to select per AL cycle.
-    #         run: Random seed for reproducibility.
-    #         ood_scores: OOD scores for clustering.
-
-    #     Returns:
-    #         selected_idxs: Indices of selected samples.
-    #     """
-
-    #     all_features, _ = self.extract_features_and_outputs(x_train)
-
-    #     # Step 2: Cluster the embeddings
-    #     n_clusters = n_samples_per_al_cycle
-    #     kmeans = KMeans(n_clusters=n_clusters, random_state=self.args.seed + run)
-    #     cluster_labels = kmeans.fit_predict(all_features)
-
-    #     # Step 3: Calculate average OOD score for each cluster
-    #     cluster_ood_scores_avg = np.zeros(n_clusters)
-    #     for cluster in range(n_clusters):
-    #         cluster_indices = np.nonzero(cluster_labels == cluster)[0]
-    #         if len(cluster_indices) > 0:
-    #             cluster_ood_scores = ood_scores[cluster_indices]
-    #             cluster_ood_scores_avg[cluster] = np.mean(cluster_ood_scores)
-
-    #     # Step 4: Determine a threshold for cluster selection
-    #     ood_threshold = np.percentile(ood_scores, 30)
-
-    #     # Step 5: Select clusters with average OOD score above the threshold
-    #     valid_clusters = np.nonzero(cluster_ood_scores_avg > ood_threshold)[0]
-    #     if len(valid_clusters) == 0:
-    #         valid_clusters = np.argsort(cluster_ood_scores_avg)[-min(n_samples_per_al_cycle, n_clusters):]
-
-    #     # Step 6: Distribute the n_samples_per_al_cycle across valid clusters
-    #     selected_indices = []
-    #     num_valid_clusters = len(valid_clusters)
-    #     if num_valid_clusters > 0:
-    #         samples_per_cluster = max(1, n_samples_per_al_cycle // num_valid_clusters)
-    #         remaining_samples = n_samples_per_al_cycle % num_valid_clusters
-
-    #         for i, cluster in enumerate(valid_clusters):
-    #             cluster_indices = np.nonzero(cluster_labels == cluster)[0]
-    #             if len(cluster_indices) > 0:
-    #                 cluster_ood_scores = ood_scores[cluster_indices]
-    #                 sorted_indices = np.argsort(-cluster_ood_scores)
-    #                 num_samples = samples_per_cluster + (1 if i < remaining_samples else 0)
-    #                 num_samples = min(num_samples, len(cluster_indices))
-    #                 selected_cluster_indices = cluster_indices[sorted_indices[:num_samples]]
-    #                 selected_indices.extend(selected_cluster_indices)
-
-    #     # Step 7: If not enough samples, fill with highest OOD scores
-    #     if len(selected_indices) < n_samples_per_al_cycle:
-    #         remaining_indices = np.setdiff1d(np.arange(len(x_train)), selected_indices)
-    #         remaining_ood_scores = ood_scores[remaining_indices]
-    #         additional_indices = remaining_indices[np.argsort(-remaining_ood_scores)[:n_samples_per_al_cycle - len(selected_indices)]]
-    #         selected_indices.extend(additional_indices)
-
-    #     # Step 8: Convert to numpy array and ensure exact number of samples
-    #     selected_indices = np.array(selected_indices)[:n_samples_per_al_cycle]
-    #     selected_idxs = np.array(selected_indices)
-
-    #     return selected_idxs
     
 
     def ood_detection(self, x_data, task_i, method='entropy', run=0, return_scores=False):
@@ -475,95 +506,7 @@ class BaseSampler(nn.Module, metaclass=abc.ABCMeta):
         
         return ood_scores
 
-        # # Dynamically estimate threshold via GMM on OOD scores (simple 2-comp; quantile threshold)
-        # threshold, est_ratio = self.estimate_ood_threshold(ood_scores, run)
-        # frac_above = float(np.mean(ood_scores >= threshold))
-        # print(f"[OOD] method={method} thr={threshold:.6f} est_ratio={est_ratio:.4f} frac_above={frac_above:.4f}")
-        # ood_mask = (ood_scores >= threshold).astype(int)
-        # ood_indices = np.nonzero(ood_mask)[0]
 
-        # return ood_indices
-
-    # def perform_ood_detection_and_evaluation(self, x_train_current, y_train_current, task_i, ood_method, classes_in_each_task, run):
-    #     """
-    #     Performs OOD detection, computes ROC AUC score, and prints confusion matrix.
-
-    #     Args:
-    #         x_train_current: Current training data.
-    #         y_train_current: Current training labels.
-    #         task_i: Index of the current task.
-    #         ood_method: Method for OOD detection (e.g., 'energy').
-    #         classes_in_each_task: List of unique classes for each task.
-
-    #     Returns:
-    #         ood_indices: Indices of detected OOD samples.
-    #         ood_scores: OOD scores for all samples.
-    #     """
-    #     # OOD detekció az aktuális task adathalmazán
-    #     ood_scores = self.ood_detection(x_train_current, task_i, method=ood_method, run=run, return_scores=True)
-
-    #     # Valódi címkék létrehozása: az új osztályok OOD-ként vannak jelölve
-    #     previous_classes = []
-    #     for i in range(task_i):
-    #         print(f"Task {i} - Classes in each task: {classes_in_each_task[1]}")
-    #         previous_classes.extend(classes_in_each_task[i])
-        
-    #     previous_classes = np.unique(previous_classes)
-    #     previous_classes = previous_classes[previous_classes != -1]  # Az -1-es osztály eltávolítása
-
-    #     print(f"Task {task_i} - Previous classes: {previous_classes}")
-
-    #     true_labels = np.ones(len(x_train_current), dtype=int)  # Alapértelmezetten minden minta OOD
-    #     for cls in previous_classes:
-    #         true_labels[y_train_current == cls] = 0  # Az előző task osztályai nem OOD-k
-
-    #     # print ood id ratio
-    #     ood_id_ratio = np.sum(true_labels == 0) / len(true_labels)
-    #     print(f"Task {task_i} - OOD/ID ratio: {ood_id_ratio:.4f}")
-
-
-    #     # print ood labels and id labels
-    #     print(f"Task {task_i} - OOD labels: {np.unique(y_train_current[true_labels==1])}")
-    #     print(f"Task {task_i} - ID labels: {np.unique(y_train_current[true_labels==0])}")
-
-    #     # ROC AUC score kiszámítása
-    #     roc_auc = roc_auc_score(true_labels, ood_scores)
-    #     print(f"Task {task_i} - ROC AUC score for OOD detection: {roc_auc:.4f}")
-
-    #     # Step 2: Estimate threshold based on previous ID data
-    #     threshold = self.estimate_ood_threshold(task_i, method=ood_method, percentile=95)
-    #     if threshold is None:
-    #         print("[WARN] No ID data found. Using 95th percentile of current scores.")
-    #         threshold = np.percentile(ood_scores, 95)
-
-    #     # Step 3: Apply threshold to get OOD mask and indices
-    #     ood_mask = (ood_scores > threshold).astype(int)
-    #     ood_indices = np.where(ood_mask == 1)[0]
-    #     est_ratio = float(np.mean(ood_mask))  # fraction above threshold
-
-    #     # Predikált címkék meghatározása az ood_indices alapján
-    #     pred_labels = np.zeros(len(x_train_current), dtype=int)  # Alapértelmezetten minden minta ID
-    #     pred_labels[ood_indices] = 1  # Az ood_indices-ben lévő minták OOD-k
-
-    #     # Confusion matrix kiszámítása
-    #     true_positive = np.sum((true_labels == 1) & (pred_labels == 1))  # Valódi OOD, predikált OOD
-    #     false_negative = np.sum((true_labels == 1) & (pred_labels == 0))  # Valódi OOD, predikált ID
-    #     false_positive = np.sum((true_labels == 0) & (pred_labels == 1))  # Valódi ID, predikált OOD
-    #     true_negative = np.sum((true_labels == 0) & (pred_labels == 0))  # Valódi ID, predikált ID
-
-    #     # Confusion matrix kiíratása
-    #     print(f"Task {task_i} - Confusion Matrix for OOD Detection:")
-    #     print(f"True OOD (1) predicted as OOD (1): {true_positive}")
-    #     print(f"True OOD (1) predicted as ID (0): {false_negative}")
-    #     print(f"True ID (0) predicted as OOD (1): {false_positive}")
-    #     print(f"True ID (0) predicted as ID (0): {true_negative}")
-
-    #     print(f"Task {task_i} - Classes in OOD samples: {np.unique(y_train_current[ood_indices])}")
-    #     print(f"Task {task_i} - Number of OOD samples detected: {len(ood_indices)} \n \n")
-        
-    #     # Mentés a CSV fájlba
-    #     #self.save_ood_metrics(x_train_current, y_train_current, task_i, ood_method, ood_scores, ood_indices, classes_in_each_task, run)
-    #     return ood_indices, ood_scores, est_ratio
     
     def perform_ood_detection_and_evaluation(self, x_train_current, y_train_current, task_i, ood_method, classes_in_each_task, run):
         """
@@ -575,6 +518,10 @@ class BaseSampler(nn.Module, metaclass=abc.ABCMeta):
         ood_scores = self.ood_detection(
             x_train_current, task_i, method=ood_method, run=run, return_scores=True
         )
+
+        # est_ratio = self.estimate_ood_threshold_GMM(ood_scores, task_i, run=run, n_components=2)
+        # # Compute threshold as top-k percentile based on estimated ratio
+        # threshold = np.percentile(ood_scores, (1 - est_ratio) * 100)
 
         # Step 2: Estimate threshold based on previous ID data
         threshold = self.estimate_ood_threshold(task_i, method=ood_method, percentile=80)

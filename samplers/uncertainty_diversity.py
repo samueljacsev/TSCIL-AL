@@ -45,80 +45,12 @@ class UncertaintyDiversitySampler(BaseSampler):
 
         return uncertainties
 
-    # def select_with_ood_active_learn(self, x_train, idx_pool, y_train, n_samples_per_al_cycle, run, task_i, ood_method, al_metric, classes_in_each_task=None):
-    #     """
-    #     Universal OOD+Active selection: supports GMM, KM2, DRE, etc. for OOD ratio estimation.
-    #     mpe_method: "gmm" | "km2" | "dre" (hardcoded for now)
-    #     """
-    #     if len(idx_pool) == 0:
-    #         return np.array([], dtype=int)
-        
-        
-
-    #     pool_x = x_train[idx_pool]
-    #     pool_y = y_train[idx_pool]
-
-    #     ood_indices_pool = self.perform_ood_detection_and_evaluation(
-    #         pool_x,
-    #         pool_y,
-    #         task_i,
-    #         ood_method=ood_method,
-    #         classes_in_each_task=classes_in_each_task,
-    #         run=run,
-    #     )
-
-    #     # Convert local pool indices to global
-    #     selected_ood = idx_pool[ood_indices_pool]
-
-    #     # Compute budgets
-    #     n_ood = len(selected_ood)
-    #     n_al  = n_samples_per_al_cycle - n_ood
-    #     n_al = max(0, n_al)
-
-    #     print(f"Selected {n_ood} OOD samples, {n_al} AL samples for this cycle.")
-
-    #     # --- Active learning on remaining pool ---
-    #     selected_al = []
-    #     if n_al > 0:
-    #         remaining = np.setdiff1d(idx_pool, selected_ood, assume_unique=False)
-    #         if len(remaining) > 0:
-    #             all_features, all_outputs = self.extract_features_and_outputs(x_train[remaining])
-    #             k = min(n_al, len(remaining))
-    #             if k > 0:
-    #                 kmeans = KMeans(n_clusters=k, random_state=self.args.seed + run)
-    #                 cluster_labels = kmeans.fit_predict(all_features)
-    #                 uncertainties = self.compute_uncertainty(all_outputs, metric=al_metric)
-
-    #                 for c in range(k):
-    #                     c_idx = np.where(cluster_labels == c)[0]
-    #                     if len(c_idx) == 0:
-    #                         continue
-    #                     c_unc = uncertainties[c_idx]
-    #                     pick_local = c_idx[np.argmax(c_unc)]
-    #                     selected_al.append(remaining[pick_local])
-
-    #     selected_ood = np.array(selected_ood, dtype=int)
-    #     selected_al = np.array(selected_al, dtype=int) if len(selected_al) else np.array([], dtype=int)
-    #     selected = np.concatenate([selected_ood, selected_al])
-
-    #     # Ensure exact budget and uniqueness
-    #     if len(selected) > n_samples_per_al_cycle:
-    #         selected = selected[:n_samples_per_al_cycle]
-    #     if len(selected) < n_samples_per_al_cycle:
-    #         remaining = np.setdiff1d(idx_pool, selected)
-    #         if len(remaining) > 0:
-    #             extra_needed = n_samples_per_al_cycle - len(selected)
-    #             extra_scores = self.ood_detection(x_train[remaining], task_i, method=ood_method, return_scores=True)
-    #             add = remaining[np.argsort(-extra_scores)[:extra_needed]]
-    #             selected = np.concatenate([selected, add])
-
-    #     return selected.astype(int)
-
 
     def select_with_ood_active_learn(self, x_train, idx_pool, y_train,
                                     n_samples_per_al_cycle, run, task_i,
                                     ood_method, al_metric,
-                                    classes_in_each_task=None):
+                                    classes_in_each_task=None,
+                                    selection_budget=0.1):
         """
         Combined OOD + Active Learning selection.
         - Uses estimated OOD ratio (from threshold-based evaluation) to determine
@@ -142,11 +74,11 @@ class UncertaintyDiversitySampler(BaseSampler):
             run=run,
         )
 
+
+
         # --- 2. Compute desired budget split ---
         est_ratio = float(np.clip(est_ratio, 0.0, 1.0))
-        #n_ood_target = int(round(est_ratio * n_samples_per_al_cycle))
-        #n_ood_target = max(0, min(n_ood_target, n_samples_per_al_cycle))
-        n_ood_target = int(round(0.2 * n_samples_per_al_cycle))
+        n_ood_target = int(round(selection_budget * n_samples_per_al_cycle))
         n_al_target = n_samples_per_al_cycle - n_ood_target
 
         print(f"\n[INFO] Task {task_i} - Active Learning cycle budget:")
@@ -155,13 +87,38 @@ class UncertaintyDiversitySampler(BaseSampler):
         print(f"  • Target OOD samples = {n_ood_target}")
         print(f"  • Target AL samples  = {n_al_target}")
 
-        # --- 3. Randomly sample from detected OOD indices (for diversity, not extremes) ---
+        # --- 3. Cluster-based OOD selection using OOD scores ---
         if n_ood_target > 0 and len(ood_indices_pool) > 0:
-            # Use detected OOD indices, not top scores (avoids selecting only extreme outliers)
             n_ood_available = min(n_ood_target, len(ood_indices_pool))
-            np.random.seed(self.args.seed + run + task_i)  # Reproducible random sampling
-            selected_ood_local = np.random.choice(ood_indices_pool, size=n_ood_available, replace=False)
+            
+            # Extract features for detected OOD samples
+            ood_pool_x = pool_x[ood_indices_pool]
+            ood_features, _ = self.extract_features_and_outputs(ood_pool_x)
+            
+            # Get OOD scores for these samples (already computed)
+            ood_pool_scores = ood_scores_pool[ood_indices_pool]
+            
+            # Cluster the OOD samples for diversity
+            n_ood_clusters = min(n_ood_available, len(ood_indices_pool))
+            kmeans_ood = KMeans(n_clusters=n_ood_clusters, random_state=self.args.seed + run)
+            ood_cluster_labels = kmeans_ood.fit_predict(ood_features)
+            
+            # Select sample with highest OOD score from each cluster
+            selected_ood_local = []
+            for cluster in range(n_ood_clusters):
+                cluster_indices = np.where(ood_cluster_labels == cluster)[0]
+                if len(cluster_indices) == 0:
+                    continue
+                cluster_ood_scores = ood_pool_scores[cluster_indices]
+                # Select the one with highest OOD score in this cluster
+                slct_idx = cluster_indices[np.argmax(cluster_ood_scores)]
+                selected_ood_local.append(ood_indices_pool[slct_idx])
+            
+            selected_ood_local = np.array(selected_ood_local[:n_ood_available])
             selected_ood = idx_pool[selected_ood_local]
+            
+            print(f"[DEBUG] Clustered {len(ood_indices_pool)} OOD samples into {n_ood_clusters} clusters")
+            print(f"[DEBUG] Selected {len(selected_ood)} diverse OOD samples (highest score per cluster)")
         else:
             selected_ood = np.array([], dtype=int)
 
@@ -248,17 +205,18 @@ class UncertaintyDiversitySampler(BaseSampler):
         print('Number of samples in current task:', n_samples_current_task)
 
         n_samples_per_al_cycle = self.get_n_samples_per_al_cycle(n_samples_current_task)
-        n_clusters = n_samples_per_al_cycle  # Number of clusters for diversity sampling
+        n_clusters = n_samples_per_al_cycle 
 
         # Initialize unlabeled indices
         idx_unlabeled = np.arange(n_samples_current_task)
         task_features = []
         task_labels = []  # Collect labels per cycle, combine at task end
+        selection_budget = 0.1  # Default selection budget ratio
             
 
         for alc in range(self.al_budget):
             print(f'Run: {run}, Task: {task_i}, AL cycle: {alc + 1} / {self.al_budget}')
-            
+            #n_clusters = min((alc  + 1) * n_samples_per_al_cycle , idx_unlabeled.size) 
             if alc == 0:
                 if self.args.ood_method and task_i > 0:
                     # Stage-1 simple path: GMM-based ratio and threshold on OOD scores, no memory, no ground-truth split
@@ -271,39 +229,78 @@ class UncertaintyDiversitySampler(BaseSampler):
                         task_i=task_i,
                         ood_method=self.args.ood_method,
                         al_metric=self.args.uncertainty_type or metric,
-                        classes_in_each_task=classes_in_each_task
+                        classes_in_each_task=classes_in_each_task,
+                        selection_budget=selection_budget
                     )
 
                     # Optional: sanity check labels
                     selected_labels = y_train[selected_idxs]
                     print(f"############################################ Task {task_i} - Classes in selected samples: {np.unique(selected_labels)}")
 
-                else:  # HERE WE SHOULD USE ACTIVE LEARNING WITH DIVERSITY
-                    # np.random.seed(self.args.seed + run)
-                    # np.random.shuffle(idx_unlabeled)
-                    # selected_idxs = idx_unlabeled[:n_samples_per_al_cycle]
-                                # ---- Standard Uncertainty + Diversity selection ----
-                    all_features, all_outputs = self.extract_features_and_outputs(x_train[idx_unlabeled])
+                else:
+                    np.random.seed(self.args.seed + run)
+                    np.random.shuffle(idx_unlabeled)
+                    selected_idxs = idx_unlabeled[:n_samples_per_al_cycle]
 
-                    # Cluster the feature embeddings for diversity
-                    kmeans = KMeans(n_clusters=n_clusters, random_state=self.args.seed + run)
-                    cluster_labels = kmeans.fit_predict(all_features)
 
-                    # Compute uncertainty
-                    uncertainties = self.compute_uncertainty(all_outputs, metric=metric)
+                    #         ---- Standard Uncert  ainty + Diversity selection ----
+                    # all_features, all_outputs = self.extract_features_and_outputs(x_train[idx_unlabeled])
 
-                    # Select most uncertain sample from each cluster
-                    selected_idxs = []
-                    for cluster in range(n_clusters):
-                        cluster_indices = np.where(cluster_labels == cluster)[0]
-                        if len(cluster_indices) == 0:
-                            continue
-                        cluster_uncertainties = uncertainties[cluster_indices]
-                        slct_idx = cluster_indices[np.argmax(cluster_uncertainties)]
-                        selected_idxs.append(idx_unlabeled[slct_idx])
+                    # # Cluster the feature embeddings for diversity
+                    # kmeans = KMeans(n_clusters=n_clusters, random_state=self.args.seed + run)
+                    # cluster_labels = kmeans.fit_predict(all_features)
 
-                    selected_idxs = np.array(selected_idxs[:n_samples_per_al_cycle])
+                    # # Compute uncertainty
+                    # uncertainties = self.compute_uncertainty(all_outputs, metric=metric)
+
+                    # # Select most uncertain sample from each cluster
+                    # selected_idxs = []
+                    # for cluster in range(n_clusters):
+                    #     cluster_indices = np.where(cluster_labels == cluster)[0]
+                    #     if len(cluster_indices) == 0:
+                    #         continue
+                    #     cluster_uncertainties = uncertainties[cluster_indices]
+                    #     slct_idx = cluster_indices[np.argmax(cluster_uncertainties)]
+                    #     selected_idxs.append(idx_unlabeled[slct_idx])
+
+                    # selected_idxs = np.array(selected_idxs[:n_samples_per_al_cycle])
             else:
+                # all_features, all_outputs = self.extract_features_and_outputs(x_train[idx_unlabeled])
+                
+                # # Step 2: Cluster the embeddings
+                # kmeans = KMeans(n_clusters=n_clusters, random_state=self.args.seed + run)
+                # cluster_labels = kmeans.fit_predict(all_features)
+
+                # # Step 3: Compute uncertainty scores
+                # uncertainties = self.compute_uncertainty(all_outputs, metric=metric)
+
+                # # Step 4: Select the most uncertain sample from each cluster
+                # candidate_idxs = []
+                # candidate_uncertainties = []
+                # for cluster in range(n_clusters):
+                #     cluster_indices = np.where(cluster_labels == cluster)[0]  # Indices in this cluster
+                #     if len(cluster_indices) == 0:
+                #         continue
+                #     cluster_uncertainties = uncertainties[cluster_indices]  # Uncertainty scores for this cluster
+                #     slct_idx = cluster_indices[np.argsort(-cluster_uncertainties)[0]]
+                #     # Add the selected indices and their uncertainties to the list
+                #     candidate_idxs.append(idx_unlabeled[slct_idx])
+                #     candidate_uncertainties.append(cluster_uncertainties[np.argsort(-cluster_uncertainties)[0]])
+
+                # # Step 5: Sort candidates by uncertainty and select top n_samples_per_al_cycle
+                # candidate_idxs = np.array(candidate_idxs)
+                # candidate_uncertainties = np.array(candidate_uncertainties)
+                
+                # # Sort by uncertainty (descending) and take top n_samples_per_al_cycle
+                # sorted_indices = np.argsort(-candidate_uncertainties)
+                # selected_idxs = candidate_idxs[sorted_indices[:n_samples_per_al_cycle]]
+                
+                # print(f"  Clusters: {n_clusters}, Candidates: {len(candidate_idxs)}, Selected: {len(selected_idxs)}")
+                # print(f"  Max uncertainty in selected: {candidate_uncertainties[sorted_indices[0]]:.6f}")
+                # if len(sorted_indices) > len(selected_idxs):
+                #     print(f"  Min uncertainty in selected: {candidate_uncertainties[sorted_indices[len(selected_idxs)-1]]:.6f}")
+                #     print(f"  Max uncertainty NOT selected: {candidate_uncertainties[sorted_indices[len(selected_idxs)]]:.6f}")
+
                 all_features, all_outputs = self.extract_features_and_outputs(x_train[idx_unlabeled])
                 
                 # Step 2: Cluster the embeddings
@@ -334,7 +331,7 @@ class UncertaintyDiversitySampler(BaseSampler):
 
             accuracies = self.agent.evaluate(task_stream, alc, self.al_budget)
             ood_method = self.args.ood_method if self.args.ood_method else ''
-            self.save_acc_to_csv(accuracies, run, task_i, alc, f'_{metric}', ood_method = ood_method)
+            self.save_acc_to_csv(accuracies, run, task_i, alc, f'_{metric}', ood_method = ood_method, selection_budget=selection_budget)
             
             # store only newly labeled indices in this AL cycle
             newly_labeled = selected_idxs  

@@ -7,11 +7,11 @@ from agents.utils.name_match import agents_replay
 
 content_root = os.path.abspath('.')
 
-al_total = 45
+al_total = 50
+
 memory_budget = 1 / al_total
 config_default = {'scenario': 'class',
-                  'runs': 1,
-                  'runs': 1,
+                  'runs': 3,
                   'runs_val': 2,  # To increase the confidence of best_config
                   'seed': 1234, # 1234,
                   'verbose': True,

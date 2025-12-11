@@ -174,3 +174,6 @@ result/har/
 result/grabmyo/
 result/wisdm/
 ood_debug_logs/
+result/plots/
+result/gmmscores/
+selection_budget_benchmark/
