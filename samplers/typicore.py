@@ -12,8 +12,8 @@ class TypiCoreSampler(BaseSampler):
     TypiCoreSampler: A hybrid sampler combining TypiClust and CoreSet strategies.
     
     Strategy:
-    - First 2 AL cycles: Use TypiClust (clustering + typicality selection)
-    - Subsequent cycles: Use CoreSet (greedy furthest-first selection)
+    - Even AL cycles (0, 2, 4, ...): Use TypiClust (clustering + typicality selection)
+    - Odd AL cycles (1, 3, 5, ...): Use CoreSet (greedy furthest-first selection)
     
     This combines the benefits of both approaches:
     - TypiClust provides good initial coverage with typical samples
@@ -29,7 +29,7 @@ class TypiCoreSampler(BaseSampler):
                  exp_args: SimpleNamespace,
                  args: SimpleNamespace):
         super().__init__(agent, exp_args, args, name='TypiCore')
-        print("TypiCore initialized: First 2 cycles use TypiClust, then CoreSet")
+        print("TypiCore initialized: Even cycles use TypiClust, odd cycles use CoreSet (alternating)")
 
     # ==================== TypiClust Methods ====================
     
@@ -249,8 +249,8 @@ class TypiCoreSampler(BaseSampler):
             
             # Switch strategy based on cycle number
             if alc % 2 == 0:
-                # First 2 cycles: Use TypiClust
-                print(f"Using TypiClust strategy (cycle {alc + 1}/2)")
+                # Even cycles: Use TypiClust
+                print(f"Using TypiClust strategy (cycle {alc + 1}, even)")
                 
                 # Determine number of clusters
                 n_clusters = min(len(self.idx_labeled) + self.n_samples_per_al_cycle, self.MAX_NUM_CLUSTERS)
@@ -280,8 +280,8 @@ class TypiCoreSampler(BaseSampler):
                             selected_idxs[-1] = alt_idx
                             break
             else:
-                # Subsequent cycles: Use CoreSet
-                print(f"Using CoreSet strategy (cycle {alc + 1})")
+                # Odd cycles: Use CoreSet
+                print(f"Using CoreSet strategy (cycle {alc + 1}, odd)")
                 selected_idxs = self.select_samples_coreset(all_features)
             
             # Update labeled and unlabeled sets
