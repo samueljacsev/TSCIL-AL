@@ -165,3 +165,6 @@ debug.py
 # Result files
 result/tune_and_exp/
 result/ray_tune_results/
+result
+
+samplers/tests/

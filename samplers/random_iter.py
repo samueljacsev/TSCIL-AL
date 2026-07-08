@@ -14,34 +14,33 @@ class RandomIterSampler(BaseSampler):
                  agent: BaseLearner,
                  exp_args: SimpleNamespace,
                  args: SimpleNamespace ):
-        super().__init__(agent, exp_args, args, name='RandomIter')
+        super().__init__(agent, exp_args, args, name='Random')
 
 
-    def active_learn_task(self, run, task_stream, task_i):
-        """
-        active_learn_task: Selects the next few samples to be labelled randomly in multiple iter.
-        """
-
-        task = task_stream.tasks[task_i]
-        x_train = task[0][0]
-        n_samples_this_task = x_train.shape[0]
-        
-        n_samples_per_al_cycle = self.get_n_samples_per_al_cycle(n_samples_this_task)
-    
-        idx_unlabeled = np.arange(n_samples_this_task)
-        
+    def active_learn_sampler(self, run, task_stream, task_i):
+        """Execute random sampling active learning strategy."""
+        accuracies = np.array([])
+        task_buffer = np.array([], dtype=int)
         
         for alc in range(self.al_budget):
-            print(f'Run: {run}, Task: {task_i}, AL cycle: {alc + 1} / {self.al_budget}')
+            print(f'AL cycle: {alc + 1} / {self.al_budget}')
 
-            np.random.shuffle(idx_unlabeled)
-            # label data by random sampling n_samples_per_al_cycle number of samples
-            labelled_idxs = idx_unlabeled[:n_samples_per_al_cycle]
-            # update the unlabelled data
-            idx_unlabeled = idx_unlabeled[n_samples_per_al_cycle:]
+            # Randomly select samples from unlabeled pool
+            np.random.shuffle(self.idx_unlabeled)
+            selected_idxs = self.idx_unlabeled[:self.n_samples_per_al_cycle].copy()
+            print(f'Number of selected indices: {len(selected_idxs)}')
 
-            new_task = (alc == 0)
-            self.agent.learn_task(task, labelled_idxs, new_task)
+            # Update labeled and unlabeled sets
+            self.idx_labeled = np.concatenate([self.idx_labeled, selected_idxs])
+            self.idx_unlabeled = self.idx_unlabeled[self.n_samples_per_al_cycle:]
+
+            # Add selected samples to the task buffer
+            task_buffer = np.concatenate([task_buffer, selected_idxs])
+
+            # Train and evaluate
+            self.agent.learn_task(self.current_task, task_buffer, alc == 0)
             accuracies = self.agent.evaluate(task_stream, alc, self.al_budget)
             self.save_acc_to_csv(accuracies, run, task_i, alc)
+
+        return accuracies
             

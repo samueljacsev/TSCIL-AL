@@ -20,14 +20,14 @@ class ASER_retrieve(object):
     def retrieve(self, buffer, **kwargs):
         model = buffer.model
 
-        if buffer.n_seen_so_far <= self.mem_size:
-            # Use random retrieval until buffer is filled
-            ret_x, ret_y = random_retrieve(buffer, self.num_retrieve)
-        else:
+        # if buffer.n_seen_so_far <= self.mem_size:
+        #     # Use random retrieval until buffer is filled
+        #     ret_x, ret_y = random_retrieve(buffer, self.num_retrieve)
+        # else:
             # Use ASER retrieval if buffer is filled
-            cur_x, cur_y = kwargs['x'], kwargs['y']
-            buffer_x, buffer_y = buffer.buffer_input, buffer.buffer_label
-            ret_x, ret_y = self._retrieve_by_knn_sv(model, buffer_x, buffer_y, cur_x, cur_y, self.num_retrieve)
+        cur_x, cur_y = kwargs['x'], kwargs['y']
+        buffer_x, buffer_y = buffer.buffer_input, buffer.buffer_label
+        ret_x, ret_y = self._retrieve_by_knn_sv(model, buffer_x, buffer_y, cur_x, cur_y, self.num_retrieve)
         return ret_x, ret_y
 
     def _retrieve_by_knn_sv(self, model, buffer_x, buffer_y, cur_x, cur_y, num_retrieve):

@@ -3,45 +3,43 @@ from types import SimpleNamespace
 from agents.base import BaseLearner
 from samplers.base import BaseSampler
 from sklearn.cluster import KMeans, MiniBatchKMeans
+from sklearn.metrics import pairwise_distances
 import numpy as np
-import time
 
 
-class TypiClustSampler(BaseSampler):
+class TypiCoreSampler(BaseSampler):
     """
-    TypiClustSampler: A sampler implementing the TypiClust strategy.
+    TypiCoreSampler: A hybrid sampler combining TypiClust and CoreSet strategies.
     
-    Based on the original TypiClust paper implementation:
-    - Clusters all samples (labeled + unlabeled)
-    - Prioritizes clusters with fewer labeled samples and larger size
-    - Selects the most typical (highest density) sample from each cluster
+    Strategy:
+    - First 2 AL cycles: Use TypiClust (clustering + typicality selection)
+    - Subsequent cycles: Use CoreSet (greedy furthest-first selection)
+    
+    This combines the benefits of both approaches:
+    - TypiClust provides good initial coverage with typical samples
+    - CoreSet ensures diverse coverage by selecting furthest points
     """
     
     MIN_CLUSTER_SIZE = 3
-    MAX_NUM_CLUSTERS = np.inf  # No hard limit on clusters
-    K_NN = 20  # Default number of neighbors for typicality
+    MAX_NUM_CLUSTERS = np.inf
+    K_NN = 20
 
     def __init__(self,
                  agent: BaseLearner,
                  exp_args: SimpleNamespace,
                  args: SimpleNamespace):
-        super().__init__(agent, exp_args, args, name='TypiClust')
+        super().__init__(agent, exp_args, args, name='TypiCore')
+        print("TypiCore initialized: First 2 cycles use TypiClust, then CoreSet")
 
+    # ==================== TypiClust Methods ====================
+    
     def get_clusters(self, features, n_clusters):
         """
         Perform K-means clustering on features for diversity.
         Uses MiniBatchKMeans for large datasets or many clusters for efficiency.
-        
-        Args:
-            features: Feature vectors to cluster.
-            n_clusters: Number of clusters to create.
-            
-        Returns:
-            cluster_labels: Array of cluster assignments.
         """
         n_clusters = min(n_clusters, len(features), self.MAX_NUM_CLUSTERS)
         
-        # Use MiniBatchKMeans for better scalability (matches original implementation)
         if n_clusters > 50:
             kmeans = MiniBatchKMeans(n_clusters=n_clusters, 
                                     batch_size=min(5000, len(features)),
@@ -54,16 +52,8 @@ class TypiClustSampler(BaseSampler):
 
     def _get_nn_sklearn(self, features, num_neighbors):
         """
-        Calculate nearest neighbors using sklearn (CPU fallback).
+        Calculate nearest neighbors using sklearn.
         Memory-efficient version that doesn't compute full distance matrix.
-        
-        Args:
-            features: Feature vectors (N x D).
-            num_neighbors: Number of neighbors to find.
-            
-        Returns:
-            distances: Distance to each neighbor (N x num_neighbors).
-            indices: Indices of neighbors (N x num_neighbors).
         """
         from sklearn.neighbors import NearestNeighbors
         
@@ -78,13 +68,6 @@ class TypiClustSampler(BaseSampler):
         """
         Compute typicality scores based on k-nearest neighbor distances.
         High typicality = low mean distance to neighbors = high density region.
-        
-        Args:
-            features: Feature vectors to compute typicality for.
-            k_nn: Number of neighbors to use. Defaults to min(K_NN, len(features)//2).
-            
-        Returns:
-            typicalities: Array of typicality scores.
         """
         if k_nn is None:
             k_nn = min(self.K_NN, len(features) // 2)
@@ -102,14 +85,6 @@ class TypiClustSampler(BaseSampler):
     def _build_cluster_df(self, cluster_labels, existing_indices):
         """
         Build cluster information similar to original implementation using pandas.
-        
-        Args:
-            cluster_labels: Cluster assignment for each sample in relevant_indices.
-            existing_indices: Indices within relevant_indices that are already labeled.
-            
-        Returns:
-            sorted_clusters: Cluster IDs sorted by priority (least labeled, largest size).
-            labels: Mutable copy of cluster_labels with labeled samples marked as -1.
         """
         import pandas as pd
         
@@ -118,7 +93,6 @@ class TypiClustSampler(BaseSampler):
         # Count cluster sizes and labeled samples per cluster
         cluster_ids, cluster_sizes = np.unique(labels, return_counts=True)
         
-        # Fix for ValueError: All arrays must be of the same length
         if len(cluster_ids) > 0:
             counts = np.bincount(labels[existing_indices], minlength=cluster_ids.max() + 1)
             cluster_labeled_counts = counts[cluster_ids]
@@ -143,20 +117,10 @@ class TypiClustSampler(BaseSampler):
         
         return clusters_df['cluster_id'].values, labels
 
-    def select_samples(self, features, cluster_labels, existing_indices, budget):
+    def select_samples_typiclust(self, features, cluster_labels, existing_indices, budget):
         """
-        Select samples using TypiClust strategy (matches original implementation).
-        
-        Args:
-            features: Feature vectors for all relevant samples.
-            cluster_labels: Cluster assignments for all relevant samples.
-            existing_indices: Indices of already labeled samples (within this array).
-            budget: Number of samples to select.
-            
-        Returns:
-            selected: Indices of selected samples (within the features array).
+        Select samples using TypiClust strategy.
         """
-
         sorted_clusters, labels = self._build_cluster_df(
             cluster_labels, existing_indices
         )
@@ -174,7 +138,6 @@ class TypiClustSampler(BaseSampler):
         for i in range(budget):
             # Round-robin through clusters
             cluster = sorted_clusters[i % len(sorted_clusters)]
-            print(f"Selecting from cluster {cluster}")
             
             # Get indices of samples in this cluster (not yet selected)
             indices = np.where(labels == cluster)[0]
@@ -195,7 +158,7 @@ class TypiClustSampler(BaseSampler):
             # Compute typicality for this cluster with adaptive K_NN
             rel_feats = features[indices]
             k_nn = min(self.K_NN, len(indices) // 2)
-            k_nn = max(1, k_nn)  # Ensure at least 1 neighbor
+            k_nn = max(1, k_nn)
             
             cluster_typicalities = self.compute_typicality(rel_feats, k_nn)
             best_local_idx = cluster_typicalities.argmax()
@@ -207,8 +170,73 @@ class TypiClustSampler(BaseSampler):
         
         return np.array(selected, dtype=int)
 
+    # ==================== CoreSet Methods ====================
+    
+    def furthest_first(self, unlabeled_features, labeled_features, n):
+        """
+        Greedy furthest-first traversal for k-center problem.
+        
+        Iteratively selects n samples from unlabeled_features that are
+        furthest from the labeled set, maximizing minimum distance to
+        already selected points.
+        """
+        m = unlabeled_features.shape[0]
+        
+        # Initialize minimum distances
+        if labeled_features.shape[0] == 0:
+            # No labeled samples yet - all distances are infinite
+            min_dist = np.tile(float("inf"), m)
+        else:
+            # Compute distances from unlabeled to labeled samples
+            dist_ctr = pairwise_distances(unlabeled_features, labeled_features)
+            # For each unlabeled sample, track distance to nearest labeled sample
+            min_dist = np.amin(dist_ctr, axis=1)
+
+        idxs = []
+
+        for i in range(n):
+            # Select the unlabeled sample with maximum distance to labeled set
+            idx = min_dist.argmax()
+            idxs.append(idx)
+            
+            # Update minimum distances with the newly selected point
+            dist_new_ctr = pairwise_distances(
+                unlabeled_features, 
+                unlabeled_features[[idx], :]
+            )
+            min_dist = np.minimum(min_dist, dist_new_ctr[:, 0])
+
+        return np.array(idxs, dtype=int)
+
+    def select_samples_coreset(self, all_features):
+        """
+        Select samples using CoreSet strategy.
+        """
+        unlabeled_features = all_features[self.idx_unlabeled]
+        
+        if self.idx_labeled.size > 0:
+            labeled_features = all_features[self.idx_labeled]
+        else:
+            labeled_features = np.empty((0, all_features.shape[1]))
+        
+        print(f"CoreSet: Selecting from {len(self.idx_unlabeled)} unlabeled samples")
+        print(f"CoreSet: Current labeled set size: {len(self.idx_labeled)}")
+        
+        # Apply furthest-first algorithm to select diverse samples
+        local_indices = self.furthest_first(
+            unlabeled_features, 
+            labeled_features, 
+            self.n_samples_per_al_cycle
+        )
+        selected_idxs = self.idx_unlabeled[local_indices]
+        
+        print(f"CoreSet: Selected {len(selected_idxs)} samples")
+        return selected_idxs
+
+    # ==================== Main Active Learning Loop ====================
+    
     def active_learn_sampler(self, run, task_stream, task_i):
-        """Execute TypiClust active learning strategy."""
+        """Execute TypiCore active learning strategy."""
         accuracies = np.array([])
         task_buffer = np.array([], dtype=int)
         
@@ -216,32 +244,33 @@ class TypiClustSampler(BaseSampler):
             print(f'AL cycle: {alc + 1} / {self.al_budget}')
 
             # Extract features from training data
-            x_train, _ = self.current_task[0]
+            x_train, y_train = self.current_task[0]
             all_features, _ = self.extract_features_and_outputs(x_train)
             
-            # Determine number of clusters (matches original implementation)
-            n_clusters = min(len(self.idx_labeled) + self.n_samples_per_al_cycle, self.MAX_NUM_CLUSTERS)
-            print(f"Step 1: Clustering into {n_clusters} clusters for diversity")
-            cluster_labels = self.get_clusters(all_features, n_clusters)
-            
-            # Select samples using TypiClust strategy
-            print("Step 2: Selecting typical samples from clusters")
-            selected_idxs = self.select_samples(
-                all_features, 
-                cluster_labels, 
-                self.idx_labeled.astype(int), 
-                self.n_samples_per_al_cycle
-            )
-
-            safe_mode=True
-            if safe_mode:
-                # find the ground-truth labels for selected samples
-                _, y_train = self.current_task[0]
+            # Switch strategy based on cycle number
+            if alc % 2 == 0:
+                # First 2 cycles: Use TypiClust
+                print(f"Using TypiClust strategy (cycle {alc + 1}/2)")
+                
+                # Determine number of clusters
+                n_clusters = min(len(self.idx_labeled) + self.n_samples_per_al_cycle, self.MAX_NUM_CLUSTERS)
+                print(f"Step 1: Clustering into {n_clusters} clusters for diversity")
+                cluster_labels = self.get_clusters(all_features, n_clusters)
+                
+                # Select samples using TypiClust strategy
+                print("Step 2: Selecting typical samples from clusters")
+                selected_idxs = self.select_samples_typiclust(
+                    all_features, 
+                    cluster_labels, 
+                    self.idx_labeled.astype(int), 
+                    self.n_samples_per_al_cycle
+                )
+                
+                # Safety check for class diversity
                 selected_labels = np.array([y_train[idx] for idx in selected_idxs])
-                # print n_unique labels in selected samples
                 if len(np.unique(selected_labels)) < 2:
                     print("Warning: Selected samples contain less than 2 unique classes.")
-                    # replace the last selected sample with a random unlabeled sample of a different class
+                    # Replace the last selected sample with a random unlabeled sample of a different class
                     unlabeled_mask = np.ones(len(all_features), dtype=bool)
                     unlabeled_mask[self.idx_labeled.astype(int)] = False
                     unlabeled_indices = np.where(unlabeled_mask)[0]
@@ -250,8 +279,10 @@ class TypiClustSampler(BaseSampler):
                             print(f"Replacing index {selected_idxs[-1]} with index {alt_idx} of class {y_train[alt_idx]}")
                             selected_idxs[-1] = alt_idx
                             break
-            
-
+            else:
+                # Subsequent cycles: Use CoreSet
+                print(f"Using CoreSet strategy (cycle {alc + 1})")
+                selected_idxs = self.select_samples_coreset(all_features)
             
             # Update labeled and unlabeled sets
             self.idx_labeled = np.concatenate([self.idx_labeled, selected_idxs])

@@ -109,38 +109,42 @@ def tune_hyperparams_on_val_tasks(args, cls_order, config_generic={}, config_mod
     #     buffer_size = get_buffer_size(args)
     #     batch_size = buffer_size # == 0.05 * n_samples_per_class * n_classes_per_task * n_tasks
     #     print('Batch size is set to buffer size: {}'.format(buffer_size))
-
+    best_params = {}
     
     # Optimized params for uvawe and har when batch_size = buffer_size on the TRAIN 
-    if args.data == 'uwave' and args.encoder == 'CNN' and args.agent == 'ASER' and args.norm == 'BN':
-        best_params = {'generic': {'lr': 0.001, 'lradj': 'step15', 'batch_size': 40, 'weight_decay': 0}, 
-                   'model': {'feature_dim': 128, 'n_layers': 4, 'dropout': 0}, 
-                   'agent': {'aser_k': 3, 'aser_type': 'asvm', 'aser_n_smp_cls': 2}}
+    if args.encoder == 'CNN' and args.agent in ['ASER', 'ER'] and args.norm == 'BN':
+        if args.data == 'uwave':
+            best_params = {'generic': {'lr': 0.001, 'lradj': 'step15', 'batch_size': 6, 'weight_decay': 0}, 
+                    'model': {'feature_dim': 128, 'n_layers': 6, 'dropout': 0}, 
+                    'agent': {'aser_k': 3, 'aser_type': 'asvm', 'aser_n_smp_cls': 2}}
     
-    elif args.data == 'har': # 0.05 366, 0.01 72, 0.005 36
-        best_params = {'generic': {'lr': 0.001, 'lradj': 'TST', 'batch_size': 36, 'weight_decay': 0}, 
-                        'model': {'feature_dim': 128, 'n_layers': 4, 'dropout': 0}, 
-                        'agent': {'aser_k': 3, 'aser_type': 'asvm', 'aser_n_smp_cls': 4}}
+        elif args.data == 'har':
+            best_params = {'generic': {'lr': 0.001, 'lradj': 'TST', 'batch_size': 5, 'weight_decay': 0}, 
+                            'model': {'feature_dim': 128, 'n_layers': 4, 'dropout': 0}, 
+                            'agent': {'aser_k': 3, 'aser_type': 'asvm', 'aser_n_smp_cls': 4}}
     
-    elif args.data == 'dailysports':
-        best_params = {"generic": {"lr": 0.001, "lradj": "TST", "batch_size": 84, "weight_decay": 0}, 
-                       "model": {"feature_dim": 128, "n_layers": 4, "dropout": 0.3}, 
-                       "agent": {"aser_k": 3, "aser_type": "asvm", "aser_n_smp_cls": 2}}
+        elif args.data == 'dailysports':
+            best_params = {"generic": {"lr": 0.001, "lradj": "TST", "batch_size": 84, "weight_decay": 0}, 
+                        "model": {"feature_dim": 128, "n_layers": 4, "dropout": 0.3}, 
+                        "agent": {"aser_k": 3, "aser_type": "asvm", "aser_n_smp_cls": 2}}
         
-    elif args.data == 'wisdm':
-        best_params = {"generic": {"lr": 0.001, "lradj": "TST", "batch_size": 600, "weight_decay": 0}, 
-                       "model": {"feature_dim": 128, "n_layers": 4, "dropout": 0.3}, 
-                       "agent": {"aser_k": 3, "aser_type": "asvm", "aser_n_smp_cls": 8}}
-        
-    elif args.data == 'grabmyo':
-        best_params = {"generic": {"lr": 0.001, "lradj": "TST", "batch_size": 1020, "weight_decay": 0}, 
+        elif args.data == 'wisdm':
+            best_params = {"generic": {"lr": 0.001, "lradj": "TST", "batch_size": 43, "weight_decay": 0}, 
                         "model": {"feature_dim": 128, "n_layers": 4, "dropout": 0.3}, 
                         "agent": {"aser_k": 3, "aser_type": "asvm", "aser_n_smp_cls": 8}}
         
-    return dict(best_params['model'], **best_params['agent'], **best_params['generic'])
+        elif args.data == 'grabmyo':
+            best_params = {"generic": {"lr": 0.001, "lradj": "TST", "batch_size": 203, "weight_decay": 0}, 
+                            "model": {"feature_dim": 128, "n_layers": 4, "dropout": 0.3}, 
+                            "agent": {"aser_k": 3, "aser_type": "asvm", "aser_n_smp_cls": 8}}
+        if best_params:
+            print('patience: {}, buffer size: {}, batch size: {}'.format(args.patience, get_buffer_size(args), best_params['generic']['batch_size']))
+            return dict(best_params['model'], **best_params['agent'], **best_params['generic'])
+            
+    
+        
     
     
-
     
     if args.ablation:
         adjust_config_for_ablation(args, config_cl[args.agent])
@@ -302,9 +306,23 @@ def tune_and_experiment_multiple_runs(args):
                 print('Task {}: contains {} val samples'.format(k, x_val.shape[0]))
                 print('Task {}: contains {} test samples'.format(k, x_test.shape[0]))
 
+            Acc_tasks = {'valid': [],
+                         'test':  []}
+
             for task_i in range(n_tasks_exp):
+                # y_tain = task_stream[0][1]
+                # print(set(y_train))
                 # Active Learning
-                sampler.active_learn_task(run, task_stream, task_i)
+                task_acc = sampler.active_learn_task(run, task_stream, task_i)
+
+                print('----------------------')
+                print('Task {}: Test Accuracies over AL cycles: {}'.format(task_i, task_acc))
+
+
+                Acc_tasks['test'].append(task_acc)
+
+                print(Acc_tasks['test'])
+
                 # model.learn_task(...)
                 #agent.evaluate(task_stream, i, path=tsne_path)  # TSNE path                
 
@@ -317,6 +335,8 @@ def tune_and_experiment_multiple_runs(args):
             # Acc_multiple_run_valid.append(agent.Acc_tasks['valid'])
             # Acc_multiple_run_test.append(agent.Acc_tasks['test'])
             
+            Acc_multiple_run_test.append(Acc_tasks['test'])
+            
 
         run_over = time.time()
         print('\n Finish Run {}: total {} sec'.format(run, run_over - run_start))
@@ -328,10 +348,10 @@ def tune_and_experiment_multiple_runs(args):
     end = time.time()
     print('\n All runs finish. Total running time: {} sec'.format(end - start))
 
-    # # ################## Val: mean and CI over runs ##################
+    # ################## Val: mean and CI over runs ##################
     # Acc_multiple_run_valid = val_mean_anc_cil_over_runs(args, Acc_multiple_run_valid)
-    # ################## Test: mean and CI over runs ##################
-    # Acc_multiple_run_test = test_mean_anc_cil_over_runs(args, Acc_multiple_run_test)  
-    # # Save the results
-    # save_results(args, Acc_multiple_run_valid, Acc_multiple_run_test, Best_params, start, end)
+    ################## Test: mean and CI over runs ##################
+    Acc_multiple_run_test = test_mean_anc_cil_over_runs(args, Acc_multiple_run_test)  
+    # Save the results
+    save_results(args, Acc_multiple_run_valid, Acc_multiple_run_test, Best_params, start, end)
 
