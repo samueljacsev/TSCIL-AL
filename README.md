@@ -10,11 +10,19 @@
 
 
 <!-- ABOUT THE PROJECT -->
-## Class-incremental Learning for Time Series with Active Learning: Benchmark and Evaluation
+# TSCIL-AL: Active Class-Incremental Learning for Time Series
+## Benchmark & Evaluation &nbsp;·&nbsp; Introducing TypiCore
 
+Time series data play a pivotal role across numerous domains, including healthcare and manufacturing. In real-world environments, models must cope with distribution shifts over time, a challenge commonly addressed through Continual Learning (CL) techniques. However, existing CL methods face a critical limitation: real-world data streams are rarely fully labeled, making annotation cost a major practical constraint. 
 
-This project is a fork of the [TSCIL](https://github.com/zqiao11/TSCIL) repository: a unified experimental framework for Time Series Class-Incremental Learning (TSCIL) based on Pytorch now extended with Active Learning capabilities. The [paper](https://arxiv.org/abs/2402.12035) has been accepted by SIGKDD 2024. Our CIL benchmarks are established with open-sourced real-world time series datasets. Based on these, our toolkit provides a simple way to customize the continual learning settings. Hyperparameter selection is based on [Ray Tune](https://docs.ray.io/en/latest/tune/index.html). 
-The addition of Active Learning enables the framework to intelligently select the most informative samples for labeling, improving efficiency and performance in class-incremental learning scenarios. This extension is designed to support various active learning strategies and seamlessly integrate them into the existing TSCIL pipeline.
+This paper investigates Active Class-Incremental Learning (ACIL) for multivariate time series, where a model must sequentially learn new classes while selectively querying labels under a fixed annotation budget.
+
+We present a systematic evaluation of a wide range of query strategies combined with multiple rehearsal-based approaches, assessing their impact on plasticity, stability, and label efficiency across four benchmark datasets. 
+
+Our analysis reveals the limitations of uncertainty-based and distribution-aware methods in achieving strong performance under constrained labeling budgets. To address these shortcomings, we propose TypiCore, a novel hybrid query strategy that alternates between typicality-based and diversity-based sample selection across active learning cycles, enabling the construction of memory buffers that are both representative and diverse. 
+Evaluated on the TSCIL benchmark, TypiCore delivers statistically significant improvements over all baselines and matches or surpasses fully supervised continual learning performance on multiple datasets while requiring a fraction of the available labels.
+
+> This project is a fork of the [TSCIL](https://github.com/zqiao11/TSCIL) repository — a unified experimental framework for Time Series Class-Incremental Learning (TSCIL) based on PyTorch — extended with Active Learning capabilities.
 
 ## Requirements
 ![](https://img.shields.io/badge/python-3.10-green.svg)
@@ -46,7 +54,6 @@ The addition of Active Learning enables the framework to intelligently select th
 2. [UWAVE](http://www.timeseriesclassification.com/description.php?Dataset=UWaveGestureLibraryAll)
 3. [Dailysports](https://archive.ics.uci.edu/ml/datasets/daily+and+sports+activities) 
 4. [WISDM](https://archive.ics.uci.edu/dataset/507/wisdm+smartphone+and+smartwatch+activity+and+biometrics+dataset)
-5. [GrabMyo](https://physionet.org/content/grabmyo/1.0.2/)
 
 
 ### Data Prepareation
@@ -69,23 +76,10 @@ For convenience, we provide the processed data files for direct download. Please
 
 ## Continual Learning Algorithms
 ### Existing Algorithms
-Regularization-based:
-* [LwF](https://arxiv.org/abs/1606.09282)
-* [EWC](https://arxiv.org/abs/1612.00796)
-* [SI](https://arxiv.org/abs/1703.04200)
-* [MAS](https://arxiv.org/abs/1711.09601)
-* [DT2W](https://ieeexplore.ieee.org/abstract/document/10094960)
 
 Replay-based:
 * [ER](https://arxiv.org/abs/1811.11682)
-* [DER](https://arxiv.org/abs/2004.07211)
-* [Herding](https://arxiv.org/abs/1611.07725)
 * [ASER](https://arxiv.org/abs/2009.00093)
-* [CLOPS](https://www.nature.com/articles/s41467-021-24483-0)
-* [FastICARL](https://arxiv.org/abs/2106.07268)
-* [Generative Replay](https://arxiv.org/abs/1705.08690)
-* [DeepInversion](https://arxiv.org/abs/1912.08795) (beta)
-* [Mnemonics](https://arxiv.org/abs/2002.10211)
 
 ### Adding New Algorithm
 1. Create a new python file in the `agent` directory for the new algorithm.
