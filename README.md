@@ -52,8 +52,9 @@ Evaluated on the TSCIL benchmark, TypiCore delivers statistically significant im
 ### Available Datasets
 1. [UCI-HAR](https://archive.ics.uci.edu/dataset/240/human+activity+recognition+using+smartphones)
 2. [UWAVE](http://www.timeseriesclassification.com/description.php?Dataset=UWaveGestureLibraryAll)
-3. [Dailysports](https://archive.ics.uci.edu/ml/datasets/daily+and+sports+activities) 
-4. [WISDM](https://archive.ics.uci.edu/dataset/507/wisdm+smartphone+and+smartwatch+activity+and+biometrics+dataset)
+3. [WISDM](https://archive.ics.uci.edu/dataset/507/wisdm+smartphone+and+smartwatch+activity+and+biometrics+dataset)
+4. [GrabMyo](https://physionet.org/content/grabmyo/1.0.2/)
+
 
 
 ### Data Prepareation
